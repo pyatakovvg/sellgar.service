@@ -1,0 +1,103 @@
+{
+  "type": "object",
+  "properties": {
+    "isUse": {
+      "type": "boolean"
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+
+    },
+    "externalId": {
+      "type": "string"
+    },
+    "typeId": {
+      "type": "number"
+    },
+    "categoryId": {
+      "type": "number"
+    },
+    "brandId": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "shops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "gallery": {
+      "type": "array"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "isUse": {
+            "type": "boolean"
+          },
+          "isTarget": {
+            "type": "boolean"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "value": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "characteristics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "isUse": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "private": false,
+  "name": "comment-srv",
+  "license": "MIT",
+  "version": "1.0.0",
+  "scripts": {
+    "migration": "cross-env NODE_ENV=production sequelize-cli db:migrate",
+    "migration:dev": "cross-env NODE_ENV=development sequelize-cli db:migrate",
+    "seed": "cross-env NODE_ENV=production sequelize-cli db:seed:all",
+    "seed:dev": "cross-env NODE_ENV=development sequelize-cli db:seed:all",
+    "start": "yarn run migration && node -r dotenv/config --experimental-modules --es-module-specifier-resolution=node ./src/index.mjs dotenv_config_path=./.env",
+    "start:dev": "nodemon --exec node -r dotenv/config --experimental-modules --es-module-specifier-resolution=node ./src/index.mjs dotenv_config_path=./.env"
+  },
+  "dependencies": {
+    "@sellgar/db": "1.0.1",
+    "@package/errors": "0.0.1",
+    "@package/logger": "0.0.1",
+    "@sellgar/moment": "1.0.1",
+    "@sellgar/rabbit": "1.0.1",
+    "@library/app": "0.0.1",
+    "@sellgar/socket": "1.0.0",
+    "@sellgar/utils": "1.0.0",
+    "ajv": "8.8.2",
+    "dotenv": "10.0.0",
+    "node-sagas": "0.0.6"
+  },
+  "devDependencies": {
+    "cross-env": "7.0.3",
+    "nodemon": "2.0.15",
+    "sequelize-cli": "6.3.0"
+  }
+}

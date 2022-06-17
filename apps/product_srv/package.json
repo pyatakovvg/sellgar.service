@@ -1,0 +1,20 @@
+{
+  "name": "@app/product",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env",
+    "start:dev": "nodemon --exec ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env"
+  },
+  "dependencies": {
+    "@library/app": "0.0.1",
+    "@plugin/db": "0.0.1",
+    "node-sagas": "0.0.6",
+    "ajv": "8.11.0",
+    "jsonwebtoken": "8.5.1"
+  },
+  "devDependencies": {
+  },
+  "peerDependencies": {
+  }
+}

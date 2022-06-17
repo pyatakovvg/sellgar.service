@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "watchOptions": {
+    "excludeDirectories": [
+      "src"
+    ]
+  },
+  "compilerOptions": {
+    "outDir": "./lib"
+  },
+  "include": [
+    "./src"
+  ]
+}

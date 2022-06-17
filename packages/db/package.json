@@ -1,0 +1,25 @@
+{
+  "private": false,
+  "name": "@sellgar/db",
+  "version": "1.0.1",
+  "license": "MIT",
+  "main": "./src/index.mjs",
+  "author": {
+    "name": "Viktor Pyatakov",
+    "email": "pyatakov.viktor@gmail.com"
+  },
+  "dependencies": {
+    "@package/logger": "0.0.1",
+    "pg": "8.7.1",
+    "pg-hstore": "2.3.4",
+    "sequelize": "6.9.0"
+  },
+  "scripts": {
+    "login": "npm login --registry=https://registry.npmjs.org/",
+    "publish": "npm publish --registry=https://registry.npmjs.org/ --access=public"
+  },
+  "files": [
+    "src",
+    "package.json"
+  ]
+}

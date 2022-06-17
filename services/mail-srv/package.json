@@ -1,0 +1,23 @@
+{
+  "private": false,
+  "name": "mail-srv",
+  "license": "MIT",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node -r dotenv/config --experimental-modules --es-module-specifier-resolution=node src/index.mjs dotenv_config_path=./.env",
+    "start:dev": "nodemon --exec node -r dotenv/config --experimental-modules --es-module-specifier-resolution=node ./src/index.mjs dotenv_config_path=./.env"
+  },
+  "dependencies": {
+    "@package/errors": "0.0.1",
+    "@package/logger": "0.0.1",
+    "@sellgar/numeral": "1.0.1",
+    "@sellgar/rabbit": "1.0.1",
+    "@library/app": "0.0.1",
+    "dotenv": "10.0.0",
+    "nodemailer": "6.7.2",
+    "nunjucks": "3.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.15"
+  }
+}

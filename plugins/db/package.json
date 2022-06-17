@@ -1,0 +1,22 @@
+{
+  "private": false,
+  "name": "@plugin/db",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib",
+  "scripts": {
+    "build": "rm -drf ./lib && cross-env NODE_ENV=production tsc",
+    "start:dev": "cross-env NODE_ENV=development tsc --watch"
+  },
+  "dependencies": {
+    "@library/app": "0.0.1",
+    "pg": "8.7.3",
+    "pg-hstore": "2.3.4",
+    "sequelize": "6.19.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.6.5",
+    "@types/sequelize": "4.28.12"
+  }
+}

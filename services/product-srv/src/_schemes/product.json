@@ -1,0 +1,122 @@
+{
+  "type": "object",
+  "required": ["groupUuid", "categoryUuid", "brandUuid", "externalId", "title", "gallery", "modes"],
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "seoTitle": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1024,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "seoDescription": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1024,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "seoKeywords": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1024,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "groupUuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "categoryUuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "brandUuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "externalId": {
+      "type": "string",
+      "minLength": 9,
+      "maxLength": 64
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "originalName": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 256
+    },
+    "description": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 2024
+    },
+    "gallery": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      }
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["currencyCode", "price", "value", "vendor"],
+        "properties": {
+          "isUse": {
+            "type": "boolean"
+          },
+          "isTarget": {
+            "type": "boolean"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "value": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "attributes": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "required": ["uuid", "value"],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "isUse": {
+      "type": "boolean"
+    },
+    "isAvailable": {
+      "type": "boolean"
+    }
+  }
+}

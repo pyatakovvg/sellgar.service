@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "required": [],
+  "properties": {
+    "profile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 12
+        },
+        "birthday": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

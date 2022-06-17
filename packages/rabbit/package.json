@@ -1,0 +1,21 @@
+{
+  "private": false,
+  "name": "@sellgar/rabbit",
+  "version": "1.0.1",
+  "license": "MIT",
+  "main": "src/index.mjs",
+  "dependencies": {
+    "@package/errors": "0.0.1",
+    "@package/logger": "0.0.1",
+    "@sellgar/utils": "1.0.0",
+    "amqplib": "0.8.0"
+  },
+  "scripts": {
+    "login": "npm login --registry=https://registry.npmjs.org/",
+    "publish": "npm publish --registry=https://registry.npmjs.org/ --access=public"
+  },
+  "files": [
+    "src",
+    "package.json"
+  ]
+}

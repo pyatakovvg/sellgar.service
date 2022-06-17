@@ -1,0 +1,19 @@
+
+{
+  "development": {
+    "port": 5432,
+    "host": "localhost",
+    "database": "osetpr-push_srv",
+    "username": "admin",
+    "password": "1Ctdfcnjgjkm",
+    "dialect": "postgres"
+  },
+  "production": {
+    "port": 5432,
+    "host": "db",
+    "database": "push_srv",
+    "username": "admin",
+    "password": "1Ctdfcnjgjkm",
+    "dialect": "postgres"
+  }
+}
