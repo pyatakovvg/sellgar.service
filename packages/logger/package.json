@@ -7,7 +7,7 @@
   "homepage": "",
   "license": "ISC",
   "main": "lib/index.js",
-  "types": "lib",
+  "types": "types",
   "directories": {
     "lib": "lib"
   },

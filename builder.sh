@@ -1,9 +1,59 @@
 #!/usr/bin/env sh
 
-cd ./packages || return 0
 
+echo '------------------------------------'
+echo '|        Сборка helpers            |'
+echo '------------------------------------'
+
+cd ./helpers || return
+
+echo ''
+echo 'Пакет "Default"'
+echo '------------------------------------'
+cd ./utils && npx yarn build
+
+
+echo '------------------------------------'
+echo '|        Сборка packages            |'
+echo '------------------------------------'
+
+cd ../../packages || return 0
 
 echo '------------------------------------'
 echo 'Пакет "Errors"'
 echo '------------------------------------'
 cd ./errors && npx yarn build || return 0
+
+echo '------------------------------------'
+echo 'Пакет "Logger"'
+echo '------------------------------------'
+cd ../logger && npx yarn build || return 0
+
+echo '------------------------------------'
+echo 'Пакет "Request"'
+echo '------------------------------------'
+cd ../request && npx yarn build || return 0
+
+
+echo '------------------------------------'
+echo '|        Сборка libraries            |'
+echo '------------------------------------'
+
+cd ../../libraries || return 0
+
+echo '------------------------------------'
+echo 'Пакет "app"'
+echo '------------------------------------'
+cd ./app && npx yarn build || return 0
+
+
+echo '------------------------------------'
+echo '|        Сборка plugins            |'
+echo '------------------------------------'
+
+cd ../../plugins || return 0
+
+echo '------------------------------------'
+echo 'Пакет "app"'
+echo '------------------------------------'
+cd ./db && npx yarn build || return 0

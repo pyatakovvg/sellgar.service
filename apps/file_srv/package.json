@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env",
-    "start:dev": "nodemon --exec ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env"
+    "start:dev": "nodemon --exec ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env.local"
   },
   "dependencies": {
     "@library/app": "0.0.1",
