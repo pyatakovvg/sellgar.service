@@ -22,7 +22,6 @@
   "workspaces": [
     "libraries/*",
     "packages/*",
-    "gateways/*",
     "apps/*",
     "helpers/*",
     "plugins/*"

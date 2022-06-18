@@ -9,8 +9,8 @@
   "main": "lib/index.js",
   "types": "types",
   "scripts": {
-    "build": "tsc",
-    "start:dev": "tsc --watch"
+    "build": "cross-env NODE_ENV=production tsc",
+    "start:dev": "cross-env NODE_ENV=development tsc --watch"
   },
   "dependencies": {},
   "devDependencies": {},

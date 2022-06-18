@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "lib",
+  "types": "types",
   "scripts": {
-    "build": "rm -drf ./lib && cross-env NODE_ENV=production tsc",
+    "build": "cross-env NODE_ENV=production tsc",
     "start:dev": "cross-env NODE_ENV=development tsc --watch"
   },
   "dependencies": {

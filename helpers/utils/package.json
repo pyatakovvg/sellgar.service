@@ -7,24 +7,12 @@
   "homepage": "",
   "license": "ISC",
   "main": "lib/index.js",
-  "types": "lib",
-  "directories": {
-    "lib": "lib"
-  },
-  "files": [
-    "lib"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "types": "types",
   "scripts": {
-    "build": "tsc",
-    "start:dev": "tsc --watch"
+    "build": "cross-env NODE_ENV=production tsc",
+    "start:dev": "cross-env NODE_ENV=development tsc --watch"
   },
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
-  "peerDependencies": {
-  }
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {}
 }
