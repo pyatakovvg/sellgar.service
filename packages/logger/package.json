@@ -17,8 +17,5 @@
   },
   "devDependencies": {
     "@types/koa": "2.13.4"
-  },
-  "peerDependencies": {
-    "koa": "2.13.4"
   }
 }
