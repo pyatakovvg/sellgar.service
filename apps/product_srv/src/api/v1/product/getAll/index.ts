@@ -24,6 +24,10 @@ class CheckController extends Controller {
       where['uuid'] = data['uuid'];
     }
 
+    if ('externalId' in data) {
+      where['externalId'] = data['externalId'];
+    }
+
     if ('limit' in data) {
       options['limit'] = Number(data['limit']);
     }

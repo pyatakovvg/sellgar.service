@@ -30,7 +30,6 @@ class CheckController extends Controller {
     const Permission = db.models['Permission'];
 
     const hashPassword = genHash256(password, process.env['PASSWORD_SALT']);
-    console.log(hashPassword)
     const hasUser = await User.count({
       where: { login, password: hashPassword },
     });
