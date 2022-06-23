@@ -13,6 +13,7 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/product/getAll'),
     import('./api/v1/product/update'),
     import('./api/v1/product/template'),
+    import('./api/v1/product/update-only'),
 
     import('./api/v1/category/getAll'),
     import('./api/v1/category/create'),

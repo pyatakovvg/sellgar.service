@@ -11,22 +11,6 @@ import Gallery from './gallery';
 import Modes from "./mode";
 import Attribute from "./attribute";
 
-// import getProduct from '../../../actions/product/get';
-// import getAllProduct from '../../../actions/product/getAll';
-// import updateProduct from '../../../actions/product/update';
-//
-// import getModes from '../../../actions/productMode/get';
-// import createModes from '../../../actions/productMode/create';
-// import destroyModes from '../../../actions/productMode/destroy';
-//
-// import getGallery from '../../../actions/productGallery/get';
-// import createGallery from '../../../actions/productGallery/create';
-// import destroyGallery from '../../../actions/productGallery/destroy';
-//
-// import getAttributes from '../../../actions/productAttribute/get';
-// import createAttributes from '../../../actions/productAttribute/create';
-// import destroyAttributes from '../../../actions/productAttribute/destroy';
-
 
 export default class Saga {
   parent: any = null;
