@@ -1,14 +1,6 @@
 
 import { Route, Result, Controller } from '@library/app';
 
-// import userBuilder from './builders/user';
-
-
-// interface IBody {
-//   login: string;
-//   password: string;
-// }
-
 
 @Route('get', '/api/v1/products')
 class CheckController extends Controller {
@@ -57,8 +49,10 @@ class CheckController extends Controller {
       distinct: true,
       where: { ...where },
       order: [
+        ['createdAt', 'asc'],
         ['modes', 'order', 'asc'],
         ['gallery', 'order', 'asc'],
+        ['attributes', 'order', 'asc'],
       ],
       attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt'],
       include: [
@@ -113,7 +107,7 @@ class CheckController extends Controller {
       ],
     });
 
-    return new Result(true)
+    return new Result()
       .data(result['rows'].map((item) => item.toJSON()))
       .meta({
         totalRows: result['count'],
