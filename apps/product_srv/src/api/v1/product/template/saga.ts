@@ -32,12 +32,12 @@ export default class Saga {
   }
 
   async getSagaDefinition(): Promise<any> {
-    const body = this.parent.body;
     const db = this.parent.plugin.get('db');
+    const rabbit = this.parent.plugin.get('rabbit');
+
     const sagaBuilder = new Sagas.SagaBuilder();
 
     const Product = db.models['Product'];
-
 
     return sagaBuilder
       .step('Create product template')
@@ -73,6 +73,14 @@ export default class Saga {
         });
 
         params.setResult(result.toJSON());
+      })
+
+      .step('Send event result product')
+      .invoke(async (params: IParams) => {
+        logger.debug('send event result product');
+
+        const result = params.getResult();
+        await rabbit.sendEvent(process.env['EXCHANGE_PRODUCT_UPDATE'], JSON.stringify(result));
       })
 
       .build();
