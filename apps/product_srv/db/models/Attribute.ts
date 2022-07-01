@@ -14,11 +14,6 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: true,
       defaultValue: null,
     },
-    categoryUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      defaultValue: null,
-    },
     name: {
       type: DataTypes.STRING(64),
       allowNull: false,
@@ -37,11 +32,7 @@ function init({ sequelize, DataTypes, Model }): any {
     timestamps: false,
   });
 
-  Attribute.associate = ({ Product, Category, Unit }) => {
-
-    Attribute.belongsTo(Category, {
-      as: 'category',
-    });
+  Attribute.associate = ({ Product, Unit }) => {
 
     Attribute.belongsTo(Unit, {
       as: 'unit',

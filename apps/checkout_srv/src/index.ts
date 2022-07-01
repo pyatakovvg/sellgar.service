@@ -13,6 +13,9 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/delivery/getAll'),
 
     import('./api/v1/payment/getAll'),
+
+    import('./api/v1/checkout/get'),
+    import('./api/v1/checkout/getAll'),
   ]));
 
   app.addPlugin('db', new DbPlugin({

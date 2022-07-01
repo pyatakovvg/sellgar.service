@@ -36,7 +36,6 @@ export default class Saga {
     const sagaBuilder = new Sagas.SagaBuilder();
 
     const Unit = db.models['Unit'];
-    const Category = db.models['Category'];
     const Attribute = db.models['Attribute'];
 
 
@@ -85,11 +84,6 @@ export default class Saga {
           },
           attributes: ['uuid', 'name', 'description'],
           include: [
-            {
-              model: Category,
-              as: 'category',
-              attributes: ['uuid', 'name', 'description'],
-            },
             {
               model: Unit,
               as: 'unit',

@@ -1,0 +1,19 @@
+{
+  "private": false,
+  "name": "@plugin/rabbit",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "types",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production tsc",
+    "start:dev": "cross-env NODE_ENV=development tsc --watch"
+  },
+  "dependencies": {
+    "@library/app": "0.0.1",
+    "@helper/utils": "0.0.1",
+    "@package/logger": "0.0.1",
+    "amqplib": "0.10.0"
+  },
+  "devDependencies": {}
+}

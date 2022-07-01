@@ -38,7 +38,7 @@ function init({ sequelize, DataTypes, Model }): any {
       through: 'GroupCategory',
       foreignKey: 'categoryUuid',
       timestamps: false,
-      as: 'group',
+      as: 'groups',
     });
 
     Category.belongsToMany(Brand, {

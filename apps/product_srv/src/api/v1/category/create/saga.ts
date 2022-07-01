@@ -36,7 +36,9 @@ export default class Saga {
     const db = this.parent.plugin.get('db');
     const sagaBuilder = new Sagas.SagaBuilder();
 
+    const Group = db.models['Group'];
     const Category = db.models['Category'];
+    const GroupCategory = db.models['GroupCategory'];
 
 
     return sagaBuilder
@@ -59,6 +61,33 @@ export default class Saga {
         });
       })
 
+      .step('Create category-group')
+      .invoke(async (params: IParams) => {
+        logger.info('create category-group');
+
+        if ( ! ('groupUuid' in body)) {
+          return void 0;
+        }
+
+        const item = params.getItem();
+        await GroupCategory.bulkCreate([
+          {
+            groupUuid: body['groupUuid'],
+            categoryUuid: item['uuid'],
+          }
+        ]);
+      })
+      .withCompensation(async (params: IParams) => {
+        logger.info('remove category-group');
+
+        const item = params.getItem();
+        await GroupCategory.destroy({
+          where: {
+            categoryUuid: item['uuid'],
+          }
+        });
+      })
+
       .step('Get result category')
       .invoke(async (params: IParams) => {
         logger.info('get result category');
@@ -69,6 +98,11 @@ export default class Saga {
           where: {
             uuid: item['uuid'],
           },
+          include: [{
+            model: Group,
+            attributes: ['uuid', 'code', 'name', 'description'],
+            as: 'groups',
+          }]
         });
 
         params.setResult(result.toJSON());

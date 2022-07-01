@@ -1,6 +1,5 @@
 
 import logger from '@package/logger';
-// import { sendEvent } from '@sellgar/rabbit';
 import { InternalServerError } from "@package/errors";
 
 import * as Sagas from 'node-sagas';
@@ -40,6 +39,8 @@ export default class Saga {
 
     const { uuid } = this.parent['params'];
     const body = this.parent['body'];
+
+    const rabbit = this.parent.plugin.get('rabbit');
 
     const product = new Product(this.parent);
     const gallery = new Gallery(this.parent);
@@ -178,29 +179,6 @@ export default class Saga {
         })));
       })
 
-      // .step('Update attributes')
-      // .invoke(async(params) => {
-      //   logger.info('update attributes');
-      //
-      //   const attrs = await getAttributes(uuid);
-      //
-      //   await destroyAttributes(uuid);
-      //   await createAttributes(uuid, body['attributes']);
-      //
-      //   params.setAttributes(attrs);
-      // })
-      // .withCompensation(async(params) => {
-      //   logger.info('restore attributes');
-      //
-      //   const attrs = params.getAttributes();
-      //
-      //   await destroyAttributes(uuid);
-      //   await createAttributes(uuid, attrs.map((attr) => ({
-      //     value: attr['value'],
-      //     uuid: attr['attributeUuid'],
-      //   })));
-      // })
-
       .step('Get result product')
       .invoke(async (params: IParams) => {
         logger.info('get result product');
@@ -209,13 +187,13 @@ export default class Saga {
         params.setResult(result);
       })
 
-      // .step('Send event')
-      // .invoke(async (params) => {
-      //   logger.debug('send event result product');
-      //
-      //   const result = params.getResult();
-      //   await sendEvent(process.env['EXCHANGE_PRODUCT_UPDATE'], JSON.stringify(result));
-      // })
+      .step('Send event')
+      .invoke(async (params: IParams) => {
+        logger.debug('send event result product');
+
+        const result = params.getResult();
+        await rabbit.sendEvent(process.env['EXCHANGE_PRODUCT_UPDATE'], JSON.stringify(result));
+      })
 
       .build();
   }

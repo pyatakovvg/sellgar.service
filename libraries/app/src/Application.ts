@@ -42,15 +42,18 @@ class Application {
       await router.create(this);
     }
 
+    await new Promise((resolve) => {
+      this.server.start(() => {
+        logger.info('Server has been started on port: ' + this.config['port']);
+        this.events.emit('start', this);
+        resolve(null);
+      });
+    });
+
     for (let index in this.plugins) {
       const plugin = this.plugins[index];
       await plugin.init(this);
     }
-
-    this.server.start(() => {
-      logger.info('Server has been started on port: ' + this.config['port']);
-      this.events.emit('start', this);
-    });
   }
 }
 

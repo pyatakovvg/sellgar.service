@@ -1,13 +1,7 @@
 
 import { Route, Result, Controller } from '@library/app';
 
-// import userBuilder from './builders/user';
-
-
-// interface IBody {
-//   login: string;
-//   password: string;
-// }
+import categoryBuilder from './builders/category';
 
 
 @Route('get', '/api/v1/categories')
@@ -19,9 +13,14 @@ class GetCategoriesController extends Controller {
     const db = super.plugin.get('db');
 
     const Category = db.models['Category'];
+    const Group = db.models['Group'];
 
     if ('uuid' in query) {
       where['uuid'] = query['uuid'];
+    }
+
+    if ('groupUUid' in query) {
+      where['groupUuid'] = query['groupUuid'];
     }
 
     const result = await Category.findAll({
@@ -32,10 +31,15 @@ class GetCategoriesController extends Controller {
         ['order', 'asc']
       ],
       attributes: ['uuid', 'code', 'name', 'description'],
+      include: [{
+        model: Group,
+        attributes: ['uuid', 'code', 'name', 'description'],
+        as: 'groups',
+      }]
     });
 
     return new Result(true)
-      .data(result.map(item => item.toJSON()))
+      .data(result.map(item => categoryBuilder(item.toJSON())))
       .build();
   }
 }

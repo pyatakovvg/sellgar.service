@@ -9,8 +9,9 @@ function init({ sequelize, DataTypes, Model }): any {
       autoIncrement: true,
     },
     imageUuid: {
-      type: DataTypes.STRING(40),
+      type: DataTypes.UUID,
       allowNull: false,
+      index: true,
     },
     productUuid: {
       type: DataTypes.UUID,
