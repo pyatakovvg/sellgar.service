@@ -1,11 +1,13 @@
 
 import { Route, Result, Controller } from '@library/app';
+import uuid from "@helper/utils/lib/uuid";
 
 
 @Route('get', '/api/v1/checkouts/:uuid')
 class GetOrderController extends Controller {
   async send(): Promise<any> {
     const where = {};
+    const params = super.params;
     const db = super.plugin.get('db');
 
     const Order = db.models['Order'];
@@ -18,9 +20,10 @@ class GetOrderController extends Controller {
     const Description = db.models['Description'];
     const OrderStatus = db.models['OrderStatus'];
 
-
     const result = await Order.findOne({
-      where,
+      where: {
+        uuid: params['uuid'],
+      },
       order: [
         ['createdAt', 'desc'],
       ],
