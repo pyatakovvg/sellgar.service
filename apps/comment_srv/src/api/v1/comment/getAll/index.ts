@@ -13,7 +13,7 @@ class CheckController extends Controller {
     const db = super.plugin.get('db');
 
     if ('productUuid' in data) {
-      where['uuid'] = data['uuid'];
+      where['productUuid'] = data['productUuid'];
     }
 
     if ('limit' in data) {

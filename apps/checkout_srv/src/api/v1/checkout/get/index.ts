@@ -6,7 +6,6 @@ import uuid from "@helper/utils/lib/uuid";
 @Route('get', '/api/v1/checkouts/:uuid')
 class GetOrderController extends Controller {
   async send(): Promise<any> {
-    const where = {};
     const params = super.params;
     const db = super.plugin.get('db');
 

@@ -33,15 +33,15 @@ class CheckController extends Controller {
       offset['limit'] = Number(data['take']);
     }
 
-    const Product = db.models['Product'];
+    const Unit = db.models['Unit'];
     const Group = db.models['Group'];
-    const Category = db.models['Category'];
     const Brand = db.models['Brand'];
-    const ProductGallery = db.models['ProductGallery'];
-    const ProductMode = db.models['ProductMode'];
+    const Product = db.models['Product'];
+    const Category = db.models['Category'];
     const Currency = db.models['Currency'];
     const Attribute = db.models['Attribute'];
-    const Unit = db.models['Unit'];
+    const ProductMode = db.models['ProductMode'];
+    const ProductGallery = db.models['ProductGallery'];
 
     const result = await Product.findAndCountAll({
       ...options,
