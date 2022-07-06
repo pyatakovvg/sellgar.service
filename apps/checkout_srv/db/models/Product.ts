@@ -8,6 +8,11 @@ function init({ sequelize, DataTypes, Model }): any {
       type: DataTypes.UUID,
       primaryKey: true,
       allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    productUuid: {
+      type: DataTypes.UUID,
+      allowNull: false,
     },
     orderUuid: {
       type: DataTypes.UUID,
@@ -38,6 +43,10 @@ function init({ sequelize, DataTypes, Model }): any {
     value: {
       type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    count: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),

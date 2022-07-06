@@ -5,7 +5,7 @@ import Saga from "./saga";
 import SagaParams, { IParams } from "./saga-params";
 
 
-@Route('put', '/api/v1/orders/:uuid')
+@Route('post', '/api/v1/checkouts/:uuid')
 class UpdateOrderController extends Controller {
   async send(): Promise<any> {
     // const ajv = new Ajv();
