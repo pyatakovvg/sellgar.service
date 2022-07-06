@@ -77,7 +77,7 @@ class GetOrderController extends Controller {
     });
 
     return new Result()
-      .data(result.toJSON())
+      .data(result ? result.toJSON() : null)
       .build();
   }
 }
