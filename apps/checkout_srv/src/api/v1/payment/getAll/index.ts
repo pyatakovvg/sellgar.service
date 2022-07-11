@@ -18,7 +18,7 @@ class ImageController extends Controller {
     const result = await Payment.findAll({
       where,
       order: [
-        ['order', 'desc'],
+        ['order', 'asc'],
       ],
       attributes: ['code', 'displayName', 'description', 'isUse'],
     });
