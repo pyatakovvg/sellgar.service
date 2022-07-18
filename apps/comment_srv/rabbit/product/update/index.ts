@@ -1,7 +1,6 @@
 
 export default async function init(rabbit, app) {
-  await rabbit.bindToExchange(process.env['QUEUE_PRODUCT_UPDATE'] + '_' + Date.now(), process.env['EXCHANGE_PRODUCT_UPDATE'], async (data, cb) => {
-    const product: any = JSON.parse(data);
+  await rabbit.bindToExchange(process.env['COMMENT_SRV_PRODUCT_UPDATE_QUEUE'] + '_' + Date.now(), process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], async (product, cb) => {
     const db = app.plugins['db'];
 
     const Product = db.models['Product'];

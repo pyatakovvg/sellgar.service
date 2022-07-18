@@ -6,6 +6,9 @@ import { Route, Result, Controller } from '@library/app';
 class CheckController extends Controller {
   async send(): Promise<any> {
     const where = {};
+    const whereGroup = {};
+    const whereCategory = {};
+
     const offset = {};
     const options = {};
 
@@ -22,6 +25,14 @@ class CheckController extends Controller {
 
     if ('isUse' in data) {
       where['isUse'] = data['isUse'];
+    }
+
+    if ('groupCode' in data) {
+      whereGroup['code'] = data['groupCode'];
+    }
+
+    if ('categoryCode' in data) {
+      whereCategory['code'] = data['categoryCode'];
     }
 
     if ('limit' in data) {
@@ -58,13 +69,19 @@ class CheckController extends Controller {
       include: [
         {
           model: Group,
-          required: false,
+          where: {
+            ...whereGroup,
+          },
+          required: !! Object.keys(whereGroup).length,
           attributes: ['uuid', 'code', 'name', 'description'],
           as: 'group',
         },
         {
           model: Category,
-          required: false,
+          where: {
+            ...whereCategory,
+          },
+          required: !! Object.keys(whereCategory).length,
           attributes: ['uuid', 'code', 'name', 'description'],
           as: 'category',
         },

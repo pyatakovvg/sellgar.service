@@ -17,7 +17,7 @@ class ImageController extends Controller {
       },
     });
 
-    await rabbit.sendEvent(process.env['EXCHANGE_IMAGE_DELETE'], JSON.stringify(params['uuid']));
+    await rabbit.sendEvent(process.env['FILE_SRV_IMAGE_DELETE_QUEUE'], params['uuid']);
 
     return new Result()
       .data(params)

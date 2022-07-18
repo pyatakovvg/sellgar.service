@@ -20,10 +20,14 @@ function init({ sequelize, DataTypes, Model }): any {
     },
     imageUuid: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
     },
     modeUuid: {
       type: DataTypes.UUID,
+      allowNull: false,
+    },
+    externalId: {
+      type: DataTypes.STRING(64),
       allowNull: false,
     },
     title: {

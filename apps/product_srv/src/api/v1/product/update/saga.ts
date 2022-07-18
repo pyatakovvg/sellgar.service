@@ -37,8 +37,8 @@ export default class Saga {
   async getSagaDefinition(): Promise<any> {
     const sagaBuilder = new Sagas.SagaBuilder();
 
-    const { uuid } = this.parent['params'];
     const body = this.parent['body'];
+    const { uuid } = this.parent['params'];
 
     const rabbit = this.parent.plugin.get('rabbit');
 
@@ -192,7 +192,7 @@ export default class Saga {
         logger.debug('send event result product');
 
         const result = params.getResult();
-        await rabbit.sendEvent(process.env['EXCHANGE_PRODUCT_UPDATE'], JSON.stringify(result));
+        await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], result);
       })
 
       .build();

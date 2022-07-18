@@ -34,6 +34,8 @@ export default class Saga {
     const { uuid } = this.parent.params;
     const body = this.parent.body;
     const db = this.parent.plugin.get('db');
+    // const rabbit = this.parent.plugin.get('rabbit');
+
     const sagaBuilder = new Sagas.SagaBuilder();
 
     const Order = db.models['Order'];
@@ -59,6 +61,10 @@ export default class Saga {
                   as: 'currency',
                 }
               ],
+            },
+            {
+              model: Currency,
+              as: 'currency',
             },
           ]
         });
@@ -96,7 +102,7 @@ export default class Saga {
       })
 
       .step('Create products')
-      .invoke(async (params: IParams) => {
+      .invoke(async () => {
         logger.info('Create products');
 
         await Product.destroy({
@@ -105,11 +111,16 @@ export default class Saga {
           }
         });
 
+        if ( ! body?.['products']) {
+          return void 0;
+        }
+
         await Product.bulkCreate(body['products'].map((item) => ({
           productUuid: item['productUuid'],
           orderUuid: uuid,
           imageUuid: item['imageUuid'],
           modeUuid: item['modeUuid'],
+          externalId: item['externalId'],
           title: item['title'],
           originalName: item['originalName'],
           vendor: item['vendor'],
@@ -121,12 +132,28 @@ export default class Saga {
       })
 
       .step('Update checkout')
-      .invoke(async (params: IParams) => {
+      .invoke(async () => {
         logger.info('update checkout');
 
-        await Order.update({
-          price: body['products'].reduce((accum, item) => accum + (item['count'] * item['price']), 0),
-        }, {
+        const data = {};
+
+        if ( !! body['statusCode']) {
+          data['statusCode'] = body['statusCode'];
+        }
+
+        if ( !! body['paymentCode']) {
+          data['paymentCode'] = body['paymentCode'];
+        }
+
+        if ( !! body['deliveryCode']) {
+          data['deliveryCode'] = body['deliveryCode'];
+        }
+
+        if ( !! body['products']) {
+          data['price'] = body['products'].reduce((accum, item) => accum + (item['count'] * item['price']), 0);
+        }
+
+        await Order.update(data, {
           where: {
             uuid,
           },

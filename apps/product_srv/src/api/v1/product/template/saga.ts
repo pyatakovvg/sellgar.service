@@ -80,7 +80,7 @@ export default class Saga {
         logger.debug('send event result product');
 
         const result = params.getResult();
-        await rabbit.sendEvent(process.env['EXCHANGE_PRODUCT_UPDATE'], JSON.stringify(result));
+        await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], result);
       })
 
       .build();

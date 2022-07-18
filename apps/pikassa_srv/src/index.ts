@@ -1,7 +1,7 @@
 
 import DbPlugin from "@plugin/db";
-import { Config, Application, Router } from '@library/app';
 import RabbitPlugin from "@plugin/rabbit";
+import { Config, Application, Router } from '@library/app';
 
 
 (async function() {
@@ -11,14 +11,7 @@ import RabbitPlugin from "@plugin/rabbit";
   }));
 
   app.addRouter(new Router([
-    import('./api/v1/delivery/getAll'),
 
-    import('./api/v1/payment/getAll'),
-
-    import('./api/v1/checkout/get'),
-    import('./api/v1/checkout/getAll'),
-    import('./api/v1/checkout/update'),
-    import('./api/v1/checkout/delete'),
   ]));
 
   app.addPlugin('db', new DbPlugin({
@@ -28,7 +21,7 @@ import RabbitPlugin from "@plugin/rabbit";
 
   app.addPlugin('rabbit', new RabbitPlugin({
     host: process.env['RABBIT_CONNECTION_HOST'],
-    actionsPath: 'rabbit',
+    actionsPath: 'rabbit'
   }));
 
   await app.start();

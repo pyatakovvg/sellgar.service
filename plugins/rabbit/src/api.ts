@@ -6,6 +6,19 @@ import { InternalServerError } from '@package/errors';
 import amqp from 'amqplib/callback_api';
 
 
+function normalizeMessage(message: any) {
+  if (message instanceof String) {
+    return Buffer.from(message);
+  }
+  else if (message instanceof Object) {
+    return Buffer.from(JSON.stringify(message));
+  }
+  else if (message instanceof Array) {
+    return Buffer.from(JSON.stringify(message));
+  }
+  return message;
+}
+
 function sendMessageToQueue(channel, queue, message, params = {}) {
   channel.sendToQueue(queue, Buffer.from(message), {
     persistent: true,
@@ -74,7 +87,7 @@ export async function createQueue(channel, queue, message, options) {
             }
           }, { noAck: true });
 
-          sendMessageToQueue(channel, queue, Buffer.from(message), {
+          sendMessageToQueue(channel, queue, normalizeMessage(message), {
             correlationId,
             replyTo: replyQueue,
           });
@@ -114,13 +127,15 @@ export async function createConsumer(channel, queue, options, callback?) {
 
       channel.prefetch(1);
 
-      channel.consume(queue, function(message) {
-        logger.info(`RabbitMQ: Получено сообщение "${message.content.toString()}" в очередь "${queue}"`);
+      channel.consume(queue, function(message: any) {
+        const result = message.content.toString();
 
-        callback(message.content.toString(), function(isOk, replyMessage) {
+        logger.info(`RabbitMQ: Получено сообщение "${result}" в очередь "${queue}"`);
+
+        callback(JSON.parse(result), function(isOk: boolean, replyMessage: any) {
 
           if (defaultOptions['reply']) {
-            channel.sendToQueue(message['properties']['replyTo'], Buffer.from(replyMessage), {
+            channel.sendToQueue(message['properties']['replyTo'], normalizeMessage(replyMessage), {
               correlationId: message['properties']['correlationId'],
             });
 
@@ -136,22 +151,26 @@ export async function createConsumer(channel, queue, options, callback?) {
           }
         });
       }, { noAck: false }, function(error) {
+
         if (error) {
           return reject(new InternalServerError({ code: '10.3.1', message: error['message'] }));
         }
+
         resolve(null);
       });
     });
   });
 }
 
-export async function createExchange(channel, exchange) {
+export async function createExchange(channel, exchange): Promise<any> {
   return new Promise(function(resolve, reject) {
     channel.assertExchange(exchange, 'fanout', { durable: true }, function(error) {
       if (error) {
         return reject(new InternalServerError({ code: '10.4.0', message: error['message'] }));
       }
+
       logger.info(`RabbitMQ: Exchange "${exchange}" успешно создан или существует`);
+
       resolve(null);
     })
   });
@@ -160,9 +179,9 @@ export async function createExchange(channel, exchange) {
 export async function createPublish(channel, exchange, message) {
   await createExchange(channel, exchange);
 
-  channel.publish(exchange, '', Buffer.from(message), { percistent: true });
+  channel.publish(exchange, '', normalizeMessage(message), { percistent: true });
 
-  logger.info(`RabbitMQ: Сообщение "${message}" успешно отправлено в exchange "${exchange}"`);
+  logger.info(`RabbitMQ: Сообщение "${JSON.stringify(message)}" успешно отправлено в exchange "${exchange}"`);
 }
 
 export async function bindQueueToExchange(channel, queue, exchange) {
@@ -171,7 +190,9 @@ export async function bindQueueToExchange(channel, queue, exchange) {
       if (error) {
         return reject(new InternalServerError({ code: '10.5.0', message: error['message'] }));
       }
+
       logger.info(`RabbitMQ: Очередь "${queue}" успешно привязана к exchange "${exchange}"`);
+
       resolve(null);
     });
   });

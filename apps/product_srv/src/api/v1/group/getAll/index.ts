@@ -24,6 +24,10 @@ class CheckController extends Controller {
       where['uuid'] = query['uuid'];
     }
 
+    if ('code' in query) {
+      where['code'] = query['code'];
+    }
+
     const result = await Group.findAll({
       where: {
         ...where,

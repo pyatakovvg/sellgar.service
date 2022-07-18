@@ -9,6 +9,10 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
+    groupUuid: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
     code: {
       type: DataTypes.STRING(64),
       allowNull: false,
