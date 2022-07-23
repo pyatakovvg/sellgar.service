@@ -3,7 +3,7 @@ import { Application, logger, Plugin } from '@library/app';
 
 import fs from 'fs';
 import path from 'path';
-import Sq, { Sequelize, Model, DataTypes } from 'sequelize';
+import Sq, { Sequelize, Model, DataTypes, Op } from 'sequelize';
 
 
 interface IConfig {
@@ -105,6 +105,10 @@ class DbPlugin extends Plugin implements IDbPlugin {
 
   get sequelize() {
     return this._sequelize;
+  }
+
+  get Op(): any {
+    return Op;
   }
 
   async init(app: Application): Promise<any> {

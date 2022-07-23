@@ -14,6 +14,9 @@ function init({ sequelize, DataTypes, Model }): any {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    thumb: {
+      type: DataTypes.BLOB,
+    },
     small: {
       type: DataTypes.BLOB,
     },

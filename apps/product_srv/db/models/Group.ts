@@ -34,8 +34,7 @@ function init({ sequelize, DataTypes, Model }): any {
 
   Group.associate = ({ Category, Product }) => {
 
-    Group.belongsToMany(Category, {
-      through: 'GroupCategory',
+    Group.hasMany(Category, {
       foreignKey: 'groupUuid',
       timestamps: false,
       as: 'categories',

@@ -2,8 +2,9 @@
 export default function(data) {
   return {
     uuid: data['uuid'],
-    type: data['type'],
+    code: data['code'],
+    name: data['name'],
     description: data['description'],
-    value: data['UserClaim'] ? data['UserClaim']['value'] : undefined,
+    productsCount: Number(data['productsCount']),
   };
 }

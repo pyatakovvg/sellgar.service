@@ -41,13 +41,27 @@ class ImageController extends Controller {
         const reader = fs.readFileSync(file['filepath']);
         const imageBuffer = Buffer.from(reader);
 
-        const smallImgBuffer = await resize(imageBuffer, { width: 124, height: 124 });
-        const middleImgBuffer = await resize(imageBuffer, { width: 320, height: 320 });
-        const largeImgBuffer = await resize(imageBuffer, { width: 840, height: 840 });
+        const thumbImgBuffer = await resize(imageBuffer, {
+          width: Number(process.env['IMAGE_THUMB_SIZE_WIDTH']),
+          height: Number(process.env['IMAGE_THUMB_SIZE_HEIGHT']),
+        });
+        const smallImgBuffer = await resize(imageBuffer, {
+          width: Number(process.env['IMAGE_SMALL_SIZE_WIDTH']),
+          height: Number(process.env['IMAGE_SMALL_SIZE_HEIGHT']),
+        });
+        const middleImgBuffer = await resize(imageBuffer, {
+          width: Number(process.env['IMAGE_MIDDLE_SIZE_WIDTH']),
+          height: Number(process.env['IMAGE_MIDDLE_SIZE_HEIGHT']),
+        });
+        const largeImgBuffer = await resize(imageBuffer, {
+          width: Number(process.env['IMAGE_LARGE_SIZE_WIDTH']),
+          height: Number(process.env['IMAGE_LARGE_SIZE_HEIGHT']),
+        });
 
         bulkImages.push({
           uuid: UUID(),
           name: file['originalFilename'].replace(/\.\w+$/, '.jpg'),
+          thumb: thumbImgBuffer,
           small: smallImgBuffer,
           middle: middleImgBuffer,
           large: largeImgBuffer,

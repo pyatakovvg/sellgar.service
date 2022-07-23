@@ -11,6 +11,7 @@ import { Config, Application, Router } from '@library/app';
   }));
 
   app.addRouter(new Router([
+    import('./api/v1/product/getBrands'),
     import('./api/v1/product/getAll'),
     import('./api/v1/product/update'),
     import('./api/v1/product/template'),

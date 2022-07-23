@@ -32,13 +32,11 @@ function init({ sequelize, DataTypes, Model }): any {
     timestamps: false,
   });
 
-  Brand.associate = ({ Category }) => {
+  Brand.associate = ({ Product }) => {
 
-    Brand.belongsToMany(Category, {
-      through: 'CategoryBrand',
+    Brand.hasMany(Product, {
       foreignKey: 'brandUuid',
-      timestamps: false,
-      as: 'categories',
+      as: 'products',
     });
   };
 

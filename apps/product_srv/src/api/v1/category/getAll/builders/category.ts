@@ -8,6 +8,7 @@ export default function(data: any) {
     name: data['name'],
     code: data['code'],
     description: data['description'],
-    groups: data['groups'].map((item) => groupBuilder(item)),
+    group: groupBuilder(data['group']),
+    productsCount: data['productsCount'],
   };
 }

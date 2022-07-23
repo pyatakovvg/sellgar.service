@@ -4,7 +4,7 @@ import { Route, Result, Controller } from '@library/app';
 
 
 interface IQuery {
-  size: 'small' | 'middle' | 'large';
+  size: 'thumb' | 'small' | 'middle' | 'large';
 }
 
 
@@ -13,8 +13,8 @@ class ImageController extends Controller {
   async send(): Promise<any> {
     const {size}: IQuery = super.query;
 
-    if ( ! size || ['small', 'middle', 'large'].indexOf(size) < 0) {
-      throw new BadRequestError({code: '20.0.2', message: 'Неверное значение size'});
+    if ( ! size || ['thumb', 'small', 'middle', 'large'].indexOf(size) < 0) {
+      throw new BadRequestError({ code: '20.0.2', message: 'Неверное значение size' });
     }
 
     const db = super.plugin.get('db');

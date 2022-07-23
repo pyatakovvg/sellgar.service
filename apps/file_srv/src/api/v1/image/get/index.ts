@@ -10,7 +10,7 @@ interface IParams {
 }
 
 interface IQuery {
-  size: 'small' | 'middle' | 'large';
+  size: 'thumb' | 'small' | 'middle' | 'large';
 }
 
 
@@ -20,7 +20,7 @@ class ImageController extends Controller {
     const { size }: IQuery = super.query;
     const { uuid }: IParams = super.params;
 
-    if ( ! size || ['small', 'middle', 'large'].indexOf(size) < 0) {
+    if ( ! size || ['thumb', 'small', 'middle', 'large'].indexOf(size) < 0) {
       throw new BadRequestError({ code: '100.0.2', message: 'Неверное значение size' });
     }
 

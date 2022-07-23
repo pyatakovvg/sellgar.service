@@ -35,14 +35,14 @@ class GetCategoriesController extends Controller {
       order: [
         ['order', 'asc']
       ],
-      attributes: ['uuid', 'code', 'name', 'description'],
+      attributes: ['uuid', 'code', 'name', 'description', [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."categoryUuid" = "Category"."uuid" and "Products"."isUse" = true)'), 'productsCount']],
       include: [{
         model: Group,
         where: {
           ...whereGroups,
         },
         attributes: ['uuid', 'code', 'name', 'description'],
-        as: 'groups',
+        as: 'group',
       }]
     });
 
