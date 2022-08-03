@@ -25,6 +25,7 @@ export default class Saga {
       return await saga.execute(params);
     }
     catch (e) {
+      console.log(e)
       if (e instanceof Sagas.SagaExecutionFailed) {
         throw new InternalServerError({ code: '100.0.0', message: e['message'] });
       }
@@ -66,8 +67,8 @@ export default class Saga {
       .withCompensation(async(params: IParams) => {
         logger.info('restore product');
 
-        const product = params.getProduct();
-        await product.update(uuid, product);
+        const productData = params.getProduct();
+        await product.update(uuid, productData);
       })
 
       .step('Get gallery')
@@ -151,7 +152,6 @@ export default class Saga {
         logger.info('update attributes');
 
         const result = await attribute.getByProductUuid(uuid);
-        console.log(result)
         params.setAttributes(result);
       })
       .withCompensation(async(params: IParams) => {

@@ -4,7 +4,7 @@ import { Route, Result, Controller } from '@library/app';
 import Saga from "./saga";
 import SagaParams, { IParams } from "./saga-params";
 
-// import userBuilder from './builders/user';
+import productBuilder from './builders/product';
 
 
 // interface IBody {
@@ -31,7 +31,7 @@ class UpdateProductTemplateController extends Controller {
     const result = params.getResult();
 
     return new Result()
-      .data(result)
+      .data(productBuilder(result))
       .build();
   }
 }

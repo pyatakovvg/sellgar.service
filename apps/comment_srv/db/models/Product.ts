@@ -22,7 +22,7 @@ function init({ sequelize, DataTypes, Model }): any {
     },
     originalName: {
       type: DataTypes.STRING(256),
-      allowNull: false,
+      allowNull: true,
       defaultValue: '',
     },
   }, {

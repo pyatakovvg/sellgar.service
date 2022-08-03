@@ -82,7 +82,7 @@ export default class Saga {
           where: {
             uuid: item['uuid'],
           },
-          attributes: ['uuid', 'name', 'description'],
+          attributes: ['uuid', 'name', 'description', 'isFiltered'],
           include: [
             {
               model: Unit,

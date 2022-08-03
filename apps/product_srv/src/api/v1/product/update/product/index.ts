@@ -35,7 +35,7 @@ class Product {
 
   async getByUuid(uuid: string) {
     const db = this.parent.plugin.get('db');
-    const { ProductMode, Product, Brand, Attribute, Unit, ProductGallery, Currency, Group, Category } = db.models;
+    const { ProductMode, Product, Brand, Attribute, Unit, ProductGallery, AttributeValue, Currency, Group, Category } = db.models;
 
     const result = await Product.findOne({
       where: { uuid },
@@ -83,13 +83,20 @@ class Product {
           ]
         },
         {
-          model: Attribute,
+          model: AttributeValue,
           through: 'ProductAttribute',
+          attributes: ['value'],
           as: 'attributes',
           include: [
             {
-              model: Unit,
-              as: 'unit',
+              model: Attribute,
+              as: 'attribute',
+              include: [
+                {
+                  model: Unit,
+                  as: 'unit',
+                }
+              ],
             }
           ]
         },

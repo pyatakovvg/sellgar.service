@@ -26,6 +26,9 @@ class CheckController extends Controller {
 
     const result = await Unit.findAll({
       where,
+      order: [
+        ['name', 'asc']
+      ]
     });
 
     return new Result(true)

@@ -101,7 +101,7 @@ export default class Saga {
           include: [{
             model: Group,
             attributes: ['uuid', 'code', 'name', 'description'],
-            as: 'groups',
+            as: 'group',
           }]
         });
 

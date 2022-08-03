@@ -1,19 +1,20 @@
 
-function init({ sequelize, DataTypes, Model }): any {
+function init({ sequelize, Model }): any {
   class ProductAttribute extends Model {}
 
-  ProductAttribute.init({
-    value: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null,
-    },
-  }, {
+  ProductAttribute.init({}, {
     sequelize,
     timestamps: false,
   });
 
-  ProductAttribute.associate = () => {};
+  ProductAttribute.associate = ({ AttributeValue }) => {
+
+    ProductAttribute.hasOne(AttributeValue, {
+      foreignKey: 'attributeUuid',
+      as: 'value',
+      onDelete: 'cascade',
+    });
+  };
 
   return ProductAttribute;
 }

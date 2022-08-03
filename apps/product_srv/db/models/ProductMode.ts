@@ -62,6 +62,7 @@ function init({ sequelize, DataTypes, Model }): any {
     ProductMode.belongsTo(Currency, {
       foreignKey: 'currencyCode',
       as: 'currency',
+      constraints: false,
     });
   };
 

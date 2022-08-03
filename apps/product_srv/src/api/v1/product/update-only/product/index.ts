@@ -35,7 +35,7 @@ class Product {
 
   async getByUuid(uuid: string) {
     const db = this.parent.plugin.get('db');
-    const { ProductMode, Product, Brand, Attribute, Unit, ProductGallery, Currency, Group, Category } = db.models;
+    const { ProductMode, Product, Brand, Attribute, Unit, ProductGallery, AttributeValue, Currency, Group, Category } = db.models;
 
     const result = await Product.findOne({
       where: { uuid },
@@ -83,13 +83,20 @@ class Product {
           ]
         },
         {
-          model: Attribute,
+          model: AttributeValue,
           through: 'ProductAttribute',
+          attributes: ['value'],
           as: 'attributes',
           include: [
             {
-              model: Unit,
-              as: 'unit',
+              model: Attribute,
+              as: 'attribute',
+              include: [
+                {
+                  model: Unit,
+                  as: 'unit',
+                }
+              ],
             }
           ]
         },
@@ -101,51 +108,3 @@ class Product {
 }
 
 export default Product;
-
-// export default async function updateProperties(uuid) {
-//   const { ProductMode, Product, ProductGallery, Currency, Group, Category } = models;
-//
-//   const result = await Product.findOne({
-//     where: { uuid },
-//     order: [
-//       ['modes', 'order', 'asc'],
-//       ['gallery', 'order', 'asc'],
-//     ],
-//     attributes: ['uuid', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'updatedAt'],
-//     include: [
-//       {
-//         model: Group,
-//         required: false,
-//         attributes: ['uuid', 'value'],
-//         as: 'group',
-//       },
-//       {
-//         model: Category,
-//         required: false,
-//         attributes: ['uuid', 'value'],
-//         as: 'category',
-//       },
-//       {
-//         model: ProductGallery,
-//         required: false,
-//         attributes: [['imageUuid', 'uuid']],
-//         as: 'gallery',
-//       },
-//       {
-//         model: ProductMode,
-//         required: false,
-//         as: 'modes',
-//         attributes: ['uuid', 'vendor', 'value', 'price', 'isUse', 'isTarget'],
-//         include: [
-//           {
-//             model: Currency,
-//             attributes: ['code', 'displayName'],
-//             as: 'currency',
-//           }
-//         ]
-//       },
-//     ],
-//   });
-//
-//   return result.toJSON();
-// }

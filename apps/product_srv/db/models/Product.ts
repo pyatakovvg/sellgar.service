@@ -49,7 +49,7 @@ function init({ sequelize, DataTypes, Model }): any {
     },
     originalName: {
       type: DataTypes.STRING(256),
-      allowNull: false,
+      allowNull: true,
       defaultValue: '',
     },
     description: {
@@ -71,34 +71,40 @@ function init({ sequelize, DataTypes, Model }): any {
     sequelize,
   });
 
-  Product.associate = ({ Group, Category, Brand, Attribute, ProductMode, ProductGallery }) => {
+  Product.associate = ({ Group, Category, Brand, AttributeValue, ProductMode, ProductGallery }) => {
 
     Product.belongsTo(Group, {
       as: 'group',
+      constraints: false,
     });
 
     Product.belongsTo(Category, {
       as: 'category',
+      constraints: false,
     });
 
     Product.belongsTo(Brand, {
       as: 'brand',
+      constraints: false,
     });
 
     Product.hasMany(ProductGallery, {
       foreignKey: 'productUuid',
       as: 'gallery',
+      onDelete: 'CASCADE'
     });
 
     Product.hasMany(ProductMode, {
       foreignKey: 'productUuid',
       as: 'modes',
+      onDelete: 'cascade'
     });
 
-    Product.belongsToMany(Attribute, {
+    Product.belongsToMany(AttributeValue, {
       through: 'ProductAttribute',
       foreignKey: 'productUuid',
       as: 'attributes',
+      onDelete: 'cascade',
     });
   };
 

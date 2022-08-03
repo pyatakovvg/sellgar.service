@@ -20,6 +20,10 @@ class GetCategoriesController extends Controller {
       where['uuid'] = query['uuid'];
     }
 
+    if ('categoryCode' in query) {
+      where['code'] = query['categoryCode'];
+    }
+
     if ('groupUuid' in query) {
       where['groupUuid'] = query['groupUuid'];
     }

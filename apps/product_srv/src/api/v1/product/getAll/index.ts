@@ -1,6 +1,8 @@
 
 import { Route, Result, Controller } from '@library/app';
 
+import productBuilder from './builders/product';
+
 
 @Route('get', '/api/v1/products')
 class GetProductsController extends Controller {
@@ -22,6 +24,7 @@ class GetProductsController extends Controller {
     const Attribute = db.models['Attribute'];
     const ProductMode = db.models['ProductMode'];
     const ProductGallery = db.models['ProductGallery'];
+    const AttributeValue = db.models['AttributeValue'];
 
 
     if ('uuid' in data) {
@@ -69,7 +72,6 @@ class GetProductsController extends Controller {
         ['createdAt', 'asc'],
         ['modes', 'order', 'asc'],
         ['gallery', 'order', 'asc'],
-        ['attributes', 'order', 'asc'],
       ],
       attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt'],
       include: [
@@ -108,13 +110,20 @@ class GetProductsController extends Controller {
           ]
         },
         {
-          model: Attribute,
+          model: AttributeValue,
           through: 'ProductAttribute',
+          attributes: ['value'],
           as: 'attributes',
           include: [
             {
-              model: Unit,
-              as: 'unit',
+              model: Attribute,
+              as: 'attribute',
+              include: [
+                {
+                  model: Unit,
+                  as: 'unit',
+                }
+              ],
             }
           ]
         },
@@ -122,7 +131,7 @@ class GetProductsController extends Controller {
     });
 
     return new Result()
-      .data(result['rows'].map((item) => item.toJSON()))
+      .data(result['rows'].map((item) => productBuilder(item.toJSON())))
       .meta({
         totalRows: result['count'],
       })

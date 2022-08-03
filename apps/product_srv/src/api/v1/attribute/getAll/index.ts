@@ -33,9 +33,10 @@ class GetAttributesController extends Controller {
         ...where,
       },
       order: [
+        ['name', 'asc'],
         ['order', 'asc']
       ],
-      attributes: ['uuid', 'name', 'description'],
+      attributes: ['uuid', 'name', 'description', 'isFiltered'],
       include: [
         {
           model: Unit,
