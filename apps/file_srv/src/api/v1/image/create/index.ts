@@ -15,7 +15,7 @@ async function resize(buffer, options) {
       background: { r: 255, g: 255, b: 255, alpha: 1 },
     })
     .jpeg({
-      quality: 90,
+      quality: Number(process.env['IMAGE_CREATE_QUALITY']),
     })
     .toBuffer();
 }
@@ -41,29 +41,14 @@ class ImageController extends Controller {
         const reader = fs.readFileSync(file['filepath']);
         const imageBuffer = Buffer.from(reader);
 
-        const thumbImgBuffer = await resize(imageBuffer, {
-          width: Number(process.env['IMAGE_THUMB_SIZE_WIDTH']),
-          height: Number(process.env['IMAGE_THUMB_SIZE_HEIGHT']),
-        });
-        const smallImgBuffer = await resize(imageBuffer, {
-          width: Number(process.env['IMAGE_SMALL_SIZE_WIDTH']),
-          height: Number(process.env['IMAGE_SMALL_SIZE_HEIGHT']),
-        });
-        const middleImgBuffer = await resize(imageBuffer, {
-          width: Number(process.env['IMAGE_MIDDLE_SIZE_WIDTH']),
-          height: Number(process.env['IMAGE_MIDDLE_SIZE_HEIGHT']),
-        });
         const largeImgBuffer = await resize(imageBuffer, {
-          width: Number(process.env['IMAGE_LARGE_SIZE_WIDTH']),
-          height: Number(process.env['IMAGE_LARGE_SIZE_HEIGHT']),
+          width: Number(process.env['IMAGE_CREATE_SIZE_WIDTH']),
+          height: Number(process.env['IMAGE_CREATE_SIZE_HEIGHT']),
         });
 
         bulkImages.push({
           uuid: UUID(),
           name: file['originalFilename'].replace(/\.\w+$/, '.jpg'),
-          thumb: thumbImgBuffer,
-          small: smallImgBuffer,
-          middle: middleImgBuffer,
           large: largeImgBuffer,
         });
       }
