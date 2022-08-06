@@ -99,7 +99,6 @@ class GetProductsController extends Controller {
       offset['limit'] = Number(data['take']);
     }
 
-
     const result = await Product.findAndCountAll({
       ...options,
       ...offset,
@@ -114,16 +113,19 @@ class GetProductsController extends Controller {
       include: [
         {
           model: Group,
+          required: false,
           attributes: ['code', 'name', 'description'],
           as: 'group',
         },
         {
           model: Category,
+          required: false,
           attributes: ['code', 'name', 'description'],
           as: 'category',
         },
         {
           model: Brand,
+          required: false,
           attributes: ['code', 'name', 'description'],
           as: 'brand',
         },
@@ -150,6 +152,7 @@ class GetProductsController extends Controller {
           model: AttributeValue,
           through: 'ProductAttribute',
           attributes: ['value'],
+          required: false,
           where: {
             ...whereAttr,
           },
@@ -157,6 +160,7 @@ class GetProductsController extends Controller {
           include: [
             {
               model: Attribute,
+              required: false,
               as: 'attribute',
               include: [
                 {
