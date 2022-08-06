@@ -53,7 +53,7 @@ export default class Saga {
         const item = params.getItem();
         await Group.destroy({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           }
         });
       })
@@ -66,7 +66,7 @@ export default class Saga {
 
         const result = await Group.findOne({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           },
         });
 

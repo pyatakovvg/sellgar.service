@@ -9,27 +9,18 @@ class GetCategoriesController extends Controller {
   async send(): Promise<any> {
     const query = super.query;
     const where = {};
-    const whereGroups = {};
 
     const db = super.plugin.get('db');
 
     const Group = db.models['Group'];
     const Category = db.models['Category'];
 
-    if ('uuid' in query) {
-      where['uuid'] = query['uuid'];
-    }
-
-    if ('categoryCode' in query) {
-      where['code'] = query['categoryCode'];
-    }
-
-    if ('groupUuid' in query) {
-      where['groupUuid'] = query['groupUuid'];
+    if ('code' in query) {
+      where['code'] = query['code'];
     }
 
     if ('groupCode' in query) {
-      whereGroups['code'] = query['groupCode'];
+      where['groupCode'] = query['groupCode'];
     }
 
     const result = await Category.findAll({
@@ -39,13 +30,10 @@ class GetCategoriesController extends Controller {
       order: [
         ['order', 'asc']
       ],
-      attributes: ['uuid', 'code', 'name', 'description', [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."categoryUuid" = "Category"."uuid" and "Products"."isUse" = true)'), 'productsCount']],
+      attributes: ['code', 'name', 'description'],//, [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."categoryCode" = "Category"."code" and "Products"."isUse" = true)'), 'productsCount']],
       include: [{
         model: Group,
-        where: {
-          ...whereGroups,
-        },
-        attributes: ['uuid', 'code', 'name', 'description'],
+        attributes: ['code', 'name', 'description'],
         as: 'group',
       }]
     });

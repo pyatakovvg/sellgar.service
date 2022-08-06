@@ -3,14 +3,9 @@ function init({ sequelize, DataTypes, Model }): any {
   class Brand extends Model {}
 
   Brand.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
     code: {
       type: DataTypes.STRING(64),
+      primaryKey: true,
       allowNull: false,
       unique: true,
     },
@@ -35,7 +30,7 @@ function init({ sequelize, DataTypes, Model }): any {
   Brand.associate = ({ Product }) => {
 
     Brand.hasMany(Product, {
-      foreignKey: 'brandUuid',
+      foreignKey: 'brandCode',
       as: 'products',
     });
   };

@@ -45,18 +45,18 @@ export default class Saga {
 
         const result = await Brand.findOne({
           where: {
-            uuid: body['uuid'],
+            code: body['code'],
           }
         });
         params.setItem(result);
       })
       .step('Update brand')
-      .invoke(async (params: IParams) => {
+      .invoke(async () => {
         logger.info('update brand');
 
         await Brand.update(body, {
           where: {
-            uuid: body['uuid'],
+            code: body['code'],
           }
         });
       })
@@ -67,7 +67,7 @@ export default class Saga {
 
         await Brand.update(item, {
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           }
         });
       })
@@ -79,7 +79,7 @@ export default class Saga {
         const item = params.getItem();
         const result = await Brand.findOne({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           },
         });
 

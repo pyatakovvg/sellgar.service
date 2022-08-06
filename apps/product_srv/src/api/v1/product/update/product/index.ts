@@ -48,19 +48,19 @@ class Product {
         {
           model: Group,
           required: false,
-          attributes: ['uuid', 'code', 'name', 'description'],
+          attributes: ['code', 'name', 'description'],
           as: 'group',
         },
         {
           model: Category,
           required: false,
-          attributes: ['uuid', 'code', 'name', 'description'],
+          attributes: ['code', 'name', 'description'],
           as: 'category',
         },
         {
           model: Brand,
           required: false,
-          attributes: ['uuid', 'code', 'name', 'description'],
+          attributes: ['code', 'name', 'description'],
           as: 'brand',
         },
         {

@@ -52,9 +52,14 @@ export default class Saga {
         logger.info('remove brand');
 
         const item = params.getItem();
+
+        if ( ! item) {
+          return void 0;
+        }
+
         await Brand.destroy({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           }
         });
       })
@@ -67,7 +72,7 @@ export default class Saga {
 
         const result = await Brand.findOne({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           },
         });
 

@@ -3,20 +3,15 @@ function init({ sequelize, DataTypes, Model }): any {
   class Category extends Model {}
 
   Category.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    groupUuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
     code: {
       type: DataTypes.STRING(64),
+      primaryKey: true,
       allowNull: false,
       unique: true,
+    },
+    groupCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     name: {
       type: DataTypes.STRING(64),
@@ -38,14 +33,14 @@ function init({ sequelize, DataTypes, Model }): any {
 
   Category.associate = ({ Group, Product }) => {
 
-    Category.hasMany(Product, {
-      foreignKey: 'categoryUuid',
-      as: 'products',
+    Category.belongsTo(Group, {
+      foreignKey: 'groupCode',
+      as: 'group',
     });
 
-    Category.belongsTo(Group, {
-      foreignKey: 'groupUuid',
-      as: 'group',
+    Category.hasMany(Product, {
+      foreignKey: 'categoryCode',
+      as: 'products',
     });
   };
 

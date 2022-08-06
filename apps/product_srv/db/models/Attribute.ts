@@ -9,6 +9,14 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    categoryCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     unitUuid: {
       type: DataTypes.UUID,
       allowNull: true,
@@ -18,22 +26,9 @@ function init({ sequelize, DataTypes, Model }): any {
       type: DataTypes.STRING(64),
       allowNull: false,
     },
-    groupUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    },
-    categoryUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    },
     description: {
       type: DataTypes.STRING(1024),
       defaultValue: '',
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
     },
     isFiltered: {
       type: DataTypes.BOOLEAN,
@@ -45,7 +40,14 @@ function init({ sequelize, DataTypes, Model }): any {
     timestamps: false,
   });
 
-  Attribute.associate = ({ AttributeValue, Unit }) => {
+  Attribute.associate = ({ AttributeValue, Category, Unit }) => {
+
+
+    Attribute.belongsTo(Category, {
+      foreignKey: 'categoryCode',
+      as: 'category',
+      constraints: false,
+    });
 
     Attribute.hasMany(AttributeValue, {
       foreignKey: 'attributeUuid',

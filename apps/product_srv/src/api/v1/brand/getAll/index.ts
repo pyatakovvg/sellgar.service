@@ -20,8 +20,8 @@ class CheckController extends Controller {
 
     const Brand = db.models['Brand'];
 
-    if ('uuid' in query) {
-      where['uuid'] = query['uuid'];
+    if ('code' in query) {
+      where['code'] = query['code'];
     }
 
     const result = await Brand.findAll({
@@ -31,7 +31,7 @@ class CheckController extends Controller {
       order: [
         ['order', 'asc']
       ],
-      attributes: ['uuid', 'code', 'name', 'description'],
+      attributes: ['code', 'name', 'description'],
     });
 
     return new Result(true)

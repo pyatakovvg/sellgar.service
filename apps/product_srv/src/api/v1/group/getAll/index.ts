@@ -22,10 +22,6 @@ class CheckController extends Controller {
     const Group = db.models['Group'];
     const Category = db.models['Category'];
 
-    if ('uuid' in query) {
-      where['uuid'] = query['uuid'];
-    }
-
     if ('code' in query) {
       where['code'] = query['code'];
     }
@@ -35,8 +31,8 @@ class CheckController extends Controller {
         include.push({
           model: Category,
           required: query['required'] ? !!~ query['required'].indexOf('category'): null,
-          attributes: ['uuid', 'code', 'name', 'description',
-            [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."categoryUuid" = "categories"."uuid" and "Products"."isUse" = true)'), 'productsCount'],
+          attributes: ['code', 'name', 'description',
+            // [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."categoryCode" = "categories"."code" and "Products"."isUse" = true)'), 'productsCount'],
           ],
           as: 'categories',
         });
@@ -50,8 +46,8 @@ class CheckController extends Controller {
       order: [
         ['order', 'asc']
       ],
-      attributes: ['uuid', 'code', 'name', 'description',
-        [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."groupUuid" = "Group"."uuid" and "Products"."isUse" = true)'), 'productsCount']
+      attributes: ['code', 'code', 'name', 'description',
+        //[db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."groupCode" = "Group"."code" and "Products"."isUse" = true)'), 'productsCount']
       ],
       include: [
         ...include,

@@ -4,10 +4,23 @@ import { Route, Result, Controller } from '@library/app';
 import productBuilder from './builders/product';
 
 
+function getAttrsFilter(query: any) {
+  const attrsKey = Object.keys(query).filter((key) => /^attr/.test(key));
+  const attrsCode = [];
+  for (let index in attrsKey) {
+    const key = attrsKey[index];
+    const attrCode = key.match(/^attr\[(.*)\]/)[1];
+    attrsCode[attrCode] = query[key];
+  }
+  return attrsCode;
+}
+
+
 @Route('get', '/api/v1/products')
 class GetProductsController extends Controller {
   async send(): Promise<any> {
     const where = {};
+    const whereAttr = {};
 
     const offset = {};
     const options = {};
@@ -26,6 +39,8 @@ class GetProductsController extends Controller {
     const ProductGallery = db.models['ProductGallery'];
     const AttributeValue = db.models['AttributeValue'];
 
+    const attrQuery = getAttrsFilter(data);
+
 
     if ('uuid' in data) {
       where['uuid'] = data['uuid'];
@@ -40,18 +55,39 @@ class GetProductsController extends Controller {
     }
 
     if ('groupCode' in data) {
-      const group = await Group.findOne({ row: true, where: { code: data['groupCode'] }});
-      where['groupUuid'] = group['uuid'];
+      where['groupCode'] = data['groupCode'];
     }
 
     if ('categoryCode' in data) {
-      const category = await Category.findOne({ row: true, where: { code: data['categoryCode'] }});
-      where['categoryUuid'] = category['uuid'];
+      where['categoryCode'] = data['categoryCode'];
     }
 
     if ('brandCode' in data) {
-      const category = await Brand.findAll({ row: true, where: { code: data['brandCode'] }});
-      where['brandUuid'] = category.map((brand) => brand['uuid']);
+      where['brandCode'] = data['brandCode'];
+    }
+
+    if ( !! Object.keys(attrQuery).length) {
+      const bulk = [];
+      const keys = Object.keys(attrQuery);
+
+      for (let index in keys) {
+        const key = keys[index];
+
+        const result = await Attribute.findOne({
+          raw: true,
+          where: {
+            code: key,
+          },
+          attributes: ['uuid'],
+        });
+
+        bulk.push({
+          attributeUuid: result['uuid'],
+          value: attrQuery[key],
+        });
+      }
+
+      whereAttr[db.Op.or] = bulk;
     }
 
     if ('limit' in data) {
@@ -62,6 +98,7 @@ class GetProductsController extends Controller {
       offset['offset'] = Number(data['skip']);
       offset['limit'] = Number(data['take']);
     }
+
 
     const result = await Product.findAndCountAll({
       ...options,
@@ -77,17 +114,17 @@ class GetProductsController extends Controller {
       include: [
         {
           model: Group,
-          attributes: ['uuid', 'code', 'name', 'description'],
+          attributes: ['code', 'name', 'description'],
           as: 'group',
         },
         {
           model: Category,
-          attributes: ['uuid', 'code', 'name', 'description'],
+          attributes: ['code', 'name', 'description'],
           as: 'category',
         },
         {
           model: Brand,
-          attributes: ['uuid', 'code', 'name', 'description'],
+          attributes: ['code', 'name', 'description'],
           as: 'brand',
         },
         {
@@ -113,6 +150,9 @@ class GetProductsController extends Controller {
           model: AttributeValue,
           through: 'ProductAttribute',
           attributes: ['value'],
+          where: {
+            ...whereAttr,
+          },
           as: 'attributes',
           include: [
             {

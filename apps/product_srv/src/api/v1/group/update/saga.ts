@@ -45,7 +45,7 @@ export default class Saga {
 
         const result = await Group.findOne({
           where: {
-            uuid: body['uuid'],
+            code: body['code'],
           }
         });
         params.setItem(result);
@@ -56,7 +56,7 @@ export default class Saga {
 
         await Group.update(body, {
           where: {
-            uuid: body['uuid'],
+            code: body['code'],
           }
         });
       })
@@ -67,7 +67,7 @@ export default class Saga {
 
         await Group.update(item, {
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           }
         });
       })
@@ -79,7 +79,7 @@ export default class Saga {
         const item = params.getItem();
         const result = await Group.findOne({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           },
         });
 

@@ -44,11 +44,11 @@ export default class Saga {
 
         const result = await Category.findOne({
           where: {
-            uuid: body['uuid'],
+            code: body['code'],
           },
           include: [{
             model: Group,
-            attributes: ['uuid', 'code', 'name', 'description'],
+            attributes: ['code', 'code', 'name', 'description'],
             as: 'group',
           }],
         });
@@ -60,7 +60,7 @@ export default class Saga {
 
         await Category.update(body, {
           where: {
-            uuid: body['uuid'],
+            code: body['code'],
           }
         });
       })
@@ -71,7 +71,7 @@ export default class Saga {
 
         await Category.update(item, {
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           }
         });
       })
@@ -83,11 +83,11 @@ export default class Saga {
         const item = params.getItem();
         const result = await Category.findOne({
           where: {
-            uuid: item['uuid'],
+            code: item['code'],
           },
           include: [{
             model: Group,
-            attributes: ['uuid', 'code', 'name', 'description'],
+            attributes: ['code', 'name', 'description'],
             as: 'group',
           }]
         });

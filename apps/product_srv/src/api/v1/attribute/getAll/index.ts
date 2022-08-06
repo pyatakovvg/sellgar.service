@@ -18,10 +18,15 @@ class GetAttributesController extends Controller {
     const where = {};
 
     const Unit = db.models['Unit'];
+    const Category = db.models['Category'];
     const Attribute = db.models['Attribute'];
 
     if ('uuid' in query) {
       where['uuid'] = query['uuid'];
+    }
+
+    if ('categoryCode' in query) {
+      where['categoryCode'] = query['categoryCode'];
     }
 
     if ('unitUuid' in query) {
@@ -34,10 +39,14 @@ class GetAttributesController extends Controller {
       },
       order: [
         ['name', 'asc'],
-        ['order', 'asc']
       ],
       attributes: ['uuid', 'name', 'description', 'isFiltered'],
       include: [
+        {
+          model: Category,
+          as: 'category',
+          attributes: ['code', 'name', 'description'],
+        },
         {
           model: Unit,
           as: 'unit',

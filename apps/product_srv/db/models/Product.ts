@@ -24,16 +24,16 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: false,
       defaultValue: '',
     },
-    groupUuid: {
-      type: DataTypes.UUID,
+    groupCode: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    categoryUuid: {
-      type: DataTypes.UUID,
+    categoryCode: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    brandUuid: {
-      type: DataTypes.UUID,
+    brandCode: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     externalId: {
@@ -74,16 +74,19 @@ function init({ sequelize, DataTypes, Model }): any {
   Product.associate = ({ Group, Category, Brand, AttributeValue, ProductMode, ProductGallery }) => {
 
     Product.belongsTo(Group, {
+      foreignKey: 'groupCode',
       as: 'group',
       constraints: false,
     });
 
     Product.belongsTo(Category, {
+      foreignKey: 'categoryCode',
       as: 'category',
       constraints: false,
     });
 
     Product.belongsTo(Brand, {
+      foreignKey: 'brandCode',
       as: 'brand',
       constraints: false,
     });

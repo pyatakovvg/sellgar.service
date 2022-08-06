@@ -3,14 +3,9 @@ function init({ sequelize, DataTypes, Model }): any {
   class Group extends Model {}
 
   Group.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
     code: {
       type: DataTypes.STRING(64),
+      primaryKey: true,
       allowNull: false,
       unique: true,
     },
@@ -35,13 +30,13 @@ function init({ sequelize, DataTypes, Model }): any {
   Group.associate = ({ Category, Product }) => {
 
     Group.hasMany(Category, {
-      foreignKey: 'groupUuid',
+      foreignKey: 'groupCode',
       timestamps: false,
       as: 'categories',
     });
 
     Group.hasMany(Product, {
-      foreignKey: 'groupUuid',
+      foreignKey: 'groupCode',
       as: 'products',
     });
   };
