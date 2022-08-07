@@ -21,6 +21,7 @@ class GetProductsController extends Controller {
   async send(): Promise<any> {
     const where = {};
     const whereAttr = {};
+    let whereAttrRequired = false;
 
     const offset = {};
     const options = {};
@@ -88,6 +89,7 @@ class GetProductsController extends Controller {
       }
 
       whereAttr[db.Op.or] = bulk;
+      whereAttrRequired = true;
     }
 
     if ('limit' in data) {
@@ -153,7 +155,7 @@ class GetProductsController extends Controller {
           model: AttributeValue,
           through: 'ProductAttribute',
           attributes: ['value'],
-          required: true,
+          required: whereAttrRequired,
           where: {
             ...whereAttr,
           },
