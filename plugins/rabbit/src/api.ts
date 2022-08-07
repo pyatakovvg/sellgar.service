@@ -1,23 +1,31 @@
 
 import logger from '@package/logger';
-import { UUID } from '@helper/utils';
+import { UUID, isJSON } from '@helper/utils';
 import { InternalServerError } from '@package/errors';
 
 import amqp from 'amqplib/callback_api';
 
 
 function normalizeMessage(message: any) {
-  if (message instanceof String) {
-    return Buffer.from(message);
-  }
-  else if (message instanceof Object) {
+  if (message instanceof Object) {
     return Buffer.from(JSON.stringify(message));
   }
   else if (message instanceof Array) {
     return Buffer.from(JSON.stringify(message));
   }
+  else if (typeof message === 'string') {
+    return Buffer.from(message);
+  }
   return message;
 }
+
+function normalizeResult(data: any) {
+  if (isJSON(data)) {
+    return JSON.parse(data);
+  }
+  return data;
+}
+
 
 function sendMessageToQueue(channel, queue, message, params = {}) {
   channel.sendToQueue(queue, Buffer.from(message), {
@@ -132,7 +140,7 @@ export async function createConsumer(channel, queue, options, callback?) {
 
         logger.info(`RabbitMQ: Получено сообщение "${result}" в очередь "${queue}"`);
 
-        callback(JSON.parse(result), function(isOk: boolean, replyMessage: any) {
+        callback(normalizeResult(result), function(isOk: boolean, replyMessage: any) {
 
           if (defaultOptions['reply']) {
             channel.sendToQueue(message['properties']['replyTo'], normalizeMessage(replyMessage), {

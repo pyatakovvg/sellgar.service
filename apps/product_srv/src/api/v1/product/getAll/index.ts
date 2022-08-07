@@ -21,6 +21,7 @@ class GetProductsController extends Controller {
   async send(): Promise<any> {
     const where = {};
     const whereAttr = {};
+
     let whereAttrRequired = false;
 
     const offset = {};

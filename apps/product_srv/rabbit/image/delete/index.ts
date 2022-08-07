@@ -1,7 +1,6 @@
 
 export default async function init(rabbit, app) {
-  await rabbit.bindToExchange(process.env['FILE_SRV_IMAGE_DELETE_QUEUE'] + '_' + Date.now(), process.env['FILE_SRV_IMAGE_DELETE_QUEUE'], async (data, cb) => {
-    const uuid = JSON.parse(data);
+  await rabbit.bindToExchange(process.env['FILE_SRV_IMAGE_DELETE_QUEUE'] + '_' + Date.now(), process.env['FILE_SRV_IMAGE_DELETE_QUEUE'], async (uuid, cb) => {
     const db = app.plugins['db'];
 
     const ProductGallery = db.models['ProductGallery'];
