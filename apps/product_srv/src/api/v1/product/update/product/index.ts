@@ -91,6 +91,7 @@ class Product {
           include: [
             {
               model: Attribute,
+              required: false,
               as: 'attribute',
               include: [
                 {
