@@ -39,6 +39,7 @@ class GetAttributesController extends Controller {
       },
       order: [
         ['name', 'asc'],
+        ['category', 'code', 'asc'],
       ],
       attributes: ['uuid', 'name', 'description', 'isFiltered'],
       include: [
