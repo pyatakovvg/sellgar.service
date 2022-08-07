@@ -42,6 +42,7 @@ class Product {
       order: [
         ['modes', 'order', 'asc'],
         ['gallery', 'order', 'asc'],
+        ['attributes', 'order', 'asc'],
       ],
       attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt'],
       include: [
