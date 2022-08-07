@@ -4,17 +4,12 @@ import { Route, Result, Controller } from '@library/app';
 import groupBuilder from './builders/group';
 
 
-// interface IBody {
-//   login: string;
-//   password: string;
-// }
-
-
 @Route('get', '/api/v1/groups')
-class CheckController extends Controller {
+class GetGroupController extends Controller {
   async send(): Promise<any> {
     const query = super.query;
     const where = {};
+    const order = [];
     const include = [];
 
     const db = super.plugin.get('db');
@@ -28,12 +23,11 @@ class CheckController extends Controller {
 
     if ('include' in query) {
       if ( !!~ query['include'].indexOf('category')) {
+        order.push(['categories', 'name', 'asc']);
         include.push({
           model: Category,
           required: query['required'] ? !!~ query['required'].indexOf('category'): null,
-          attributes: ['code', 'name', 'description',
-            // [db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."categoryCode" = "categories"."code" and "Products"."isUse" = true)'), 'productsCount'],
-          ],
+          attributes: ['code', 'name', 'description'],
           as: 'categories',
         });
       }
@@ -44,11 +38,10 @@ class CheckController extends Controller {
         ...where,
       },
       order: [
-        ['order', 'asc']
+        ['name', 'asc'],
+        ...order,
       ],
-      attributes: ['code', 'code', 'name', 'description',
-        //[db.sequelize.literal('(SELECT COUNT(*) FROM "Products" WHERE "Products"."groupCode" = "Group"."code" and "Products"."isUse" = true)'), 'productsCount']
-      ],
+      attributes: ['code', 'name', 'description'],
       include: [
         ...include,
       ],
@@ -60,4 +53,4 @@ class CheckController extends Controller {
   }
 }
 
-export default CheckController;
+export default GetGroupController;

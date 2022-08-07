@@ -29,7 +29,7 @@ class CheckController extends Controller {
         ...where,
       },
       order: [
-        ['order', 'asc']
+        ['name', 'asc']
       ],
       attributes: ['code', 'name', 'description'],
     });
