@@ -153,7 +153,7 @@ class GetProductsController extends Controller {
           model: AttributeValue,
           through: 'ProductAttribute',
           attributes: ['value'],
-          required: false,
+          required: true,
           where: {
             ...whereAttr,
           },
