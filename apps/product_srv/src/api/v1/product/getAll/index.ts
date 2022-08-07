@@ -108,7 +108,7 @@ class GetProductsController extends Controller {
         ['createdAt', 'asc'],
         ['modes', 'order', 'asc'],
         ['gallery', 'order', 'asc'],
-        ['attribute', 'order', 'asc'],
+        ['attributes', 'order', 'asc'],
       ],
       attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt'],
       include: [

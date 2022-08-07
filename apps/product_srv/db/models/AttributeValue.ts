@@ -17,6 +17,11 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: true,
       defaultValue: null,
     },
+    order: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   }, {
     sequelize,
     timestamps: false,

@@ -55,7 +55,11 @@ class Attribute {
     const { ProductAttribute, AttributeValue } = db.models;
 
     if (data && !! data.length) {
-      const valuesResult = await AttributeValue.bulkCreate(data.map((item: any) => ({ attributeUuid: item['attributeUuid'], value: item['value'] })));
+      const valuesResult = await AttributeValue.bulkCreate(data.map((item: any, index: number) => ({
+        attributeUuid: item['attributeUuid'],
+        value: item['value'],
+        order: index,
+      })));
       const values = valuesResult.map((item: any) => item.toJSON());
       await ProductAttribute.bulkCreate(values.reduce((accum, item) => {
         accum.push({
