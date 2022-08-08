@@ -22,7 +22,7 @@ class GetProductsController extends Controller {
       order: [
         ['name', 'asc'],
       ],
-      attributes: ['code', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
+      attributes: ['code', 'icon', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
       include: [
         // {
         //   model: Category,

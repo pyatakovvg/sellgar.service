@@ -41,7 +41,7 @@ class GetGroupController extends Controller {
         ['name', 'asc'],
         ...order,
       ],
-      attributes: ['code', 'name', 'description'],
+      attributes: ['code', 'icon', 'name', 'description'],
       include: [
         ...include,
       ],

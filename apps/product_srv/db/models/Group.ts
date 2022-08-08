@@ -9,6 +9,11 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: false,
       unique: true,
     },
+    icon: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
     name: {
       type: DataTypes.STRING(64),
       allowNull: false,
