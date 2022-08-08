@@ -27,7 +27,7 @@ class GetGroupController extends Controller {
         include.push({
           model: Category,
           required: query['required'] ? !!~ query['required'].indexOf('category'): null,
-          attributes: ['code', 'name', 'description'],
+          attributes: ['code', 'imageUuid', 'name', 'description'],
           as: 'categories',
         });
       }
@@ -41,7 +41,7 @@ class GetGroupController extends Controller {
         ['name', 'asc'],
         ...order,
       ],
-      attributes: ['code', 'icon', 'name', 'description'],
+      attributes: ['code', 'icon', 'imageUuid', 'name', 'description'],
       include: [
         ...include,
       ],

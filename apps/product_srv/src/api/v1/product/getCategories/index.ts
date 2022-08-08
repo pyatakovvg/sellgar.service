@@ -28,7 +28,7 @@ class GetProductsController extends Controller {
       where: {
         ...where,
       },
-      attributes: ['code', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
+      attributes: ['code', 'imageUuid', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
       include: [
         {
           model: Product,

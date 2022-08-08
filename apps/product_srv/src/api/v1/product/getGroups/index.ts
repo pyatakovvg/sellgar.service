@@ -22,23 +22,8 @@ class GetProductsController extends Controller {
       order: [
         ['name', 'asc'],
       ],
-      attributes: ['code', 'icon', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
+      attributes: ['code', 'icon', 'imageUuid', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
       include: [
-        // {
-        //   model: Category,
-        //   required: true,
-        //   attributes: ['code', 'name', 'description'],//, [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount2']],
-        //   as: 'categories',
-        //   include: [
-        //     {
-        //       model: Product,
-        //       where: { isUse: true },
-        //       required: true,
-        //       attributes: [],
-        //       as: 'products',
-        //     },
-        //   ],
-        // },
         {
           model: Product,
           where: { isUse: true },
@@ -61,7 +46,7 @@ class GetProductsController extends Controller {
         where: {
           groupCode: group['code'],
         },
-        attributes: ['code', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
+        attributes: ['code', 'name', 'imageUuid', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
         include: [
           {
             model: Product,

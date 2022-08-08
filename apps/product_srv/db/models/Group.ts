@@ -14,6 +14,10 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: true,
       defaultValue: null,
     },
+    imageUuid: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING(64),
       allowNull: false,

@@ -13,6 +13,10 @@ function init({ sequelize, DataTypes, Model }): any {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    imageUuid: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING(64),
       allowNull: false,

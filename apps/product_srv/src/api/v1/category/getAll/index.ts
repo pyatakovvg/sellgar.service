@@ -31,10 +31,10 @@ class GetCategoriesController extends Controller {
         ['name', 'asc'],
         ['group', 'name', 'asc'],
       ],
-      attributes: ['code', 'name', 'description'],
+      attributes: ['code', 'name', 'imageUuid', 'description'],
       include: [{
         model: Group,
-        attributes: ['code', 'name', 'description'],
+        attributes: ['code', 'name', 'imageUuid', 'description'],
         as: 'group',
       }]
     });
