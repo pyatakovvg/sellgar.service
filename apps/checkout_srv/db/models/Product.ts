@@ -30,6 +30,14 @@ function init({ sequelize, DataTypes, Model }): any {
       type: DataTypes.STRING(64),
       allowNull: false,
     },
+    groupCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    categoryCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     title: {
       type: DataTypes.STRING(256),
       allowNull: false,

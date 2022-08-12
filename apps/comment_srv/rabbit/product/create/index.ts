@@ -10,6 +10,8 @@ export default async function init(rabbit, app) {
       externalId: data['externalId'],
       title: data['title'],
       originalName: data['originalName'],
+      groupCode: '',
+      categoryCode: '',
     });
 
     cb(true);

@@ -25,6 +25,14 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: true,
       defaultValue: '',
     },
+    groupCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    categoryCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   }, {
     sequelize,
   });

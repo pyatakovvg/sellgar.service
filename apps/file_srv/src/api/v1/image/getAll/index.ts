@@ -1,31 +1,42 @@
 
-import { BadRequestError } from "@package/errors";
 import { Route, Result, Controller } from '@library/app';
-
-
-interface IQuery {
-  size: 'thumb' | 'small' | 'middle' | 'large';
-}
 
 
 @Route('get', '/api/v1/images')
 class ImageController extends Controller {
   async send(): Promise<any> {
-    const {size}: IQuery = super.query;
-
-    if ( ! size || ['thumb', 'small', 'middle', 'large'].indexOf(size) < 0) {
-      throw new BadRequestError({ code: '20.0.2', message: 'Неверное значение size' });
-    }
-
+    const query = super.query;
     const db = super.plugin.get('db');
 
+    const where = {};
+
     const Image = db.models['Image'];
+    const Folder = db.models['Folder'];
+
+    if ('folderUuid' in query) {
+      if (query['folderUuid'] !== 'root') {
+        where['uuid'] = query['folderUuid'];
+      }
+    }
+    else {
+      where['uuid'] = null;
+    }
 
     const result = await Image.findAndCountAll({
       order: [
         ['createdAt', 'desc'],
       ],
-      attributes: ['uuid', 'name', 'createdAt'],
+      attributes: ['uuid', 'name'],
+      include: [{
+        model: Folder,
+        where: {
+          ...where,
+        },
+        required: true,
+        through: 'FolderImage',
+        attributes: [],
+        as: 'folders',
+      }]
     });
 
     return new Result()

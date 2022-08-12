@@ -121,6 +121,8 @@ export default class Saga {
           imageUuid: item['imageUuid'],
           modeUuid: item['modeUuid'],
           externalId: item['externalId'],
+          groupCode: item['groupCode'],
+          categoryCode: item['categoryCode'],
           title: item['title'],
           originalName: item['originalName'],
           vendor: item['vendor'],

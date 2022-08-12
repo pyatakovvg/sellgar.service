@@ -1,9 +1,9 @@
 
 
 function init({ sequelize, DataTypes, Model }): any {
-  class Image extends Model {}
+  class Folder extends Model {}
 
-  Image.init({
+  Folder.init({
     uuid: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -14,28 +14,31 @@ function init({ sequelize, DataTypes, Model }): any {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    large: {
-      type: DataTypes.BLOB,
-    },
-    order: {
-      type: DataTypes.INTEGER,
+    parentUuid: {
+      type: DataTypes.UUID,
+      allowNull: true,
     }
   }, {
     sequelize,
     timestamps: true,
   });
 
-  Image.associate = ({ Folder }) => {
+  Folder.associate = ({ Image }) => {
 
-    Image.belongsToMany(Folder, {
-      through: 'FolderImage',
-      foreignKey: 'imageUuid',
+    Folder.hasMany(Folder, {
+      foreignKey: 'parentUuid',
       as: 'folders',
+    });
+
+    Folder.belongsToMany(Image, {
+      through: 'FolderImage',
+      foreignKey: 'folderUuid',
+      as: 'images',
       onDelete: 'cascade',
     });
   };
 
-  return Image;
+  return Folder;
 }
 
 export default init;

@@ -6,6 +6,7 @@ export default async function init(rabbit, app) {
     const Product = db.models['Product'];
 
     const products = await Product.findAll({
+      raw: true,
       where: {
         productUuid: data['uuid'],
       },
@@ -16,11 +17,13 @@ export default async function init(rabbit, app) {
     for (let iIndex in data['modes']) {
       const mode = data['modes'][iIndex];
       for (let jIndex in products) {
-        const product = products[jIndex].toJSON();
+        const product = products[jIndex];
         if (product['modeUuid'] === mode['uuid']) {
           bulk.push({
             ...product,
             externalId: data['externalId'],
+            groupCode: data['groupCode'],
+            categoryCode: data['categoryCode'],
             imageUuid: data?.['gallery']?.[0]?.['uuid'] ?? null,
             title: data['title'],
             originalName: data['originalName'],

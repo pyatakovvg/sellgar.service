@@ -15,6 +15,8 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/image/delete'),
     import('./api/v1/image/create'),
     import('./api/v1/image/getAll'),
+
+    import('./api/v1/folder/getAll'),
   ]));
 
   app.addPlugin('db', new DbPlugin({

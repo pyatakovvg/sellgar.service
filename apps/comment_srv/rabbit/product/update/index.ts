@@ -13,6 +13,8 @@ export default async function init(rabbit, app) {
         externalId: product['externalId'],
         title: product['title'],
         originalName: product['originalName'],
+        groupCode: product['group']?.['code'] ?? '',
+        categoryCode: product['category']?.['code'] ?? '',
       });
     }
     else {
@@ -21,6 +23,8 @@ export default async function init(rabbit, app) {
         externalId: product['externalId'],
         title: product['title'],
         originalName: product['originalName'],
+        groupCode: product['group']?.['code'] ?? '',
+        categoryCode: product['category']?.['code'] ?? '',
       }, {
         where: { uuid: product['uuid'] }
       });
