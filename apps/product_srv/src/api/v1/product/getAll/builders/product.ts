@@ -17,6 +17,7 @@ export default function(data: any) {
     isAvailable: data['isAvailable'],
     createdAt: data['createdAt'],
     updatedAt: data['updatedAt'],
+    commentsCount: Number(data['commentsCount']),
     group: data['group'],
     category: data['category'],
     brand: data['brand'],

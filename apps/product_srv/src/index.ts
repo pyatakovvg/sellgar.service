@@ -41,6 +41,9 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/group/getAll'),
     import('./api/v1/group/create'),
     import('./api/v1/group/update'),
+
+    import('./api/v1/comment/getAll'),
+    import('./api/v1/comment/create'),
   ]));
 
   app.addPlugin('db', new DbPlugin({

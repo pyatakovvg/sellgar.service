@@ -71,7 +71,12 @@ function init({ sequelize, DataTypes, Model }): any {
     sequelize,
   });
 
-  Product.associate = ({ Group, Category, Brand, AttributeValue, ProductMode, ProductGallery }) => {
+  Product.associate = ({ Comment, Group, Category, Brand, AttributeValue, ProductMode, ProductGallery }) => {
+
+    Product.hasMany(Comment, {
+      foreignKey: 'productUuid',
+      as: 'comments',
+    });
 
     Product.belongsTo(Group, {
       foreignKey: 'groupCode',

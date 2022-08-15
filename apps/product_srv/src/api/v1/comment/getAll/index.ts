@@ -32,17 +32,26 @@ class CheckController extends Controller {
       ...options,
       ...offset,
       distinct: true,
-      where: { ...where },
+      where: { ...where, themeCode: 'opinion' },
       order: [
-        ['createdAt', 'asc'],
+        ['createdAt', 'desc'],
       ],
-      attributes: ['uuid', 'author', 'description', 'createdAt', 'updatedAt'],
+      attributes: ['uuid', 'author', 'positive', 'negative', 'description', 'createdAt', 'updatedAt'],
       include: [
         {
           model: CommentTheme,
           required: true,
           attributes: ['code', 'displayName', 'description'],
           as: 'theme',
+        },
+        {
+          model: Comment,
+          required: false,
+          where: {
+            themeCode: 'comment',
+          },
+          attributes: ['uuid', 'author', 'description', 'createdAt', 'updatedAt'],
+          as: 'comments',
         },
       ],
     });

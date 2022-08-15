@@ -113,7 +113,9 @@ class GetProductsController extends Controller {
         ['gallery', 'order', 'asc'],
         ['attributes', 'order', 'asc'],
       ],
-      attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt'],
+      attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt',
+      [db.sequelize.literal(`(SELECT COUNT(*) FROM "Comments" WHERE "Comments"."themeCode"='opinion' AND "Comments"."productUuid"="Product"."uuid")`), 'commentsCount']
+      ],
       include: [
         {
           model: Group,

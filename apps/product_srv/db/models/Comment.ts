@@ -27,6 +27,14 @@ function init({ sequelize, DataTypes, Model }): any {
       allowNull: false,
       defaultValue: 'Гость',
     },
+    positive: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    negative: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     description: {
       type: DataTypes.STRING(1024),
       allowNull: false,
@@ -41,6 +49,11 @@ function init({ sequelize, DataTypes, Model }): any {
     Comment.belongsTo(CommentTheme, {
       foreignKey: 'themeCode',
       as: 'theme',
+    });
+
+    Comment.hasMany(Comment, {
+      foreignKey: 'parentUuid',
+      as: 'comments',
     });
   };
 
