@@ -44,11 +44,16 @@ function init({ sequelize, DataTypes, Model }): any {
     timestamps: true,
   });
 
-  Comment.associate = ({ CommentTheme }) => {
+  Comment.associate = ({ Rating, CommentTheme }) => {
 
     Comment.belongsTo(CommentTheme, {
       foreignKey: 'themeCode',
       as: 'theme',
+    });
+
+    Comment.hasOne(Rating, {
+      foreignKey: 'commentUuid',
+      as: 'rating',
     });
 
     Comment.hasMany(Comment, {

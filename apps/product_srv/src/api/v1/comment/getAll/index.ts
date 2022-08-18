@@ -25,6 +25,7 @@ class CheckController extends Controller {
       offset['limit'] = Number(data['take']);
     }
 
+    const Rating = db.models['Rating'];
     const Comment = db.models['Comment'];
     const CommentTheme = db.models['CommentTheme'];
 
@@ -38,6 +39,12 @@ class CheckController extends Controller {
       ],
       attributes: ['uuid', 'author', 'positive', 'negative', 'description', 'createdAt', 'updatedAt'],
       include: [
+        {
+          model: Rating,
+          required: false,
+          attributes: ['common', 'view', 'quality'],
+          as: 'rating'
+        },
         {
           model: CommentTheme,
           required: true,

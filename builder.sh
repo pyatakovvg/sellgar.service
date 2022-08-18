@@ -30,6 +30,16 @@ echo '------------------------------------'
 cd ../logger && npx yarn build || return 0
 
 echo '------------------------------------'
+echo 'Пакет "Numeral"'
+echo '------------------------------------'
+cd ../numeral && npx yarn build || return 0
+
+echo '------------------------------------'
+echo 'Пакет "Moment"'
+echo '------------------------------------'
+cd ../moment && npx yarn build || return 0
+
+echo '------------------------------------'
 echo 'Пакет "Request"'
 echo '------------------------------------'
 cd ../request && npx yarn build || return 0

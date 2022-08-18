@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "name": "@package/numeral",
+  "version": "0.0.1",
+  "main": "lib/index.esm.js",
+  "types": "types",
+  "publishConfig": {
+    "source": "src/index.ts",
+    "main": "lib/index.js"
+  },
+  "scripts": {
+    "build": "cross-env NODE_ENV=production microbundle build -f es",
+    "start:dev": "cross-env NODE_ENV=development microbundle watch -f es --no-compress"
+  },
+  "dependencies": {
+    "numeral": "2.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "16.11.49",
+    "@types/numeral": "2.0.2"
+  }
+}

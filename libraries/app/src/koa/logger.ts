@@ -1,5 +1,6 @@
 
-import moment from 'moment';
+import moment from '@package/moment';
+
 import winston from 'winston';
 import { ExtendableContext, Next } from 'koa';
 

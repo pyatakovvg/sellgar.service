@@ -10,10 +10,10 @@
     "start:dev": "cross-env NODE_ENV=development tsc --watch"
   },
   "dependencies": {
-    "@library/app": "0.0.1",
     "@helper/utils": "0.0.1",
+    "@library/app": "0.0.1",
     "@package/logger": "0.0.1",
-    "amqplib": "0.10.0"
+    "amqplib": "0.10.2"
   },
   "devDependencies": {}
 }

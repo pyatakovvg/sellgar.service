@@ -3,15 +3,15 @@
   "private": true,
   "dependencies": {
     "audit-ci": "5.1.2",
-    "improved-yarn-audit": "3.0.0",
-    "ts-node": "10.6.0",
-    "typescript": "4.6.3",
-    "nodemon": "2.0.15",
+    "cross-env": "7.0.3",
     "dotenv": "16.0.0",
-    "cross-env": "7.0.3"
+    "improved-yarn-audit": "3.0.0",
+    "nodemon": "2.0.15",
+    "ts-node": "10.6.0",
+    "typescript": "4.6.3"
   },
   "devDependencies": {
-    "@types/node": "17.0.27",
+    "@types/node": "16.11.49",
     "lerna": "4.0.0",
     "lerna-update-wizard": "1.1.2"
   },
