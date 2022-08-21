@@ -19,6 +19,7 @@ function getAttrsFilter(query: any) {
 @Route('get', '/api/v1/products')
 class GetProductsController extends Controller {
   async send(): Promise<any> {
+    const order = [];
     const where = {};
     const whereAttr = {};
 
@@ -43,6 +44,22 @@ class GetProductsController extends Controller {
 
     const attrQuery = getAttrsFilter(data);
 
+    if ('sort' in data) {
+      switch (Number(data['sort'])) {
+        case 1: {
+          order.push(['modes', 'price', 'asc']);
+        } break;
+        case 2: {
+          order.push(['modes', 'price', 'desc']);
+        } break;
+        case 3: {
+          order.push(['title', 'asc']);
+        } break;
+      }
+    }
+    else {
+      order.push(['createdAt', 'asc']);
+    }
 
     if ('uuid' in data) {
       where['uuid'] = data['uuid'];
@@ -108,7 +125,7 @@ class GetProductsController extends Controller {
       distinct: true,
       where: { ...where },
       order: [
-        ['createdAt', 'asc'],
+        ...order,
         ['modes', 'order', 'asc'],
         ['gallery', 'order', 'asc'],
         ['attributes', 'order', 'asc'],

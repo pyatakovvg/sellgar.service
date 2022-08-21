@@ -2,18 +2,19 @@
 import { Route, Result, Controller } from '@library/app';
 
 
-@Route('get', '/api/v1/folders/:uuid')
+@Route('get', '/api/v1/folders')
 class ImageController extends Controller {
   async send(): Promise<any> {
-    const params = super.params;
+    const query = super.query;
     const db = super.plugin.get('db');
 
     const where = {};
-    const Image = db.models['Image'];
+    const where2 = {};
     const Folder = db.models['Folder'];
 
-    if (params['uuid'] !== 'root') {
-      where['parentUuid'] = params['uuid'];
+    if (query['uuid']) {
+      where['parentUuid'] = query['uuid'];
+      where2['folderUuid'] = query['uuid'];
     }
     else {
       where['parentUuid'] = null;
@@ -23,28 +24,13 @@ class ImageController extends Controller {
       order: [
         ['name', 'asc'],
       ],
-      group: [
-        'Folder.uuid',
-        'images.FolderImage.imageUuid',
-        'images.FolderImage.folderUuid',
-      ],
       where: {
         ...where,
       },
-      attributes: ['uuid', 'name',
-        [db.sequelize.fn('count', db.sequelize.col('images.FolderImage.imageUuid')), 'imagesCount'],
-        [db.sequelize.fn('count', db.sequelize.col('folders.uuid')), 'foldersCount'],
+      attributes: [
+        'uuid',
+        'name',
       ],
-      include: [{
-        model: Folder,
-        attributes: [],
-        as: 'folders',
-      }, {
-        model: Image,
-        through: 'FolderImage',
-        attributes: [],
-        as: 'images',
-      }]
     });
 
     return new Result()

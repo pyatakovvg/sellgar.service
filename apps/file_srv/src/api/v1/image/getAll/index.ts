@@ -14,9 +14,7 @@ class ImageController extends Controller {
     const Folder = db.models['Folder'];
 
     if ('folderUuid' in query) {
-      if (query['folderUuid'] !== 'root') {
-        where['uuid'] = query['folderUuid'];
-      }
+      where['uuid'] = query['folderUuid'];
     }
     else {
       where['uuid'] = null;
@@ -33,7 +31,9 @@ class ImageController extends Controller {
           ...where,
         },
         required: true,
-        through: 'FolderImage',
+        through: {
+          attributes: []
+        },
         attributes: [],
         as: 'folders',
       }]
