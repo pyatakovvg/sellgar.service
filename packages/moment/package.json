@@ -2,15 +2,15 @@
   "private": true,
   "name": "@package/moment",
   "version": "0.0.1",
-  "main": "lib/index.esm.js",
+  "description": "> TODO: description",
+  "author": "Viktor Pyatakov <pyatakov.viktor@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
   "types": "types",
-  "publishConfig": {
-    "source": "src/index.ts",
-    "main": "lib/index.js"
-  },
   "scripts": {
-    "build": "cross-env NODE_ENV=production microbundle build -f es",
-    "start:dev": "cross-env NODE_ENV=development microbundle watch -f es --no-compress"
+    "build": "cross-env NODE_ENV=production tsc",
+    "start:dev": "cross-env NODE_ENV=development tsc --watch"
   },
   "dependencies": {
     "moment": "2.29.4",
