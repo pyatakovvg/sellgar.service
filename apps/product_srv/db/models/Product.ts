@@ -1,122 +1,82 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Product extends Model {}
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinTable, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from '@plugin/type-orm';
 
-  Product.init({
-    uuid: {
-      type: DataTypes.UUID,
-      unique: true,
-      primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    seoTitle: {
-      type: DataTypes.STRING(1024),
-      allowNull: false,
-      defaultValue: '',
-    },
-    seoDescription: {
-      type: DataTypes.STRING(1024),
-      allowNull: false,
-      defaultValue: '',
-    },
-    seoKeywords: {
-      type: DataTypes.STRING(1024),
-      allowNull: false,
-      defaultValue: '',
-    },
-    groupCode: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    categoryCode: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    brandCode: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    externalId: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-      unique: true,
-      defaultValue: () => Date.now().toString(32),
-    },
-    title: {
-      type: DataTypes.STRING(256),
-      allowNull: false,
-      defaultValue: '',
-    },
-    originalName: {
-      type: DataTypes.STRING(256),
-      allowNull: true,
-      defaultValue: '',
-    },
-    description: {
-      type: DataTypes.STRING(2024),
-      allowNull: false,
-      defaultValue: '',
-    },
-    isUse: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    isAvailable: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-  }, {
-    sequelize,
-  });
+import Group from './Group';
+import Brand from './Brand';
+import Category from './Category';
+import Currency from "./Currency";
+import ProductImage from "./ProductImage";
+import AttributeGroup from './AttributeGroup';
 
-  Product.associate = ({ Comment, Group, Category, Brand, AttributeValue, ProductMode, ProductGallery }) => {
 
-    Product.hasMany(Comment, {
-      foreignKey: 'productUuid',
-      as: 'comments',
-    });
+@Entity('Product')
+class Product {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    Product.belongsTo(Group, {
-      foreignKey: 'groupCode',
-      as: 'group',
-      constraints: false,
-    });
+  @Column('varchar', { nullable: true, unique: true })
+  externalId: string;
 
-    Product.belongsTo(Category, {
-      foreignKey: 'categoryCode',
-      as: 'category',
-      constraints: false,
-    });
+  @Column('varchar', { nullable: true })
+  title: string;
 
-    Product.belongsTo(Brand, {
-      foreignKey: 'brandCode',
-      as: 'brand',
-      constraints: false,
-    });
+  @Column('varchar', { nullable: true })
+  description: string;
 
-    Product.hasMany(ProductGallery, {
-      foreignKey: 'productUuid',
-      as: 'gallery',
-      onDelete: 'CASCADE'
-    });
+  @Column('numeric', { precision: 10, scale: 2, default: 0 })
+  price: number;
 
-    Product.hasMany(ProductMode, {
-      foreignKey: 'productUuid',
-      as: 'modes',
-      onDelete: 'cascade'
-    });
+  @ManyToOne(() => Currency, (currency) => currency['code'])
+  @JoinColumn()
+  currency: Currency;
 
-    Product.belongsToMany(AttributeValue, {
-      through: 'ProductAttribute',
-      foreignKey: 'productUuid',
-      as: 'attributes',
-      onDelete: 'cascade',
-    });
-  };
+  @Column('boolean', { default: false })
+  isUse: boolean;
 
-  return Product;
+  @Column('boolean', { default: false })
+  isAvailable: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+
+  @ManyToOne(() => Group, (group) => group['code'], {
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
+  })
+  @JoinColumn()
+  group: Group;
+
+  @ManyToOne(() => Category, (category) => category['code'], {
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
+  })
+  @JoinColumn()
+  category: Category;
+
+  @ManyToOne(() => Brand, (brand) => brand['uuid'], {
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
+  })
+  @JoinColumn()
+  brand: Brand;
+
+  @OneToMany(() => AttributeGroup, (group) => group['products'], {
+    eager: true,
+    cascade: true,
+  })
+  @JoinTable()
+  attributes: AttributeGroup[];
+
+  @OneToMany(() => ProductImage, (image) => image['product'], {
+    eager: true,
+    cascade: true,
+  })
+  @JoinTable()
+  images: ProductImage[];
 }
 
-export default init;
+export default Product;

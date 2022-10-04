@@ -1,6 +1,6 @@
 
-import DbPlugin from "@plugin/db";
 import RabbitPlugin from "@plugin/rabbit";
+import DbTypeORMPlugin from "@plugin/type-orm";
 import { Config, Application, Router } from '@library/app';
 
 
@@ -11,43 +11,48 @@ import { Config, Application, Router } from '@library/app';
   }));
 
   app.addRouter(new Router([
+    import('./api/v1/product/getBrands'),
     import('./api/v1/product/getGroups'),
     import('./api/v1/product/getCategories'),
-    import('./api/v1/product/getBrands'),
     import('./api/v1/product/getAttributes'),
+
     import('./api/v1/product/getAll'),
     import('./api/v1/product/update'),
-    import('./api/v1/product/template'),
-    import('./api/v1/product/update-only'),
-
-    import('./api/v1/category/getAll'),
-    import('./api/v1/category/create'),
-    import('./api/v1/category/update'),
+    import('./api/v1/product/create'),
 
     import('./api/v1/currency/getAll'),
 
     import('./api/v1/unit/getAll'),
-    import('./api/v1/unit/create'),
-    import('./api/v1/unit/update'),
+    import('./api/v1/unit/upsert'),
+    import('./api/v1/unit/delete'),
 
     import('./api/v1/attribute/getAll'),
-    import('./api/v1/attribute/create'),
-    import('./api/v1/attribute/update'),
+    import('./api/v1/attribute/upsert'),
+    import('./api/v1/attribute/delete'),
 
     import('./api/v1/brand/getAll'),
-    import('./api/v1/brand/create'),
-    import('./api/v1/brand/update'),
+    import('./api/v1/brand/upsert'),
+    import('./api/v1/brand/delete'),
 
     import('./api/v1/group/getAll'),
-    import('./api/v1/group/create'),
-    import('./api/v1/group/update'),
+    import('./api/v1/group/upsert'),
+    import('./api/v1/group/delete'),
+
+    import('./api/v1/category/getAll'),
+    import('./api/v1/category/upsert'),
+    import('./api/v1/category/delete'),
 
     import('./api/v1/comment/getAll'),
     import('./api/v1/comment/create'),
   ]));
 
-  app.addPlugin('db', new DbPlugin({
-    host: process.env['DB_CONNECTION_HOST'],
+  app.addPlugin('db', new DbTypeORMPlugin({
+    logging: process.env['DATABASE_LOGGING'] === 'true',
+    host: process.env['DATABASE_HOST'],
+    port: Number(process.env['DATABASE_PORT']),
+    username: process.env['DATABASE_USERNAME'],
+    password: process.env['DATABASE_PASSWORD'],
+    database: process.env['DATABASE_DATABASE'],
     modelsPath: 'db/models',
   }));
 

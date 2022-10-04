@@ -1,5 +1,6 @@
 
-import { Route, Result, Controller } from '@library/app';
+import { queryNormalize } from '@helper/utils';
+import { Controller, Result, Route } from '@library/app';
 
 import productBuilder from './builders/product';
 
@@ -19,188 +20,158 @@ function getAttrsFilter(query: any) {
 @Route('get', '/api/v1/products')
 class GetProductsController extends Controller {
   async send(): Promise<any> {
-    const order = [];
-    const where = {};
-    const whereAttr = {};
+    const query = queryNormalize(super.query);
 
-    let whereAttrRequired = false;
-
-    const offset = {};
-    const options = {};
-
-    const data = super.query;
     const db = super.plugin.get('db');
+    const Product = db.model['Product'];
 
-    const Unit = db.models['Unit'];
-    const Group = db.models['Group'];
-    const Brand = db.models['Brand'];
-    const Product = db.models['Product'];
-    const Category = db.models['Category'];
-    const Currency = db.models['Currency'];
-    const Attribute = db.models['Attribute'];
-    const ProductMode = db.models['ProductMode'];
-    const ProductGallery = db.models['ProductGallery'];
-    const AttributeValue = db.models['AttributeValue'];
 
-    const attrQuery = getAttrsFilter(data);
+    const repository = db.repository(Product);
+    let queryBuilder = repository.createQueryBuilder('product')
+      .select(['product.uuid', 'product.externalId', 'product.title', 'product.description', 'product.price',
+        'product.isUse', 'product.isAvailable', 'product.createdAt', 'product.updatedAt']);
 
-    if ('sort' in data) {
-      switch (Number(data['sort'])) {
-        case 1: {
-          order.push(['modes', 'price', 'asc']);
-        } break;
-        case 2: {
-          order.push(['modes', 'price', 'desc']);
-        } break;
-        case 3: {
-          order.push(['title', 'asc']);
-        } break;
-      }
-    }
-    else {
-      order.push(['createdAt', 'asc']);
-    }
+    // const attrQuery = getAttrsFilter(data);
 
-    if ('uuid' in data) {
-      where['uuid'] = data['uuid'];
+    // if ('sort' in data) {
+    //   switch (Number(data['sort'])) {
+    //     case 1: {
+    //       order.push(['amount', 'asc']);
+    //     } break;
+    //     case 2: {
+    //       order.push(['amount', 'desc']);
+    //     } break;
+    //     case 3: {
+    //       order.push(['title', 'asc']);
+    //     } break;
+    //   }
+    // }
+    // else {
+    //   order.push(['createdAt', 'asc']);
+    // }
+
+    if ('uuid' in query) {
+      queryBuilder.andWhere('product.uuid IN (:...uuid)', { uuid: query['uuid'] });
     }
 
-    if ('externalId' in data) {
-      where['externalId'] = data['externalId'];
+    if ('externalId' in query) {
+      queryBuilder.andWhere('product.externalId IN (:...externalId)', { externalId: query['externalId'] });
     }
 
-    if ('isUse' in data) {
-      where['isUse'] = data['isUse'] === 'true';
+    if ('isUse' in query) {
+      queryBuilder.andWhere('product.isUse IN (:...isUse)', { isUse: query['isUse'] });
     }
 
-    if ('groupCode' in data) {
-      where['groupCode'] = data['groupCode'];
+    queryBuilder
+      .leftJoin('product.group', 'group')
+      .addSelect(['group.uuid', 'group.name', 'group.code', 'group.description'])
+
+    if ('groupCode' in query) {
+      queryBuilder.andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
     }
 
-    if ('categoryCode' in data) {
-      where['categoryCode'] = data['categoryCode'];
+    if ('groupUuid' in query) {
+      queryBuilder.andWhere('group.uuid IN (:...groupUuid)', { groupUuid: query['groupUuid'] });
     }
 
-    if ('brandCode' in data) {
-      where['brandCode'] = data['brandCode'];
+    queryBuilder
+      .leftJoin('product.category', 'category')
+      .addSelect(['category.uuid', 'category.name', 'category.code', 'category.description']);
+
+    if ('categoryCode' in query) {
+      queryBuilder.andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
     }
 
-    if ( !! Object.keys(attrQuery).length) {
-      const bulk = [];
-      const keys = Object.keys(attrQuery);
-
-      for (let index in keys) {
-        const key = keys[index];
-
-        const result = await Attribute.findOne({
-          raw: true,
-          where: {
-            code: key,
-          },
-          attributes: ['uuid'],
-        });
-
-        bulk.push({
-          attributeUuid: result['uuid'],
-          value: attrQuery[key],
-        });
-      }
-
-      whereAttr[db.Op.or] = bulk;
-      whereAttrRequired = true;
+    if ('categoryUuid' in query) {
+      queryBuilder.andWhere('category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] });
     }
 
-    if ('limit' in data) {
-      options['limit'] = Number(data['limit']);
+    queryBuilder
+      .leftJoin('product.brand', 'brand')
+      .addSelect(['brand.uuid', 'brand.name', 'brand.code', 'brand.description']);
+
+    if ('brandCode' in query) {
+      queryBuilder.andWhere('brand.code IN (:...brandCode)', { brandCode: query['brandCode'] });
     }
 
-    if (('skip' in data) && ('take' in data)) {
-      offset['offset'] = Number(data['skip']);
-      offset['limit'] = Number(data['take']);
+    if ('brandUuid' in query) {
+      queryBuilder.andWhere('brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] });
     }
 
-    const result = await Product.findAndCountAll({
-      ...options,
-      ...offset,
-      distinct: true,
-      where: { ...where },
-      order: [
-        ...order,
-        ['modes', 'order', 'asc'],
-        ['gallery', 'order', 'asc'],
-        ['attributes', 'order', 'asc'],
-      ],
-      attributes: ['uuid', 'seoTitle', 'seoDescription', 'seoKeywords', 'externalId', 'title', 'originalName', 'description', 'isUse', 'isAvailable', 'createdAt', 'updatedAt',
-        [db.sequelize.literal(`(SELECT COUNT(*) FROM "Comments" WHERE "Comments"."themeCode"='opinion' AND "Comments"."productUuid"="Product"."uuid")`), 'commentsCount']
-      ],
-      include: [
-        {
-          model: Group,
-          required: false,
-          attributes: ['code', 'name', 'description'],
-          as: 'group',
-        },
-        {
-          model: Category,
-          required: false,
-          attributes: ['code', 'name', 'description'],
-          as: 'category',
-        },
-        {
-          model: Brand,
-          required: false,
-          attributes: ['code', 'name', 'description'],
-          as: 'brand',
-        },
-        {
-          model: ProductGallery,
-          required: false,
-          attributes: [['imageUuid', 'uuid']],
-          as: 'gallery',
-        },
-        {
-          model: ProductMode,
-          required: false,
-          as: 'modes',
-          attributes: ['uuid', 'vendor', 'value', 'price', 'isUse', 'isTarget'],
-          include: [
-            {
-              model: Currency,
-              attributes: ['code', 'displayName'],
-              as: 'currency',
-            }
-          ]
-        },
-        {
-          model: AttributeValue,
-          through: 'ProductAttribute',
-          attributes: ['value'],
-          required: whereAttrRequired,
-          where: {
-            ...whereAttr,
-          },
-          as: 'attributes',
-          include: [
-            {
-              model: Attribute,
-              required: false,
-              as: 'attribute',
-              include: [
-                {
-                  model: Unit,
-                  as: 'unit',
-                }
-              ],
-            }
-          ]
-        },
-      ],
-    });
+    if ('isUse' in query) {
+      queryBuilder.andWhere('product.isUse IN (:...isUse)', { isUse: query['isUse'] });
+    }
+
+    if ('isAvailable' in query) {
+      queryBuilder.andWhere('product.isAvailable IN (:...isAvailable)', { isAvailable: query['isAvailable'] });
+    }
+
+    // if ( !! Object.keys(attrQuery).length) {
+    //   const bulk = [];
+    //   const keys = Object.keys(attrQuery);
+    //
+    //   for (let index in keys) {
+    //     const key = keys[index];
+    //
+    //     const result = await Attribute.findOne({
+    //       raw: true,
+    //       where: {
+    //         code: key,
+    //       },
+    //       attributes: ['uuid'],
+    //     });
+    //
+    //     bulk.push({
+    //       attributeUuid: result['uuid'],
+    //       value: attrQuery[key],
+    //     });
+    //   }
+    //
+    //   whereAttr[db.Op.or] = bulk;
+    //   whereAttrRequired = true;
+    // }
+
+    queryBuilder
+      .leftJoin('product.currency', 'currency')
+      .addSelect(['currency.code', 'currency.displayName'])
+
+      .leftJoin('product.attributes', 'attribute')
+      .addSelect(['attribute.uuid', 'attribute.name'])
+
+        .leftJoin('attribute.values', 'value')
+        .addSelect(['value.uuid', 'value.value'])
+
+          .leftJoin('value.attribute', 'value_attribute')
+          .addSelect(['value_attribute.uuid', 'value_attribute.code', 'value_attribute.name', 'value_attribute.description'])
+
+            .leftJoin('value_attribute.unit', 'unit')
+            .addSelect(['unit.uuid', 'unit.name', 'unit.description'])
+
+      .leftJoin('product.images', 'product_image')
+      .addSelect(['product_image.uuid'])
+
+        .leftJoin('product_image.image', 'image')
+        .addSelect(['image.uuid', 'image.name'])
+
+      .addOrderBy('value.order', 'ASC')
+      .addOrderBy('product.price', 'ASC')
+      .addOrderBy('attribute.order', 'ASC')
+      .addOrderBy('product_image.order', 'ASC');
+
+    if ('skip' in query) {
+      queryBuilder.offset(Number(query['skip'][0]));
+    }
+
+    if ('take' in query) {
+      queryBuilder.limit(Number(query['take'][0]));
+    }
+
+    const result = await queryBuilder.getManyAndCount();
 
     return new Result()
-      .data(result['rows'].map((item) => productBuilder(item.toJSON())))
+      .data(result[0].map(productBuilder))
       .meta({
-        totalRows: result['count'],
+        totalRows: result[1],
       })
       .build();
   }

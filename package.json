@@ -2,9 +2,11 @@
   "name": "root",
   "private": true,
   "dependencies": {
+    "@prisma/client": "4.3.1",
     "audit-ci": "5.1.2",
     "cross-env": "7.0.3",
     "dotenv": "16.0.0",
+    "dotenv-cli": "6.0.0",
     "improved-yarn-audit": "3.0.0",
     "nodemon": "2.0.15",
     "ts-node": "10.6.0",
@@ -12,8 +14,9 @@
   },
   "devDependencies": {
     "@types/node": "16.11.49",
-    "lerna": "4.0.0",
-    "lerna-update-wizard": "1.1.2"
+    "lerna": "5.5.1",
+    "lerna-update-wizard": "1.1.2",
+    "prisma": "4.3.1"
   },
   "license": "MIT",
   "bin": {

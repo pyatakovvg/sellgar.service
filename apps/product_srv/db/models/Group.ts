@@ -1,56 +1,53 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Group extends Model {}
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinTable,
+  ManyToMany
+} from '@plugin/type-orm';
 
-  Group.init({
-    code: {
-      type: DataTypes.STRING(64),
-      primaryKey: true,
-      allowNull: false,
-      unique: true,
-    },
-    icon: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null,
-    },
-    imageUuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(1024),
-      defaultValue: '',
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
+import Image from "./Image";
+import Product from './Product';
+import Category from './Category';
 
-  Group.associate = ({ Category, Product }) => {
 
-    Group.hasMany(Category, {
-      foreignKey: 'groupCode',
-      timestamps: false,
-      as: 'categories',
-    });
+@Entity('Group')
+class Group {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    Group.hasMany(Product, {
-      foreignKey: 'groupCode',
-      as: 'products',
-    });
-  };
+  @Column('varchar', { unique: true })
+  code: string;
 
-  return Group;
+  @Column('varchar', { unique: true })
+  name: string;
+
+  @Column('varchar', { nullable: true })
+  description: string;
+
+  @Column('varchar', { nullable: true })
+  icon: string;
+
+  @Column('integer', { default: 999999 })
+  order: number;
+
+
+  @OneToMany(() => Category, (category) => category['group'])
+  @JoinTable()
+  categories: Category[];
+
+  @OneToMany(() => Product, (product) => product['group'])
+  @JoinTable()
+  products: Product[];
+
+  @ManyToMany(() => Image, {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
+  @JoinTable()
+  images: Image[];
 }
 
-export default init;
+export default Group;

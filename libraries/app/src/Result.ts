@@ -5,31 +5,37 @@ interface IDataError {
   correlationId?: string;
 }
 
+interface IResult {
+  data?: any;
+  meta?: any;
+  success?: boolean;
+}
+
 
 class Result {
-  private result: object = {};
+  private result: IResult = {};
 
   constructor(state: boolean = true) {
     this.result['success'] = state;
     return this;
   }
 
-  data(data: any) {
+  data<T>(data: T): Result {
     this.result['data'] = data;
     return this;
   }
 
-  error(data: IDataError) {
+  error(data: IDataError): Result {
     this.result['error'] = data;
     return this;
   }
 
-  meta(meta: any) {
+  meta<T>(meta: T): Result {
     this.result['meta'] = meta;
     return this;
   }
 
-  build(isEmpty: boolean = false) {
+  build(isEmpty: boolean = false): IResult {
     if (isEmpty) {
       return this.result['data'];
     }

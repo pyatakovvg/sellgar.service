@@ -1,66 +1,40 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Attribute extends Model {}
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, JoinTable, OneToMany } from '@plugin/type-orm';
 
-  Attribute.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    categoryCode: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    unitUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      defaultValue: null,
-    },
-    name: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(1024),
-      defaultValue: '',
-    },
-    isFiltered: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
-
-  Attribute.associate = ({ AttributeValue, Category, Unit }) => {
+import Unit from './Unit';
+import Category from './Category';
+import AttributeValue from './AttributeValue';
 
 
-    Attribute.belongsTo(Category, {
-      foreignKey: 'categoryCode',
-      as: 'category',
-      constraints: false,
-    });
+@Entity('Attribute')
+class Attribute {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    Attribute.hasMany(AttributeValue, {
-      foreignKey: 'attributeUuid',
-      as: 'values',
-    });
+  @Column('varchar')
+  code: string;
 
-    Attribute.belongsTo(Unit, {
-      as: 'unit',
-      constraints: false,
-    });
-  };
+  @Column('varchar')
+  name: string;
 
-  return Attribute;
+  @Column('varchar', { nullable: true })
+  description: string;
+
+  @Column('boolean', { default: true })
+  isFiltered: boolean;
+
+
+  @ManyToOne(() => Unit, (unit) => unit['uuid'])
+  @JoinColumn()
+  unit: Unit;
+
+  @ManyToOne(() => Category, (category) => category['code'])
+  @JoinColumn()
+  category: Category;
+
+  @OneToMany(() => AttributeValue, (value) => value['attribute'])
+  @JoinTable()
+  values: AttributeValue[];
 }
 
-export default init;
+export default Attribute;

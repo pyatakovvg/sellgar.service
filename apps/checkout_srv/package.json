@@ -13,7 +13,7 @@
     "ajv": "8.11.0",
     "busboy": "1.6.0",
     "node-sagas": "0.0.6",
-    "sharp": "0.30.7"
+    "sharp": "0.31.0"
   },
   "devDependencies": {},
   "peerDependencies": {}

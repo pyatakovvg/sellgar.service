@@ -1,25 +1,14 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Currency extends Model {}
+import { Entity, Column, PrimaryColumn } from '@plugin/type-orm';
 
-  Currency.init({
-    code: {
-      type: DataTypes.STRING(4),
-      primaryKey: true,
-      allowNull: false,
-    },
-    displayName: {
-      type: DataTypes.STRING(16),
-      allowNull: false,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
 
-  Currency.associate = () => {};
+@Entity('Currency')
+class Currency {
+  @PrimaryColumn({ unique: true })
+  code: string;
 
-  return Currency;
+  @Column('varchar', { nullable: false, length: 16 })
+  displayName: string;
 }
 
-export default init;
+export default Currency;

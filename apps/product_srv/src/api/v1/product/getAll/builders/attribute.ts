@@ -1,18 +1,9 @@
 
-function normalizeValue(value: string) {
-  if (/^\d+$/.test(value)) {
-    return Number(value);
-  }
-  return value;
-}
-
-
 export default function(data: any) {
   return {
-    uuid: data['attribute']['uuid'],
-    name: data['attribute']['name'],
-    value: normalizeValue(data['value']) || null,
-    description: data['attribute']['description'],
+    uuid: data['uuid'],
+    value: data['value'],
+    attributeUuid: data['attribute']['uuid'],
     unit: data['attribute']['unit'],
   };
 }

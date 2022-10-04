@@ -1,50 +1,67 @@
 
+import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
 
 @Route('get', '/api/v1/products/brands')
-class GetProductsController extends Controller {
+class GetProductBrandController extends Controller {
   async send(): Promise<any> {
-    const where = {};
+    const query = queryNormalize(super.query);
 
-    const data = super.query;
     const db = super.plugin.get('db');
+    const Brand = db.model['Brand'];
 
-    const Brand = db.models['Brand'];
-    const Product = db.models['Product'];
 
-    if ('groupCode' in data) {
-      where['groupCode'] = data['groupCode'];
+    const repository = db.repository(Brand);
+    const queryBuilder = await repository.createQueryBuilder('brand')
+      .select(['brand.uuid', 'brand.code', 'brand.name', 'brand.description']);
+
+    if ('uuid' in query) {
+      queryBuilder.andWhere('brand.uuid IN (:...b_uuid)', { b_uuid: query['uuid'] });
     }
 
-    if ('categoryCode' in data) {
-      where['categoryCode'] = data['categoryCode'];
+    if ('code' in query) {
+      queryBuilder.andWhere('brand.code IN (:...b_code)', { b_code: query['code'] });
     }
 
-    const result = await Brand.findAll({
-      distinct: true,
-      group: [
-        'Brand.code'
-      ],
-      order: [
-        ['order', 'asc'],
-      ],
-      attributes: ['name', 'code', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
-      include: [
-        {
-          model: Product,
-          where: { ...where, isUse: true },
-          required: true,
-          attributes: [],
-          as: 'products',
+    queryBuilder
+      .innerJoin('brand.products', 'products');
+
+    if ('groupCode' in query) {
+      queryBuilder
+        .innerJoin('products.group', 'group')
+        .andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
+    }
+
+    if ('categoryCode' in query) {
+      queryBuilder
+        .innerJoin('products.category', 'category')
+        .andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
+    }
+
+    queryBuilder
+      .loadRelationCountAndMap('brand.products', 'brand.products', 'count', (qb) => {
+        if ('groupCode' in query) {
+          qb
+            .innerJoin('count.group', 'group')
+            .andWhere('group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
         }
-      ],
-    });
+        if ('categoryCode' in query) {
+          qb
+            .innerJoin('count.category', 'category')
+            .andWhere('category.code IN (:...p_categoryCode)', { p_categoryCode: query['categoryCode'] });
+        }
+        return qb;
+      })
 
-    return new Result()
-      .data(result.map((item) => item.toJSON()))
+      .addOrderBy('brand.order', 'ASC');
+
+    const result = await queryBuilder.getManyAndCount();
+
+    return new Result(true)
+      .data(result[0])
       .build();
   }
 }
 
-export default GetProductsController;
+export default GetProductBrandController;

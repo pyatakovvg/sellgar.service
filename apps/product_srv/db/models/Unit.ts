@@ -1,35 +1,20 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Unit extends Model {}
+import { Entity, Column, PrimaryGeneratedColumn } from '@plugin/type-orm';
 
-  Unit.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    name: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(1024),
-      defaultValue: '',
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
 
-  Unit.associate = () => {};
+@Entity('Unit')
+class Unit {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-  return Unit;
+  @Column('varchar', { unique: true })
+  name: string;
+
+  @Column('varchar')
+  description: string;
+
+  @Column('integer', { default: 999999 })
+  order: number;
 }
 
-export default init;
+export default Unit;

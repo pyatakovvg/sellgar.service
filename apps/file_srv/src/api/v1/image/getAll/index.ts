@@ -1,48 +1,36 @@
 
+import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
 
 @Route('get', '/api/v1/images')
 class ImageController extends Controller {
   async send(): Promise<any> {
-    const query = super.query;
-    const db = super.plugin.get('db');
+    const query = queryNormalize(super.query);
 
-    const where = {};
+    const db = super.plugin.get('db2');
+    const Image = db.model['Image'];
 
-    const Image = db.models['Image'];
-    const Folder = db.models['Folder'];
+    const repository = db.repository(Image);
+    const queryBuilder = repository
+      .createQueryBuilder('image')
+      .select(['image.uuid', 'image.name', 'image.size', 'image.mime', 'image.width', 'image.height'])
+      .orderBy('image.createdAt', 'DESC');
 
-    if ('folderUuid' in query) {
-      where['uuid'] = query['folderUuid'];
+    if ('skip' in query) {
+      queryBuilder.offset(Number(query['skip'][0]));
     }
-    else {
-      where['uuid'] = null;
+
+    if ('take' in query) {
+      queryBuilder.limit(Number(query['take'][0]));
     }
 
-    const result = await Image.findAndCountAll({
-      order: [
-        ['createdAt', 'desc'],
-      ],
-      attributes: ['uuid', 'name'],
-      include: [{
-        model: Folder,
-        where: {
-          ...where,
-        },
-        required: true,
-        through: {
-          attributes: []
-        },
-        attributes: [],
-        as: 'folders',
-      }]
-    });
+    const result = await queryBuilder.getManyAndCount();
 
     return new Result()
-      .data(result['rows'].map((item) => item.toJSON()))
+      .data(result[0])
       .meta({
-        total: result['count'],
+        totalRows: result[1],
       })
       .build();
   }

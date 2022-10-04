@@ -2,6 +2,7 @@
 import DbPlugin from "@plugin/db";
 import RabbitPlugin from "@plugin/rabbit";
 import { Config, Application, Router } from '@library/app';
+import DbTypeORMPlugin from "@plugin/type-orm";
 
 
 (async function() {
@@ -18,6 +19,16 @@ import { Config, Application, Router } from '@library/app';
 
     import('./api/v1/folder/getAll'),
   ]));
+
+  app.addPlugin('db2', new DbTypeORMPlugin({
+    logging: true,
+    host: process.env['DATABASE_HOST'],
+    port: Number(process.env['DATABASE_PORT']),
+    username: process.env['DATABASE_USERNAME'],
+    password: process.env['DATABASE_PASSWORD'],
+    database: process.env['DATABASE_DATABASE'],
+    modelsPath: 'db2/models',
+  }));
 
   app.addPlugin('db', new DbPlugin({
     host: process.env['DB_CONNECTION_HOST'],

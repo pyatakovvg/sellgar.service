@@ -13,7 +13,7 @@
     "start:dev": "cross-env NODE_ENV=development tsc --watch"
   },
   "dependencies": {
-    "winston": "3.8.1"
+    "winston": "3.8.2"
   },
   "devDependencies": {
     "@types/koa": "2.13.5"

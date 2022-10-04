@@ -1,68 +1,59 @@
 
+import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
 
 @Route('get', '/api/v1/products/groups')
-class GetProductsController extends Controller {
+class GetProductGroupController extends Controller {
   async send(): Promise<any> {
+    const query = queryNormalize(super.query);
+
     const db = super.plugin.get('db');
-
-    const Group = db.models['Group'];
-    const Product = db.models['Product'];
-    const Category = db.models['Category'];
+    const Group = db.model['Group'];
 
 
-    const result = await Group.findAll({
-      raw: true,
-      distinct: true,
-      subQuery: false,
-      group: [
-        'Group.code',
-      ],
-      order: [
-        ['name', 'asc'],
-      ],
-      attributes: ['code', 'icon', 'imageUuid', 'name', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
-      include: [
-        {
-          model: Product,
-          where: { isUse: true },
-          required: true,
-          attributes: [],
-          as: 'products',
-        },
-      ],
-    });
+    const repository = db.repository(Group);
+    let queryBuilder = repository.createQueryBuilder('group')
+      .select(['group.uuid', 'group.code', 'group.name', 'group.description', 'group.icon'])
+      .addOrderBy('group.order', 'ASC');
 
-    const newResult = [...result];
-    for (let index in newResult) {
-      const group = newResult[index];
-
-      newResult[index]['categories'] =  await Category.findAll({
-        raw: true,
-        group: [
-          'Category.code',
-        ],
-        where: {
-          groupCode: group['code'],
-        },
-        attributes: ['code', 'name', 'imageUuid', 'description', [db.sequelize.fn('COUNT', db.sequelize.col('products')), 'productsCount']],
-        include: [
-          {
-            model: Product,
-            where: { isUse: true },
-            required: true,
-            attributes: [],
-            as: 'products',
-          },
-        ],
-      });
+    if ('uuid' in query) {
+      queryBuilder.andWhere('group.uuid IN (:...uuid)', { uuid: query['uuid'] })
     }
 
-    return new Result()
-      .data(newResult)
+    if ('code' in query) {
+      queryBuilder.andWhere('group.code IN (:...code)', { code: query['code'] })
+    }
+
+    queryBuilder
+      .leftJoin('group.image', 'g_image')
+      .addSelect(['g_image.uuid'])
+
+      .innerJoin('group.products', 'g_products')
+
+      .loadRelationCountAndMap('group.products', 'group.products');
+
+
+    queryBuilder
+      .leftJoin('group.categories', 'categories')
+      .addSelect(['categories.uuid', 'categories.code', 'categories.name', 'categories.description', 'group.icon'])
+
+      .leftJoin('categories.image', 'c_image')
+      .addSelect(['c_image.uuid'])
+
+      .innerJoin('categories.products', 'c_products')
+
+      .loadRelationCountAndMap('categories.products', 'categories.products')
+
+      .addOrderBy('categories.order', 'ASC');
+
+
+    const result = await queryBuilder.getMany();
+
+    return new Result(true)
+      .data(result)
       .build();
   }
 }
 
-export default GetProductsController;
+export default GetProductGroupController;

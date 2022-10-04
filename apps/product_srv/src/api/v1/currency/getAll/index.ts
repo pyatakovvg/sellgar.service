@@ -5,18 +5,19 @@ import { Route, Result, Controller } from '@library/app';
 @Route('get', '/api/v1/currencies')
 class CheckController extends Controller {
   async send(): Promise<any> {
-    const where = {};
-
     const db = super.plugin.get('db');
 
-    const Currency = db.models['Currency'];
+    const Currency = db.model['Currency'];
 
-    const result = await Currency.findAll({
-      where,
-    });
+    const repository = db.repository(Currency);
+    const queryBuilder = repository.createQueryBuilder('currency');
+
+    const result = await queryBuilder
+      .select(['currency.code', 'currency.displayName'])
+      .getMany();
 
     return new Result(true)
-      .data(result.map(item => item.toJSON()))
+      .data(result)
       .build();
   }
 }

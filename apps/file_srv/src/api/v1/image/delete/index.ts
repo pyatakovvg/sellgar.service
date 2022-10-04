@@ -6,17 +6,19 @@ import { Route, Result, Controller } from '@library/app';
 class ImageController extends Controller {
   async send(): Promise<any> {
     const params = super.params;
-
-    const db = super.plugin.get('db');
     const rabbit = super.plugin.get('rabbit');
 
-    const Image = db.models['Image'];
+    const db = super.plugin.get('db2');
+    const Image = db.model['Image'];
 
-    await Image.destroy({
-      where: {
-        uuid: params['uuid']
-      },
-    });
+    const repository = db.repository(Image);
+    const queryBuilder = repository.createQueryBuilder();
+
+    await queryBuilder
+      .delete()
+      .from(Image)
+      .where('uuid = :uuid', { uuid: params['uuid'] })
+      .execute();
 
     await rabbit.sendEvent(process.env['FILE_SRV_IMAGE_DELETE_EXCHANGE'], params['uuid']);
 

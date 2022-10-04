@@ -1,41 +1,38 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Brand extends Model {}
+import { Entity, Column, PrimaryGeneratedColumn, JoinTable, OneToMany, ManyToMany } from '@plugin/type-orm';
 
-  Brand.init({
-    code: {
-      type: DataTypes.STRING(64),
-      primaryKey: true,
-      allowNull: false,
-      unique: true,
-    },
-    name: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(1024),
-      defaultValue: '',
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
+import Image from './Image';
+import Product from "./Product";
 
-  Brand.associate = ({ Product }) => {
 
-    Brand.hasMany(Product, {
-      foreignKey: 'brandCode',
-      as: 'products',
-    });
-  };
+@Entity('Brand')
+class Brand {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-  return Brand;
+  @Column('varchar')
+  code: string;
+
+  @Column('varchar', { unique: true })
+  name: string;
+
+  @Column('varchar', { nullable: true })
+  description: string;
+
+  @Column('integer', { default: 999999 })
+  order: string;
+
+
+  @ManyToMany(() => Image, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
+  @JoinTable()
+  images: Image[];
+
+  @OneToMany(() => Product, (product) => product['brand'])
+  products: Product[];
 }
 
-export default init;
+export default Brand;

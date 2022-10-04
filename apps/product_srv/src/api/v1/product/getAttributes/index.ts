@@ -1,87 +1,60 @@
 
+import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
 
 @Route('get', '/api/v1/products/attributes')
 class GetAttributesController extends Controller {
   async send(): Promise<any> {
-    const where = {};
-    const whereAttr = {};
+    const query = queryNormalize(super.query);
 
-    const data = super.query;
     const db = super.plugin.get('db');
-
-    const Unit = db.models['Unit'];
-    const Product = db.models['Product'];
-    const Attribute = db.models['Attribute'];
-    const AttributeValue = db.models['AttributeValue'];
+    const Attribute = db.model['Attribute'];
 
 
-    if ('groupCode' in data) {
-      where['groupCode'] = data['groupCode'];
-    }
+    const repository = db.repository(Attribute);
+    const queryRequest = repository.createQueryBuilder('attributes')
+      .select(['attributes.uuid', 'attributes.code', 'attributes.name', 'attributes.description'])
+      .where('attributes.isFiltered = :status', { status: true })
 
-    if ('categoryCode' in data) {
-      where['categoryCode'] = data['categoryCode'];
-      whereAttr['categoryCode'] = data['categoryCode'];
-    }
+      if ('categoryCode' in query) {
+        queryRequest
+          .innerJoin('attributes.category', 'a_category')
+          .andWhere('a_category.code IN (:...a_categoryCode)', { a_categoryCode: query['categoryCode'] });
+      }
 
-    const result = await Attribute.findAll({
-      distinct: true,
-      order: [
-        ['name', 'asc'],
-        ['values', 'value', 'asc'],
-      ],
-      group: [
-        'Attribute.uuid',
-        'values.uuid',
-        'values.value',
-        'unit.name',
-      ],
-      attributes: [
-        'code',
-        'name',
-        [db.sequelize.col('unit.name'), 'unitName'],
-      ],
-      where: {
-        ...whereAttr,
-        // isFiltered: true,
-      },
-      include: [
-        {
-          model: AttributeValue,
-          required: true,
-          attributes: ['value'],
-          as: 'values',
-          include: [{
-            model: Product,
-            required: true,
-            where: {
-              ...where,
-              isUse: true,
-            },
-            through: { attributes: [] },
-            attributes: [],
-            as: 'products',
-          }]
-        },
-        {
-          model: Unit,
-          attributes: [],
-          as: 'unit',
-        }
-      ],
-    });
+    queryRequest
+      .leftJoin('attributes.unit', 'unit')
+      .addSelect(['unit.uuid', 'unit.name'])
 
-    const finalResult = result.reduce((accum, item) => {
-      const attr = item.toJSON();
+      .leftJoin('attributes.values', 'values')
+      .addSelect(['values.uuid', 'values.value'])
+
+        .innerJoin('values.group', 'group')
+          .innerJoin('group.products', 'product')
+
+          if ('categoryCode' in query) {
+            queryRequest
+              .innerJoin('product.category', 'p_category')
+              .andWhere('p_category.code IN (:...p_categoryCode)', { p_categoryCode: query['categoryCode'] });
+          }
+
+          if ('groupCode' in query) {
+            queryRequest
+              .innerJoin('product.group', 'p_group')
+              .andWhere('p_group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
+          }
+
+    const result = await queryRequest.getMany();
+
+    const finalResult = result.reduce((accum, attr) => {
       accum.push({
         code: attr['code'],
         name: attr['name'],
         values: [...new Set(attr['values'].map((i) => i['value']))]
           .map((value) => ({
             value: value,
-            unitName: attr['unitName'],
+            unit: attr['unit'],
           }))
           .sort((left: any, right: any) => {
             if (left['value'] > right['value']) {

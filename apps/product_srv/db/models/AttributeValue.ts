@@ -1,48 +1,32 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class AttributeValue extends Model {}
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from '@plugin/type-orm';
 
-  AttributeValue.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    attributeUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    },
-    value: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null,
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
+import Attribute from './Attribute';
+import AttributeGroup from './AttributeGroup';
 
-  AttributeValue.associate = ({ Attribute, Product }) => {
 
-    AttributeValue.belongsTo(Attribute, {
-      primaryKey: 'attributeUuid',
-      as: 'attribute',
-      constraints: false,
-    });
+@Entity('AttributeValue')
+class AttributeValue {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    AttributeValue.belongsToMany(Product, {
-      through: 'ProductAttribute',
-      foreignKey: 'attributeUuid',
-      as: 'products',
-    });
-  };
+  @Column('varchar')
+  value: string;
 
-  return AttributeValue;
+  @Column('integer', { default: 0 })
+  order: number;
+
+
+  @ManyToOne(() => AttributeGroup, (group) => group['uuid'], {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
+  @JoinColumn()
+  group: AttributeGroup;
+
+  @ManyToOne(() => Attribute, (attribute) => attribute['uuid'])
+  @JoinColumn()
+  attribute: Attribute;
 }
 
-export default init;
+export default AttributeValue;

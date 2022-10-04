@@ -1,15 +1,19 @@
 
-export default async function init(rabbit, app) {
-  await rabbit.bindToExchange(process.env['FILE_SRV_IMAGE_DELETE_QUEUE'] + '_' + Date.now(), process.env['FILE_SRV_IMAGE_DELETE_QUEUE'], async (uuid, cb) => {
+import Application from '@library/app';
+
+export default async function init(rabbit, app: Application) {
+  await rabbit.bindToExchange(process.env['FILE_SRV_IMAGE_DELETE_QUEUE'] + '_' + Date.now(), process.env['FILE_SRV_IMAGE_DELETE_EXCHANGE'], async (uuid, cb) => {
     const db = app.plugins['db'];
+    const Image = db.model['Image'];
 
-    const ProductGallery = db.models['ProductGallery'];
+    const repository = db.repository(Image);
 
-    await ProductGallery.destroy({
-      where: {
-        imageUuid: uuid,
-      },
-    });
+    await repository
+      .createQueryBuilder()
+      .delete()
+      .from(Image)
+      .where('uuid = :uuid', { uuid })
+      .execute();
 
     cb(true);
   });

@@ -1,54 +1,55 @@
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Category extends Model {}
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinTable,
+  OneToMany, ManyToMany,
+} from '@plugin/type-orm';
 
-  Category.init({
-    code: {
-      type: DataTypes.STRING(64),
-      primaryKey: true,
-      allowNull: false,
-      unique: true,
-    },
-    groupCode: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    imageUuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(1024),
-      defaultValue: '',
-    },
-    order: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-  }, {
-    sequelize,
-    timestamps: false,
-  });
+import Image from "./Image";
+import Group from './Group';
+import Product from "./Product";
 
-  Category.associate = ({ Group, Product }) => {
 
-    Category.belongsTo(Group, {
-      foreignKey: 'groupCode',
-      as: 'group',
-    });
+@Entity('Category')
+class Category {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    Category.hasMany(Product, {
-      foreignKey: 'categoryCode',
-      as: 'products',
-    });
-  };
+  @Column('varchar', { unique: true })
+  code: string;
 
-  return Category;
+  @Column('varchar', { unique: true })
+  name: string;
+
+  @Column('varchar', { nullable: true })
+  description: string;
+
+  @Column('varchar', { nullable: true })
+  icon: string;
+
+  @Column('integer', { default: 999999 })
+  order: number;
+
+
+  @ManyToOne(() => Group, (group) => group['uuid'], {
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
+  })
+  @JoinTable()
+  group: Group;
+
+  @ManyToMany(() => Image, {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
+  @JoinTable()
+  images: Image[];
+
+  @OneToMany(() => Product, (product) => product['category'])
+  products: Product[];
 }
 
-export default init;
+export default Category;

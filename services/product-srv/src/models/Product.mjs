@@ -76,7 +76,7 @@ export default function(sequelize, DataType) {
     sequelize,
   });
 
-  Product.associate = ({ Group, Category, Brand, Attribute, ProductMode, ProductGallery }) => {
+  Product.associate = ({ Group, Category, Brand, Attribute, Price, ProductGallery }) => {
 
     Product.belongsTo(Group, {
       as: 'group',
@@ -95,9 +95,9 @@ export default function(sequelize, DataType) {
       as: 'gallery',
     });
 
-    Product.hasMany(ProductMode, {
+    Product.hasMany(Price, {
       foreignKey: 'productUuid',
-      as: 'modes',
+      as: 'price',
     });
 
     Product.belongsToMany(Attribute, {

@@ -1,43 +1,44 @@
 
+import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
-
-// import userBuilder from './builders/user';
-
-
-// interface IBody {
-//   login: string;
-//   password: string;
-// }
 
 
 @Route('get', '/api/v1/brands')
-class CheckController extends Controller {
+class GetBrandController extends Controller {
   async send(): Promise<any> {
-    const query = super.query;
-    const where = {};
+    const query = queryNormalize(super.query);
 
     const db = super.plugin.get('db');
+    const Brand = db.model['Brand'];
 
-    const Brand = db.models['Brand'];
 
-    if ('code' in query) {
-      where['code'] = query['code'];
+    const repository = db.repository(Brand);
+    const queryBuilder = await repository.createQueryBuilder('brand')
+      .select(['brand.uuid', 'brand.code', 'brand.name', 'brand.description']);
+
+    if ('uuid' in query) {
+      queryBuilder
+        .andWhere('brand.uuid IN (:...uuid)', { uuid: query['uuid'] });
     }
 
-    const result = await Brand.findAll({
-      where: {
-        ...where,
-      },
-      order: [
-        ['name', 'asc']
-      ],
-      attributes: ['code', 'name', 'description'],
-    });
+    if ('code' in query) {
+      queryBuilder
+        .andWhere('brand.code IN (:...code)', { code: query['code'] });
+    }
+
+    queryBuilder
+      .leftJoin('brand.images', 'image')
+      .addSelect(['image.uuid', 'image.name'])
+
+      .addOrderBy('brand.order', 'ASC');
+
+    const result = await queryBuilder.getManyAndCount();
 
     return new Result(true)
-      .data(result.map(item => item.toJSON()))
+      .data(result[0])
+      .meta({ totalRows: result[1] })
       .build();
   }
 }
 
-export default CheckController;
+export default GetBrandController;
