@@ -2,7 +2,10 @@
 import Application from '@library/app';
 
 export default async function init(rabbit, app: Application) {
-  await rabbit.bindToExchange(process.env['FILE_SRV_IMAGE_CREATE_QUEUE'] + '_' + Date.now(), process.env['FILE_SRV_IMAGE_CREATE_EXCHANGE'], async (data, cb) => {
+  await rabbit.bindToExchange(
+    process.env['PRODUCT_SRV_IMAGE_CREATE_QUEUE'] + '_' + Date.now(),
+    process.env['FILE_SRV_IMAGE_CREATE_EXCHANGE'],
+  async (data, cb) => {
     const db = app.plugins['db'];
     const Image = db.model['Image'];
 
