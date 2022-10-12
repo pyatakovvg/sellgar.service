@@ -6,12 +6,14 @@ import { Route, Result, Controller } from '@library/app';
 class CreateProductTemplateController extends Controller {
   async send(): Promise<any> {
     const body = super.body;
+
+    const rabbit = super.plugin.get('rabbit');
     const db = super.plugin.get('db');
     const Product = db.model['Product'];
 
-    const result = await db.repository(Product).save({});
 
     let preloadData = {};
+    const result = await db.repository(Product).save({});
 
     if ('externalId' in body) {
       preloadData['externalId'] = body['externalId'];
@@ -62,6 +64,8 @@ class CreateProductTemplateController extends Controller {
         order: index,
       }));
     }
+
+    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], result);
 
     return new Result()
       .data({

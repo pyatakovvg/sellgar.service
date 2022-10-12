@@ -28,7 +28,10 @@ class Attribute {
   @JoinColumn()
   unit: Unit;
 
-  @ManyToOne(() => Category, (category) => category['code'])
+  @ManyToOne(() => Category, (category) => category['code'], {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   @JoinColumn()
   category: Category;
 

@@ -17,7 +17,6 @@ class Result {
 
   constructor(state: boolean = true) {
     this.result['success'] = state;
-    return this;
   }
 
   data<T>(data: T): Result {
@@ -30,7 +29,7 @@ class Result {
     return this;
   }
 
-  meta<T>(meta: T): Result {
+  meta(meta: any): Result {
     this.result['meta'] = meta;
     return this;
   }

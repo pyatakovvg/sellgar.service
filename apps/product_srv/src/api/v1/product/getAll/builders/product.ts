@@ -1,19 +1,26 @@
 
-import groupBuilder from './group';
+import brandBuilder from './brand';
+import attributeGroupBuilder from './attributeGroup';
 
 
 export default function(data: any) {
   return {
     uuid: data['uuid'],
     externalId: data['externalId'],
+    barcode: data['barcode'],
+    vendor: data['vendor'],
+
     title: data['title'],
     description: data['description'] || '',
 
     group: data['group'],
     category: data['category'],
-    brand: data['brand'],
+    brand: data['brand']
+      ? brandBuilder(data['brand'])
+      : null,
 
     price: Number(data['price']),
+    purchasePrice: Number(data['purchasePrice']),
     currency: data['currency'],
 
     images: data['images'].map((image: any) => ({
@@ -21,7 +28,7 @@ export default function(data: any) {
       name: image?.['image']?.['name'],
     })),
 
-    attributes: data['attributes'].map(groupBuilder),
+    attributes: data['attributes'].map(attributeGroupBuilder),
 
     isUse: data['isUse'],
     isAvailable: data['isAvailable'],

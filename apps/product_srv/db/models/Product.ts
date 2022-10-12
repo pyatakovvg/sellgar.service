@@ -17,6 +17,12 @@ class Product {
   @Column('varchar', { nullable: true, unique: true })
   externalId: string;
 
+  @Column('varchar', { nullable: true, unique: true })
+  barcode: string;
+
+  @Column('varchar', { nullable: true, unique: true })
+  vendor: string;
+
   @Column('varchar', { nullable: true })
   title: string;
 
@@ -25,6 +31,9 @@ class Product {
 
   @Column('numeric', { precision: 10, scale: 2, default: 0 })
   price: number;
+
+  @Column('numeric', { precision: 10, scale: 2, default: 0 })
+  purchasePrice: number;
 
   @ManyToOne(() => Currency, (currency) => currency['code'])
   @JoinColumn()

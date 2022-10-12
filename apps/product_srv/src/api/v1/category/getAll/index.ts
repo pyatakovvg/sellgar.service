@@ -2,7 +2,7 @@
 import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
-import categoryBuilder from './builder/category';
+import categoryBuilder from './builders/category';
 
 
 @Route('get', '/api/v1/categories')

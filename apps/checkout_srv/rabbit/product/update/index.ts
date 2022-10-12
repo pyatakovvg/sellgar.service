@@ -1,48 +1,27 @@
 
-export default async function init(rabbit, app) {
-  await rabbit.bindToExchange(process.env['CHECKOUT_SRV_PRODUCT_UPDATE_QUEUE'] + '_' + Date.now(), process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], async (data, cb) => {
+import Application from '@library/app';
+
+
+export default async function init(rabbit, app: Application) {
+  await rabbit.bindToExchange(
+    process.env['CHECKOUT_SRV_PRODUCT_UPDATE_QUEUE'] + '_' + Date.now(),
+    process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'],
+  async (data, cb) => {
     const db = app.plugins['db'];
+    const Product = db.model['Product'];
+    const repository = db.repository(Product);
 
-    const Product = db.models['Product'];
-
-    const products = await Product.findAll({
-      raw: true,
-      where: {
-        productUuid: data['uuid'],
-      },
-    });
-
-    const bulk = [];
-
-    for (let iIndex in data['modes']) {
-      const mode = data['modes'][iIndex];
-      for (let jIndex in products) {
-        const product = products[jIndex];
-        if (product['modeUuid'] === mode['uuid']) {
-          bulk.push({
-            ...product,
-            externalId: data['externalId'],
-            groupCode: data['groupCode'],
-            categoryCode: data['categoryCode'],
-            imageUuid: data?.['gallery']?.[0]?.['uuid'] ?? null,
-            title: data['title'],
-            originalName: data['originalName'],
-            vendor: mode['vendor'],
-            value: mode['value'],
-            price: mode['price'],
-          });
-        }
-      }
-    }
-
-    for (let index in bulk) {
-      const product = bulk[index];
-      await Product.update(product, {
-        where: {
-          uuid: product['uuid'],
-        },
-      });
-    }
+    await repository.upsert({
+      uuid: data['uuid'],
+      externalId: data['externalId'],
+      title: data['title'],
+      vendor: data['vendor'],
+      price: data['price'],
+      groupCode: data['group']?.['code'] ?? null,
+      categoryCode: data['category']?.['code'] ?? null,
+      currency: data['currency'],
+      image: data['images']?.[0]?.['image'] ?? null,
+    }, ['uuid']);
 
     cb(true);
   });

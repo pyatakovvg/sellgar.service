@@ -2,6 +2,8 @@
 import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
+import brandBuilder from './builders/brand';
+
 
 @Route('get', '/api/v1/products/brands')
 class GetProductBrandController extends Controller {
@@ -25,7 +27,7 @@ class GetProductBrandController extends Controller {
     }
 
     queryBuilder
-      .innerJoin('brand.products', 'products');
+      .innerJoin('brand.products', 'products', 'products.isUse = true');
 
     if ('groupCode' in query) {
       queryBuilder
@@ -40,26 +42,27 @@ class GetProductBrandController extends Controller {
     }
 
     queryBuilder
-      .loadRelationCountAndMap('brand.products', 'brand.products', 'count', (qb) => {
+      .loadRelationCountAndMap('brand.products', 'brand.products', 'products', (qb) => {
         if ('groupCode' in query) {
           qb
-            .innerJoin('count.group', 'group')
+            .innerJoin('products.group', 'group')
             .andWhere('group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
         }
         if ('categoryCode' in query) {
           qb
-            .innerJoin('count.category', 'category')
+            .innerJoin('products.category', 'category')
             .andWhere('category.code IN (:...p_categoryCode)', { p_categoryCode: query['categoryCode'] });
         }
+        qb.andWhere('products.isUse = true');
         return qb;
       })
 
       .addOrderBy('brand.order', 'ASC');
 
-    const result = await queryBuilder.getManyAndCount();
+    const result = await queryBuilder.getMany();
 
     return new Result(true)
-      .data(result[0])
+      .data(result.map(brandBuilder))
       .build();
   }
 }

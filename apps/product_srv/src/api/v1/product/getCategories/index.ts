@@ -2,6 +2,8 @@
 import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
+import categoryBuilder from './builders/category';
+
 
 @Route('get', '/api/v1/products/categories')
 class GetProductCategoryController extends Controller {
@@ -17,7 +19,7 @@ class GetProductCategoryController extends Controller {
       .select(['category.uuid', 'category.code', 'category.name', 'category.description', 'category.icon'])
 
     queryBuilder
-      .leftJoin('category.image', 'c_image')
+      .leftJoin('category.images', 'c_image')
       .addSelect(['c_image.uuid']);
 
     if ('uuid' in query) {
@@ -37,13 +39,13 @@ class GetProductCategoryController extends Controller {
     }
 
     queryBuilder
-      .leftJoin('group.image', 'g_image')
+      .leftJoin('group.images', 'g_image')
       .addSelect(['g_image.uuid'])
 
       .addOrderBy('group.order', 'ASC');
 
     queryBuilder
-      .innerJoin('category.products', 'products');
+      .innerJoin('category.products', 'products', 'products.isUse IS TRUE');
 
     if ('groupCode' in query) {
       queryBuilder
@@ -71,10 +73,10 @@ class GetProductCategoryController extends Controller {
       .addOrderBy('category.order', 'ASC');
 
 
-    const result = await queryBuilder.getManyAndCount();
+    const result = await queryBuilder.getMany();
 
     return new Result(true)
-      .data(result[0])
+      .data(result.map(categoryBuilder))
       .build();
   }
 }

@@ -7,10 +7,10 @@ import productBuilder from './builders/product';
 
 function getAttrsFilter(query: any) {
   const attrsKey = Object.keys(query).filter((key) => /^attr/.test(key));
-  const attrsCode = [];
+  const attrsCode = {};
   for (let index in attrsKey) {
     const key = attrsKey[index];
-    const attrCode = key.match(/^attr\[(.*)\]/)[1];
+    const attrCode = key.replace(/[\[\]]+/g, '').match(/^attr(.*)/)[1];
     attrsCode[attrCode] = query[key];
   }
   return attrsCode;
@@ -21,152 +21,140 @@ function getAttrsFilter(query: any) {
 class GetProductsController extends Controller {
   async send(): Promise<any> {
     const query = queryNormalize(super.query);
+    const attrQuery = getAttrsFilter(query);
 
     const db = super.plugin.get('db');
     const Product = db.model['Product'];
 
 
-    const repository = db.repository(Product);
-    let queryBuilder = repository.createQueryBuilder('product')
-      .select(['product.uuid', 'product.externalId', 'product.title', 'product.description', 'product.price',
-        'product.isUse', 'product.isAvailable', 'product.createdAt', 'product.updatedAt']);
+    const result = await db.manager.transaction(async (entityManager) => {
+      const repositoryProduct = entityManager.getRepository(Product);
 
-    // const attrQuery = getAttrsFilter(data);
+      let queryBuilder = repositoryProduct.createQueryBuilder('product')
+        .select(['product.uuid', 'product.externalId', 'product.title', 'product.description', 'product.price',
+          'product.purchasePrice', 'product.vendor', 'product.barcode', 'product.isUse', 'product.isAvailable', 'product.createdAt',
+          'product.updatedAt']);
 
-    // if ('sort' in data) {
-    //   switch (Number(data['sort'])) {
-    //     case 1: {
-    //       order.push(['amount', 'asc']);
-    //     } break;
-    //     case 2: {
-    //       order.push(['amount', 'desc']);
-    //     } break;
-    //     case 3: {
-    //       order.push(['title', 'asc']);
-    //     } break;
-    //   }
-    // }
-    // else {
-    //   order.push(['createdAt', 'asc']);
-    // }
+      if (('skip' in query) && ('take' in query)) {
+        queryBuilder
+          .limit(Number(query['take'][0]))
+          .offset(Number(query['skip'][0]));
+      }
 
-    if ('uuid' in query) {
-      queryBuilder.andWhere('product.uuid IN (:...uuid)', { uuid: query['uuid'] });
-    }
+      if ('uuid' in query) {
+        queryBuilder.andWhere('product.uuid IN (:...uuid)', { uuid: query['uuid'] });
+      }
 
-    if ('externalId' in query) {
-      queryBuilder.andWhere('product.externalId IN (:...externalId)', { externalId: query['externalId'] });
-    }
+      if ('externalId' in query) {
+        queryBuilder.andWhere('product.externalId IN (:...externalId)', { externalId: query['externalId'] });
+      }
 
-    if ('isUse' in query) {
-      queryBuilder.andWhere('product.isUse IN (:...isUse)', { isUse: query['isUse'] });
-    }
+      if ('isUse' in query) {
+        queryBuilder.andWhere('product.isUse IN (:...isUse)', { isUse: query['isUse'] });
+      }
 
-    queryBuilder
-      .leftJoin('product.group', 'group')
-      .addSelect(['group.uuid', 'group.name', 'group.code', 'group.description'])
+      if ('isAvailable' in query) {
+        queryBuilder.andWhere('product.isAvailable IN (:...isAvailable)', { isAvailable: query['isAvailable'] });
+      }
 
-    if ('groupCode' in query) {
-      queryBuilder.andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
-    }
+      queryBuilder
+        .leftJoin('product.group', 'group')
+        .addSelect(['group.uuid', 'group.name', 'group.code', 'group.description'])
 
-    if ('groupUuid' in query) {
-      queryBuilder.andWhere('group.uuid IN (:...groupUuid)', { groupUuid: query['groupUuid'] });
-    }
+      if ('groupCode' in query) {
+        queryBuilder.andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
+      }
 
-    queryBuilder
-      .leftJoin('product.category', 'category')
-      .addSelect(['category.uuid', 'category.name', 'category.code', 'category.description']);
+      if ('groupUuid' in query) {
+        queryBuilder.andWhere('group.uuid IN (:...groupUuid)', { groupUuid: query['groupUuid'] });
+      }
 
-    if ('categoryCode' in query) {
-      queryBuilder.andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
-    }
+      queryBuilder
+        .leftJoin('product.category', 'category')
+        .addSelect(['category.uuid', 'category.name', 'category.code', 'category.description']);
 
-    if ('categoryUuid' in query) {
-      queryBuilder.andWhere('category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] });
-    }
+      if ('categoryCode' in query) {
+        queryBuilder.andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
+      }
 
-    queryBuilder
-      .leftJoin('product.brand', 'brand')
-      .addSelect(['brand.uuid', 'brand.name', 'brand.code', 'brand.description']);
+      if ('categoryUuid' in query) {
+        queryBuilder.andWhere('category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] });
+      }
 
-    if ('brandCode' in query) {
-      queryBuilder.andWhere('brand.code IN (:...brandCode)', { brandCode: query['brandCode'] });
-    }
+      queryBuilder
+        .leftJoin('product.brand', 'brand')
+        .addSelect(['brand.uuid', 'brand.name', 'brand.code', 'brand.description'])
 
-    if ('brandUuid' in query) {
-      queryBuilder.andWhere('brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] });
-    }
+        .leftJoinAndSelect('brand.images', 'images');
 
-    if ('isUse' in query) {
-      queryBuilder.andWhere('product.isUse IN (:...isUse)', { isUse: query['isUse'] });
-    }
+      if ('brandCode' in query) {
+        queryBuilder.andWhere('brand.code IN (:...brandCode)', { brandCode: query['brandCode'] });
+      }
 
-    if ('isAvailable' in query) {
-      queryBuilder.andWhere('product.isAvailable IN (:...isAvailable)', { isAvailable: query['isAvailable'] });
-    }
+      if ('brandUuid' in query) {
+        queryBuilder.andWhere('brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] });
+      }
 
-    // if ( !! Object.keys(attrQuery).length) {
-    //   const bulk = [];
-    //   const keys = Object.keys(attrQuery);
-    //
-    //   for (let index in keys) {
-    //     const key = keys[index];
-    //
-    //     const result = await Attribute.findOne({
-    //       raw: true,
-    //       where: {
-    //         code: key,
-    //       },
-    //       attributes: ['uuid'],
-    //     });
-    //
-    //     bulk.push({
-    //       attributeUuid: result['uuid'],
-    //       value: attrQuery[key],
-    //     });
-    //   }
-    //
-    //   whereAttr[db.Op.or] = bulk;
-    //   whereAttrRequired = true;
-    // }
+      queryBuilder
+        .leftJoin('product.currency', 'currency')
+        .addSelect(['currency.code', 'currency.displayName'])
 
-    queryBuilder
-      .leftJoin('product.currency', 'currency')
-      .addSelect(['currency.code', 'currency.displayName'])
+        .addOrderBy('product.price', 'ASC');
 
-      .leftJoin('product.attributes', 'attribute')
-      .addSelect(['attribute.uuid', 'attribute.name'])
+      const products = await queryBuilder.getManyAndCount();
 
-        .leftJoin('attribute.values', 'value')
-        .addSelect(['value.uuid', 'value.value'])
+      for (let index in products[0]) {
+        const product = products[0][index];
+        let queryBuilder = repositoryProduct.createQueryBuilder('product')
+          .select(['product.uuid'])
+          .where('product.uuid = :productUuid', { productUuid: product['uuid'] })
 
+          .leftJoin('product.images', 'product_image')
+          .addSelect(['product_image.uuid'])
+
+          .addOrderBy('product_image.order', 'ASC')
+
+          .leftJoin('product_image.image', 'image')
+          .addSelect(['image.uuid', 'image.name'])
+
+          .leftJoin('product.attributes', 'attribute')
+          .addSelect(['attribute.uuid', 'attribute.name'])
+
+          .addOrderBy('attribute.order', 'ASC')
+
+          .leftJoin('attribute.values', 'value')
+          .addSelect(['value.uuid', 'value.value'])
+
+          .addOrderBy('value.order', 'ASC');
+
+        if ( !! Object.keys(attrQuery).length) {
+          const values = Object.keys(attrQuery).reduce((accum, item) => [...accum, ...(attrQuery[item])], []);
+          queryBuilder
+            .andWhere('value.value IN (:...values)', { values });
+        }
+
+        queryBuilder
           .leftJoin('value.attribute', 'value_attribute')
           .addSelect(['value_attribute.uuid', 'value_attribute.code', 'value_attribute.name', 'value_attribute.description'])
 
-            .leftJoin('value_attribute.unit', 'unit')
-            .addSelect(['unit.uuid', 'unit.name', 'unit.description'])
+        if ( !! Object.keys(attrQuery).length) {
+          const a_codes = Object.keys(attrQuery);
+          queryBuilder
+            .andWhere('value_attribute.code IN (:...a_codes)', { a_codes });
+        }
 
-      .leftJoin('product.images', 'product_image')
-      .addSelect(['product_image.uuid'])
+        queryBuilder
+          .leftJoin('value_attribute.unit', 'unit')
+          .addSelect(['unit.uuid', 'unit.name', 'unit.description'])
 
-        .leftJoin('product_image.image', 'image')
-        .addSelect(['image.uuid', 'image.name'])
+        const resultProduct = await queryBuilder.getOne();
 
-      .addOrderBy('value.order', 'ASC')
-      .addOrderBy('product.price', 'ASC')
-      .addOrderBy('attribute.order', 'ASC')
-      .addOrderBy('product_image.order', 'ASC');
+        product['images'] = resultProduct['images'];
+        product['attributes'] = resultProduct['attributes'];
+      }
 
-    if ('skip' in query) {
-      queryBuilder.offset(Number(query['skip'][0]));
-    }
-
-    if ('take' in query) {
-      queryBuilder.limit(Number(query['take'][0]));
-    }
-
-    const result = await queryBuilder.getManyAndCount();
+      return products;
+    })
 
     return new Result()
       .data(result[0].map(productBuilder))

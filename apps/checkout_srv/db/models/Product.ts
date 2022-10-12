@@ -1,90 +1,46 @@
 
+import {Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany, JoinTable} from '@plugin/type-orm';
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Product extends Model {}
+import Image from './Image';
+import Currency from "./Currency";
+import BucketProduct from "./BucketProduct";
 
-  Product.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    productUuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    orderUuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    imageUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    },
-    modeUuid: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    externalId: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    groupCode: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    categoryCode: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    title: {
-      type: DataTypes.STRING(256),
-      allowNull: false,
-      defaultValue: '',
-    },
-    originalName: {
-      type: DataTypes.STRING(256),
-      allowNull: false,
-      defaultValue: '',
-    },
-    vendor: {
-      type: DataTypes.STRING(32),
-      allowNull: false,
-    },
-    value: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1,
-    },
-    price: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-      get(column) {
-        return Number(this.getDataValue(column));
-      },
-    },
-    currencyCode: {
-      type: DataTypes.STRING(4),
-      allowNull: false,
-    },
-  }, {
-    sequelize,
-    timestamps: true,
-  });
 
-  Product.associate = ({ Currency }) => {
+@Entity('Product')
+class Product {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    Product.belongsTo(Currency, {
-      foreignKey: 'currencyCode',
-      as: 'currency',
-    });
-  };
+  @Column('varchar', { nullable: true, unique: true })
+  externalId: string;
 
-  return Product;
+  @Column('varchar', { nullable: true })
+  title: string;
+
+  @Column('varchar', { nullable: true, default: null })
+  groupCode: string;
+
+  @Column('varchar', { nullable: true, default: null })
+  categoryCode: string;
+
+  @Column('varchar', { nullable: true, unique: true })
+  vendor: string;
+
+  @Column('numeric', { precision: 10, scale: 2, default: 0 })
+  price: number;
+
+
+  @ManyToOne(() => Currency, (currency) => currency['code'])
+  @JoinColumn()
+  currency: Currency;
+
+  @ManyToOne(() => Image, (image) => image['uuid'])
+  @JoinColumn()
+  image: Image;
+
+  @OneToMany(() => BucketProduct, (bucketProduct) => bucketProduct['product'])
+  @JoinTable()
+  bucketProduct: BucketProduct;
 }
 
-export default init;
+export default Product;

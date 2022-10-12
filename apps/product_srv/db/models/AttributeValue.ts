@@ -24,7 +24,10 @@ class AttributeValue {
   @JoinColumn()
   group: AttributeGroup;
 
-  @ManyToOne(() => Attribute, (attribute) => attribute['uuid'])
+  @ManyToOne(() => Attribute, (attribute) => attribute['uuid'], {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   @JoinColumn()
   attribute: Attribute;
 }

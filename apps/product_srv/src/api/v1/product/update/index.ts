@@ -8,6 +8,7 @@ class UpdateProductTemplateController extends Controller {
     const body = super.body;
     const params = super.params;
 
+    const rabbit = super.plugin.get('rabbit');
     const db = super.plugin.get('db');
     const Product = db.model['Product'];
 
@@ -18,6 +19,13 @@ class UpdateProductTemplateController extends Controller {
     if ('externalId' in body) {
       preloadData['externalId'] = body['externalId'];
     }
+    if ('barcode' in body) {
+      preloadData['barcode'] = body['barcode'];
+    }
+    if ('vendor' in body) {
+      preloadData['vendor'] = body['vendor'];
+    }
+
     if ('title' in body) {
       preloadData['title'] = body['title'];
     }
@@ -34,6 +42,9 @@ class UpdateProductTemplateController extends Controller {
 
     if ('price' in body) {
       preloadData['price'] = body['price'];
+    }
+    if ('purchasePrice' in body) {
+      preloadData['purchasePrice'] = body['purchasePrice'];
     }
     if ('currencyCode' in body) {
       preloadData['currency'] = { code: body['currencyCode'] };
@@ -75,11 +86,24 @@ class UpdateProductTemplateController extends Controller {
       ...preloadData,
     });
 
-    console.log(product)
+    const result = await repProduct.save(product);
 
-    await repProduct.save(product, {
+    let queryBuilder = repProduct.createQueryBuilder('product')
+      .where('product.uuid=:productUuid', { productUuid: result['uuid'] })
+      .leftJoinAndSelect('product.images', 'product_image')
+         .leftJoinAndSelect('product_image.image', 'images')
+      .leftJoinAndSelect('product.group', 'group')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.currency', 'currency')
+      .leftJoinAndSelect('product.attributes', 'attributes')
+        .leftJoinAndSelect('attributes.values', 'values')
+          .leftJoinAndSelect('values.attribute', 'value_attribute')
+            .leftJoin('value_attribute.unit', 'unit');
 
-    });
+    const updatedProduct = await queryBuilder.getOne();
+
+    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], updatedProduct);
 
     return new Result()
       .data(null)

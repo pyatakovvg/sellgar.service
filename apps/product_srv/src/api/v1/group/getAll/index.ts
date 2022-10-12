@@ -2,6 +2,8 @@
 import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
+import groupBuilder from './builders/group';
+
 
 @Route('get', '/api/v1/groups')
 class GetGroupController extends Controller {
@@ -47,8 +49,10 @@ class GetGroupController extends Controller {
     const result = await queryBuilder.getManyAndCount();
 
     return new Result(true)
-      .data(result[0])
-      .meta({ totalRows: result[1] })
+      .data(result[0].map(groupBuilder))
+      .meta({
+        totalRows: result[1],
+      })
       .build();
   }
 }

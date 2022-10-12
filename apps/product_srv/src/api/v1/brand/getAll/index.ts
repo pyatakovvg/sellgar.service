@@ -2,6 +2,8 @@
 import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
+import brandBuilder from './builders/brand';
+
 
 @Route('get', '/api/v1/brands')
 class GetBrandController extends Controller {
@@ -35,7 +37,7 @@ class GetBrandController extends Controller {
     const result = await queryBuilder.getManyAndCount();
 
     return new Result(true)
-      .data(result[0])
+      .data(result[0].map(brandBuilder))
       .meta({ totalRows: result[1] })
       .build();
   }

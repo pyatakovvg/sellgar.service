@@ -45,6 +45,15 @@ class GetAttributesController extends Controller {
               .andWhere('p_group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
           }
 
+          if ('brandCode' in query) {
+            queryRequest
+              .innerJoin('product.brand', 'p_brand')
+              .andWhere('p_brand.code IN (:...p_brandCode)', { p_brandCode: query['brandCode'] });
+          }
+
+          queryRequest
+            .addOrderBy('attributes.name', 'ASC');
+
     const result = await queryRequest.getMany();
 
     const finalResult = result.reduce((accum, attr) => {
