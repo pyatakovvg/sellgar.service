@@ -76,7 +76,7 @@ cd ../typeOrm && npx yarn build || return 0
 echo '------------------------------------'
 echo 'Пакет "rabbit"'
 echo '------------------------------------'
-cd ./rabbit && npx yarn build || return 0
+cd ../rabbit && npx yarn build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "rabbit"'
