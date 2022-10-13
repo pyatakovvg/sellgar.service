@@ -44,7 +44,6 @@ class ImageController extends Controller {
     const image = new Img(result['buffer']);
 
     if ( !! width || !! height) {
-      console.log(Number(width) ?? null, Number(height) ?? null)
       image.resize(Number(width) ?? null, Number(height) ?? null);
     }
 
