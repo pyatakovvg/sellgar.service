@@ -26,7 +26,7 @@ class Image implements IImage {
   resize(width: number, height?: number | null): IImage {
     this.instance.resize(width, height || null, {
       kernel: sharp.kernel.cubic,
-      fit: sharp.fit.contain,
+      fit: sharp.fit.inside,
       withoutEnlargement: true,
       position: sharp.strategy.entropy,
       background: { r: 255, g: 255, b: 255, alpha: 0 },

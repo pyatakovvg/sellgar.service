@@ -5,7 +5,7 @@ import { Route, Result, Controller } from '@library/app';
 import fs from 'fs';
 
 
-function getSize(innerWidth: number, innerHeight: number, square: number = 1024) {
+function getSize(innerWidth: number, innerHeight: number, square: number) {
   const deltaHeight = square * innerHeight / innerWidth;
   if (deltaHeight > square) {
     return { w: null, h: square };
