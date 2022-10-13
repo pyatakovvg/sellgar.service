@@ -1,8 +1,8 @@
 
 import DbPlugin from "@plugin/db";
 import RabbitPlugin from "@plugin/rabbit";
-import { Config, Application, Router } from '@library/app';
 import DbTypeORMPlugin from "@plugin/type-orm";
+import { Config, Application, Router } from '@library/app';
 
 
 (async function() {
