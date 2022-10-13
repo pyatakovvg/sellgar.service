@@ -69,6 +69,16 @@ echo '------------------------------------'
 cd ./db && npx yarn build || return 0
 
 echo '------------------------------------'
+echo 'Пакет "db2"'
+echo '------------------------------------'
+cd ./typeOrm && npx yarn build || return 0
+
+echo '------------------------------------'
+echo 'Пакет "rabbit"'
+echo '------------------------------------'
+cd ./rabbit && npx yarn build || return 0
+
+echo '------------------------------------'
 echo 'Пакет "rabbit"'
 echo '------------------------------------'
 cd ../rabbit && npx yarn build || return 0
