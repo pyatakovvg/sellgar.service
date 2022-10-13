@@ -44,6 +44,11 @@ echo 'Пакет "Request"'
 echo '------------------------------------'
 cd ../request && npx yarn build || return 0
 
+echo '------------------------------------'
+echo 'Пакет "Sharp"'
+echo '------------------------------------'
+cd ../sharp && npx yarn build || return 0
+
 
 echo '------------------------------------'
 echo '|        Сборка libraries            |'
