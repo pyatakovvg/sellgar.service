@@ -92,7 +92,7 @@ class UpdateProductTemplateController extends Controller {
       .where('product.uuid=:productUuid', { productUuid: result['uuid'] })
       .leftJoinAndSelect('product.images', 'product_image')
         .leftJoinAndSelect('product_image.image', 'images')
-      .addOrderBy('product_image', 'ASC')
+      .addOrderBy('product_image.order', 'ASC')
       .leftJoinAndSelect('product.group', 'group')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.brand', 'brand')
