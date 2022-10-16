@@ -15,10 +15,10 @@ import { Config, Application, Router } from '@library/app';
 
     import('./api/v1/payment/getAll'),
 
-    import('./api/v1/checkout/get'),
+    import('./api/v1/status/getAll'),
+
     import('./api/v1/checkout/getAll'),
-    import('./api/v1/checkout/update'),
-    import('./api/v1/checkout/delete'),
+    import('./api/v1/checkout/create'),
 
     import('./api/v1/bucket/getAll'),
     import('./api/v1/bucket/update'),

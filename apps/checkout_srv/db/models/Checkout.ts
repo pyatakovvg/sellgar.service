@@ -4,15 +4,21 @@ import {
   Column,
   JoinTable,
   ManyToOne,
+  OneToMany,
+  Generated,
   JoinColumn,
-  ManyToMany,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
-import Product from "./Product";
+import Payment from "./Payment";
+import Currency from "./Currency";
+import Delivery from "./Delivery";
+import CheckoutDetail from "./CheckoutDetail";
 import CheckoutStatus from "./CheckoutStatus";
+import DeliveryDetail from "./DeliveryDetail";
+import CheckoutProduct from "./CheckoutProduct";
 
 
 @Entity('Checkout')
@@ -20,8 +26,12 @@ class Checkout {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column('varchar', { nullable: true, unique: true })
+  @Column('integer', { unique: true })
+  @Generated('increment')
   externalId: string;
+
+  @Column('numeric', { precision: 10, scale: 2, default: 0 })
+  price: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -34,9 +44,31 @@ class Checkout {
   @JoinColumn()
   status: CheckoutStatus;
 
-  @ManyToMany(() => Product)
+  @OneToMany(() => CheckoutProduct, (product) => product['checkout'], {
+    eager: true,
+    cascade: true,
+  })
   @JoinTable()
-  products: Product[];
+  products: CheckoutProduct[];
+
+  @ManyToOne(() => Currency, (currency) => currency['code'])
+  @JoinColumn()
+  currency: Currency;
+
+  @ManyToOne(() => Delivery, (delivery) => delivery['code'])
+  @JoinColumn()
+  delivery: Delivery;
+
+  @ManyToOne(() => Payment, (payment) => payment['code'])
+  @JoinColumn()
+  payment: Payment;
+
+  @OneToMany(() => CheckoutDetail, (details) => details['checkout'], {
+    eager: true,
+    cascade: true,
+  })
+  @JoinTable()
+  details: DeliveryDetail[];
 }
 
 export default Checkout;

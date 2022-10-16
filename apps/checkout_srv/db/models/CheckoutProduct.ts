@@ -4,10 +4,11 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn,
 } from '@plugin/type-orm';
 
-import Image from "./Image";
+import Product from "./Product";
+import Checkout from "./Checkout";
 import Currency from "./Currency";
 
 
@@ -16,26 +17,33 @@ class CheckoutProduct {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column('varchar', { nullable: true, unique: true })
-  externalId: string;
-
-  @Column('varchar', { nullable: true })
-  title: string;
-
-  @Column('varchar', { nullable: true, unique: true })
-  vendor: string;
-
   @Column('numeric', { precision: 10, scale: 2, default: 0 })
   price: number;
+
+  @Column('integer', { nullable: false, default: 0 })
+  count: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
 
   @ManyToOne(() => Currency, (currency) => currency['code'])
   @JoinColumn()
   currency: Currency;
 
-  @ManyToOne(() => Image, (image) => image['uuid'])
+  @ManyToOne(() => Checkout, (checkout) => checkout['uuid'], {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   @JoinColumn()
-  image: Image;
+  checkout: Checkout;
+
+  @ManyToOne(() => Product, (product) => product['uuid'])
+  @JoinColumn()
+  product: Product;
 }
 
 export default CheckoutProduct;

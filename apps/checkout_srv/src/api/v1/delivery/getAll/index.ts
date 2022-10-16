@@ -3,30 +3,29 @@ import { Route, Result, Controller } from '@library/app';
 
 
 @Route('get', '/api/v1/delivery')
-class ImageController extends Controller {
+class GetDeliveryController extends Controller {
   async send(): Promise<any> {
-    const where = {};
     const query = super.query;
-    const db = super.plugin.get('db');
 
-    const Delivery = db.models['Delivery'];
+    const db = super.plugin.get('db');
+    const Delivery = db.model['Delivery'];
+
+    const repository = db.manager.getRepository(Delivery);
+    const queryBuilder = repository.createQueryBuilder('delivery')
+      .select(['delivery.code', 'delivery.name', 'delivery.description', 'delivery.isUse'])
+      .addOrderBy('delivery.order', 'ASC');
+
 
     if ('isUse' in query) {
-      where['isUse'] = query['isUse'] === 'true';
+      queryBuilder.andWhere('delivery.isUse = :isUse', { isUse: query['isUse'] })
     }
 
-    const result = await Delivery.findAll({
-      where,
-      order: [
-        ['order', 'asc'],
-      ],
-      attributes: ['code', 'displayName', 'description', 'isUse'],
-    });
+    const result = await queryBuilder.getMany();
 
     return new Result()
-      .data(result.map((item) => item.toJSON()))
+      .data(result)
       .build();
   }
 }
 
-export default ImageController;
+export default GetDeliveryController;

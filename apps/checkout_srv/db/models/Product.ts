@@ -4,6 +4,7 @@ import {Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, OneToMany
 import Image from './Image';
 import Currency from "./Currency";
 import BucketProduct from "./BucketProduct";
+import CheckoutProduct from "./CheckoutProduct";
 
 
 @Entity('Product')
@@ -41,6 +42,10 @@ class Product {
   @OneToMany(() => BucketProduct, (bucketProduct) => bucketProduct['product'])
   @JoinTable()
   bucketProduct: BucketProduct;
+
+  @OneToMany(() => CheckoutProduct, (checkoutProduct) => checkoutProduct['product'])
+  @JoinTable()
+  checkoutProduct: CheckoutProduct;
 }
 
 export default Product;

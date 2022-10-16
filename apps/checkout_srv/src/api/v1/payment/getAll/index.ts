@@ -3,30 +3,29 @@ import { Route, Result, Controller } from '@library/app';
 
 
 @Route('get', '/api/v1/payments')
-class ImageController extends Controller {
+class GetPaymentController extends Controller {
   async send(): Promise<any> {
-    const where = {};
     const query = super.query;
-    const db = super.plugin.get('db');
 
-    const Payment = db.models['Payment'];
+    const db = super.plugin.get('db');
+    const Payment = db.model['Payment'];
+
+    const repository = db.manager.getRepository(Payment);
+    const queryBuilder = repository.createQueryBuilder('payment')
+      .select(['payment.code', 'payment.name', 'payment.description', 'payment.isUse'])
+      .addOrderBy('payment.order', 'ASC');
+
 
     if ('isUse' in query) {
-      where['isUse'] = query['isUse'] === 'true';
+      queryBuilder.andWhere('payment.isUse = :isUse', { isUse: query['isUse'] })
     }
 
-    const result = await Payment.findAll({
-      where,
-      order: [
-        ['order', 'asc'],
-      ],
-      attributes: ['code', 'displayName', 'description', 'isUse'],
-    });
+    const result = await queryBuilder.getMany();
 
     return new Result()
-      .data(result.map((item) => item.toJSON()))
+      .data(result)
       .build();
   }
 }
 
-export default ImageController;
+export default GetPaymentController;
