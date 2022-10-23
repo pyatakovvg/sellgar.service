@@ -3,6 +3,7 @@ import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
 import categoryBuilder from './builders/category';
+import product from "../_builder/product";
 
 
 @Route('get', '/api/v1/products/categories')
@@ -45,27 +46,29 @@ class GetProductCategoryController extends Controller {
       .addOrderBy('group.order', 'ASC');
 
     queryBuilder
-      .innerJoin('category.products', 'products', 'products.isUse IS TRUE');
+      .innerJoin('category.catalogs', 'catalog', 'catalog.isUse is true')
+      .innerJoin('catalog.products', 'products')
+      .innerJoin('products.product', 'product', 'product.count > 0 AND product.reserve < product.count');
 
     if ('groupCode' in query) {
       queryBuilder
-        .innerJoin('products.group', 'group')
+        .innerJoin('catalog.group', 'group')
         .andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
     }
 
     if ('categoryCode' in query) {
       queryBuilder
-        .innerJoin('products.category', 'category')
+        .innerJoin('catalog.category', 'category')
         .andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
     }
 
     queryBuilder
-      .loadRelationCountAndMap('category.products', 'category.products', 'count', (qb) => {
+      .loadRelationCountAndMap('category.products', 'category.catalogs', 'catalog', (qb) => {
         if ('groupCode' in query) {
-          qb.innerJoin('count.group', 'group').andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
+          qb.innerJoin('catalog.group', 'group').andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
         }
         if ('categoryCode' in query) {
-          qb.innerJoin('count.category', 'category').andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
+          qb.innerJoin('catalog.category', 'category').andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
         }
         return qb;
       })

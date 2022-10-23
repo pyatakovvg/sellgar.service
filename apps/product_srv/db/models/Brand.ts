@@ -1,15 +1,17 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, JoinTable, OneToMany, ManyToMany } from '@plugin/type-orm';
+import { Index, Entity, Column, PrimaryGeneratedColumn, JoinTable, OneToMany, ManyToMany } from '@plugin/type-orm';
 
 import Image from './Image';
-import Product from "./Product";
+import Store from "./Store";
 
 
 @Entity('Brand')
 class Brand {
+  @Index()
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
+  @Index()
   @Column('varchar')
   code: string;
 
@@ -31,8 +33,8 @@ class Brand {
   @JoinTable()
   images: Image[];
 
-  @OneToMany(() => Product, (product) => product['brand'])
-  products: Product[];
+  @OneToMany(() => Store, (product) => product['brand'])
+  products: Store[];
 }
 
 export default Brand;

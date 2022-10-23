@@ -106,8 +106,6 @@ const request = async (options) => {
     timeout: 24000,
   });
 
-  console.log(12, instance)
-
   instance.interceptors.request.use(function (config) {
     config.paramsSerializer = (params) => {
       return qs.stringify(params, { arrayFormat: 'repeat' })

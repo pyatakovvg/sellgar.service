@@ -1,5 +1,6 @@
 
 import {
+  Index,
   Entity,
   Column,
   PrimaryGeneratedColumn,
@@ -10,14 +11,16 @@ import {
 
 import Image from "./Image";
 import Group from './Group';
-import Product from "./Product";
+import Catalog from "./Catalog";
 
 
 @Entity('Category')
 class Category {
+  @Index()
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
+  @Index()
   @Column('varchar', { unique: true })
   code: string;
 
@@ -48,8 +51,8 @@ class Category {
   @JoinTable()
   images: Image[];
 
-  @OneToMany(() => Product, (product) => product['category'])
-  products: Product[];
+  @OneToMany(() => Catalog, (product) => product['category'])
+  catalogs: Catalog[];
 }
 
 export default Category;

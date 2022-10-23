@@ -1,9 +1,10 @@
 
-import { Entity, Column, PrimaryColumn } from '@plugin/type-orm';
+import { Index, Entity, Column, PrimaryColumn } from '@plugin/type-orm';
 
 
 @Entity('Image')
 class Image {
+  @Index()
   @PrimaryColumn('uuid')
   uuid: string;
 

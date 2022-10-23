@@ -11,14 +11,16 @@ import { Config, Application, Router } from '@library/app';
   }));
 
   app.addRouter(new Router([
+    import('./api/v1/store/getAll'),
+    import('./api/v1/store/upsert'),
+
     import('./api/v1/product/getBrands'),
     import('./api/v1/product/getGroups'),
     import('./api/v1/product/getCategories'),
     import('./api/v1/product/getAttributes'),
 
     import('./api/v1/product/getAll'),
-    import('./api/v1/product/update'),
-    import('./api/v1/product/create'),
+    import('./api/v1/product/upsert'),
 
     import('./api/v1/currency/getAll'),
 

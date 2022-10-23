@@ -1,5 +1,6 @@
 
 import {
+  Index,
   Entity,
   Column,
   PrimaryGeneratedColumn,
@@ -8,16 +9,18 @@ import {
   ManyToMany
 } from '@plugin/type-orm';
 
-import Image from "./Image";
-import Product from './Product';
+import Image from './Image';
+import Catalog from './Catalog';
 import Category from './Category';
 
 
 @Entity('Group')
 class Group {
+  @Index()
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
+  @Index()
   @Column('varchar', { unique: true })
   code: string;
 
@@ -38,9 +41,9 @@ class Group {
   @JoinTable()
   categories: Category[];
 
-  @OneToMany(() => Product, (product) => product['group'])
+  @OneToMany(() => Catalog, (product) => product['group'])
   @JoinTable()
-  products: Product[];
+  catalogs: Catalog[];
 
   @ManyToMany(() => Image, {
     onDelete: 'CASCADE',

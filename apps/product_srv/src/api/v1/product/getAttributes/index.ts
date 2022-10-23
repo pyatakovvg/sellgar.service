@@ -15,7 +15,7 @@ class GetAttributesController extends Controller {
     const repository = db.repository(Attribute);
     const queryRequest = repository.createQueryBuilder('attributes')
       .select(['attributes.uuid', 'attributes.code', 'attributes.name', 'attributes.description'])
-      .where('attributes.isFiltered = :status', { status: true })
+      .where('attributes.isFiltered is true', { status: true })
 
       if ('categoryCode' in query) {
         queryRequest
@@ -30,26 +30,26 @@ class GetAttributesController extends Controller {
       .leftJoin('attributes.values', 'values')
       .addSelect(['values.uuid', 'values.value'])
 
-        .innerJoin('values.group', 'group')
-          .innerJoin('group.products', 'product')
+        // .innerJoin('values.group', 'group')
+          // .innerJoin('group.catalogs', 'catalog')
 
-          if ('categoryCode' in query) {
-            queryRequest
-              .innerJoin('product.category', 'p_category')
-              .andWhere('p_category.code IN (:...p_categoryCode)', { p_categoryCode: query['categoryCode'] });
-          }
-
-          if ('groupCode' in query) {
-            queryRequest
-              .innerJoin('product.group', 'p_group')
-              .andWhere('p_group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
-          }
-
-          if ('brandCode' in query) {
-            queryRequest
-              .innerJoin('product.brand', 'p_brand')
-              .andWhere('p_brand.code IN (:...p_brandCode)', { p_brandCode: query['brandCode'] });
-          }
+          // if ('categoryCode' in query) {
+          //   queryRequest
+          //     .innerJoin('catalog.category', 'p_category')
+          //     .andWhere('p_category.code IN (:...p_categoryCode)', { p_categoryCode: query['categoryCode'] });
+          // }
+          //
+          // if ('groupCode' in query) {
+          //   queryRequest
+          //     .innerJoin('catalog.group', 'p_group')
+          //     .andWhere('p_group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
+          // }
+          //
+          // if ('brandCode' in query) {
+          //   queryRequest
+          //     .innerJoin('catalog.brand', 'p_brand')
+          //     .andWhere('p_brand.code IN (:...p_brandCode)', { p_brandCode: query['brandCode'] });
+          // }
 
           queryRequest
             .addOrderBy('attributes.name', 'ASC');

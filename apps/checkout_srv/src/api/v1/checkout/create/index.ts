@@ -1,4 +1,5 @@
 
+import { InternalServerError } from '@package/errors';
 import { Route, Result, Controller } from '@library/app';
 
 import bucketBuilder from './builders/bucket';
@@ -10,15 +11,18 @@ class CreateCheckoutController extends Controller {
     const body = super.body;
 
     const db = super.plugin.get('db');
+    const rabbit = super.plugin.get('rabbit');
 
     const Bucket = db.model['Bucket'];
     const Checkout = db.model['Checkout'];
+    const PaymentDetail = db.model['PaymentDetail'];
     const CheckoutDetail = db.model['CheckoutDetail'];
     const CheckoutProduct = db.model['CheckoutProduct'];
 
     const result = await db.manager.transaction(async (entityManager) => {
       const bucketRepository = entityManager.getRepository(Bucket);
       const checkoutRepository = entityManager.getRepository(Checkout);
+      const paymentDetailRepository = entityManager.getRepository(PaymentDetail);
       const checkoutDetailRepository = entityManager.getRepository(CheckoutDetail);
       const checkoutProductRepository = entityManager.getRepository(CheckoutProduct);
 
@@ -57,6 +61,21 @@ class CreateCheckoutController extends Controller {
           product: product['product']['uuid'],
         };
       }));
+
+      if (body['paymentCode'] === 'online') {
+        const result = await rabbit.sendCommand(process.env['PIKASSA_SRV_PAYMENT_CREATE_QUEUE'], '', { reply: true })
+
+        if ( ! result['success']) {
+          throw new InternalServerError({ code: '100.1.1', message: 'Ошибка при выставлении счета' });
+        }
+
+        await paymentDetailRepository.save([{
+          checkout,
+          name: 'paymentLink',
+          value: result['data']['paymentLink'],
+          payment: { code: body['paymentCode'] },
+        }]);
+      }
 
       await bucketRepository.delete({ uuid: bucket['uuid'] });
 

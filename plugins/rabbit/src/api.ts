@@ -78,7 +78,7 @@ export async function createQueue(channel, queue, message, options) {
       if (defaultOptions['reply']) {
         channel.assertQueue(replyQueue, { durable: true, autoDelete: true }, function(error) {
           if (error) {
-            return reject(new InternalServerError({ code: '10.2.1', message: error['message'] }));
+            return reject(new InternalServerError({ code: '100.2.1', message: error['message'] }));
           }
 
           logger.info(`RabbitMQ: Очередь "${replyQueue}" для обратного вызова успешно добавлена или существует`);
@@ -87,10 +87,10 @@ export async function createQueue(channel, queue, message, options) {
             if (message['properties']['correlationId'] === correlationId) {
               channel.cancel(message['fields']['consumerTag'], function(error) {
                 if (error) {
-                  return reject(new InternalServerError({ code: '10.2.2', message: error['message'] }));
+                  return reject(new InternalServerError({ code: '100.2.2', message: error['message'] }));
                 }
                 logger.info(`RabbitMQ: Получено подтверждение по очереди "${queue}" "${message['content'].toString()}"`);
-                resolve(message.content.toString());
+                resolve(JSON.parse(message.content.toString()));
               });
             }
           }, { noAck: true });

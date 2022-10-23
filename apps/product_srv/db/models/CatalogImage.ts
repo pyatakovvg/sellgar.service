@@ -1,19 +1,21 @@
 
 import {
+  Index,
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   ManyToOne,
   JoinTable,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
 import Image from './Image';
-import Product from './Product';
+import Catalog from './Catalog';
 
 
-@Entity('ProductImage')
-class ProductImage {
+@Entity('CatalogImage')
+class CatalogImage {
+  @Index()
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
@@ -28,12 +30,12 @@ class ProductImage {
   @JoinTable()
   image: Image;
 
-  @ManyToOne(() => Product, (product) => product['uuid'], {
+  @ManyToOne(() => Catalog, (product) => product['uuid'], {
     onDelete: 'CASCADE',
     orphanedRowAction: 'delete',
   })
   @JoinColumn()
-  product: Product;
+  product: Catalog;
 }
 
-export default ProductImage;
+export default CatalogImage;

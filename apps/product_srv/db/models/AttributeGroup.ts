@@ -9,7 +9,7 @@ import {
   OneToMany
 } from '@plugin/type-orm';
 
-import Product from './Product';
+import Catalog from './Catalog';
 import AttributeValue from './AttributeValue';
 
 
@@ -25,12 +25,12 @@ class AttributeGroup {
   order: number;
 
 
-  @ManyToOne(() => Product, (product) => product['uuid'], {
+  @ManyToOne(() => Catalog, (product) => product['uuid'], {
     onDelete: 'CASCADE',
     orphanedRowAction: 'delete',
   })
   @JoinColumn()
-  products: Product;
+  products: Catalog;
 
   @OneToMany(() => AttributeValue, (attribute) => attribute['group'], {
     eager: true,

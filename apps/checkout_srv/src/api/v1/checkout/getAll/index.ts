@@ -42,7 +42,7 @@ class GetCheckoutController extends Controller {
 
     queryBuilder
       .leftJoinAndSelect('checkout.payment', 'payment')
-        .leftJoinAndSelect('payment.details', 'p_details');
+        .leftJoinAndSelect('payment.details', 'p_details', 'p_details.checkoutUuid = "checkout"."uuid"');
 
     if ('paymentCode' in query) {
       queryBuilder.andWhere('payment.code IN (:...paymentCode)', { paymentCode: query['paymentCode'] })

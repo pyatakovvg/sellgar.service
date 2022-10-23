@@ -31,10 +31,10 @@ class GetProductGroupController extends Controller {
       .leftJoin('group.images', 'g_image')
       .addSelect(['g_image.uuid'])
 
-      .innerJoin('group.products', 'g_products', 'g_products.isUse = true')
+      .innerJoin('group.catalogs', 'catalog', 'catalog.isUse is true')
 
-      .loadRelationCountAndMap('group.products', 'group.products', 'products', (qb) => {
-        qb.andWhere('products.isUse = true');
+      .loadRelationCountAndMap('group.products', 'group.catalogs', 'catalog', (qb) => {
+        qb.andWhere('catalog.isUse is true');
         return qb;
       });
 
@@ -46,10 +46,10 @@ class GetProductGroupController extends Controller {
       .leftJoin('categories.images', 'c_image')
       .addSelect(['c_image.uuid'])
 
-      .innerJoin('categories.products', 'c_products', 'c_products.isUse = true')
+      .innerJoin('categories.catalogs', 'c_catalog', 'c_catalog.isUse is true')
 
-      .loadRelationCountAndMap('categories.products', 'categories.products', 'products', (qb) => {
-        qb.andWhere('products.isUse = true');
+      .loadRelationCountAndMap('categories.products', 'categories.catalogs', 'catalog', (qb) => {
+        qb.andWhere('catalog.isUse is true');
         return qb;
       })
 
