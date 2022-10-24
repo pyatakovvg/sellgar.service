@@ -48,7 +48,7 @@ class Catalog {
   @JoinColumn()
   category: Category;
 
-  @OneToMany(() => AttributeGroup, (group) => group['products'], {
+  @OneToMany(() => AttributeGroup, (group) => group['catalog'], {
     eager: true,
     cascade: true,
   })

@@ -30,7 +30,7 @@ class AttributeGroup {
     orphanedRowAction: 'delete',
   })
   @JoinColumn()
-  products: Catalog;
+  catalog: Catalog;
 
   @OneToMany(() => AttributeValue, (attribute) => attribute['group'], {
     eager: true,

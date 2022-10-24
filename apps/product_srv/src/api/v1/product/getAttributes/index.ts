@@ -11,48 +11,40 @@ class GetAttributesController extends Controller {
     const db = super.plugin.get('db');
     const Attribute = db.model['Attribute'];
 
-
     const repository = db.repository(Attribute);
     const queryRequest = repository.createQueryBuilder('attributes')
       .select(['attributes.uuid', 'attributes.code', 'attributes.name', 'attributes.description'])
-      .where('attributes.isFiltered is true', { status: true })
-
-      if ('categoryCode' in query) {
-        queryRequest
-          .innerJoin('attributes.category', 'a_category')
-          .andWhere('a_category.code IN (:...a_categoryCode)', { a_categoryCode: query['categoryCode'] });
-      }
+      .where('attributes.isFiltered IS true', { status: true });
 
     queryRequest
       .leftJoin('attributes.unit', 'unit')
       .addSelect(['unit.uuid', 'unit.name'])
 
-      .leftJoin('attributes.values', 'values')
+      .innerJoin('attributes.values', 'values')
       .addSelect(['values.uuid', 'values.value'])
 
-        // .innerJoin('values.group', 'group')
-          // .innerJoin('group.catalogs', 'catalog')
+      .innerJoin('values.group', 'group')
+      .innerJoin('group.catalog', 'catalog')
 
-          // if ('categoryCode' in query) {
-          //   queryRequest
-          //     .innerJoin('catalog.category', 'p_category')
-          //     .andWhere('p_category.code IN (:...p_categoryCode)', { p_categoryCode: query['categoryCode'] });
-          // }
-          //
-          // if ('groupCode' in query) {
-          //   queryRequest
-          //     .innerJoin('catalog.group', 'p_group')
-          //     .andWhere('p_group.code IN (:...p_groupCode)', { p_groupCode: query['groupCode'] });
-          // }
-          //
-          // if ('brandCode' in query) {
-          //   queryRequest
-          //     .innerJoin('catalog.brand', 'p_brand')
-          //     .andWhere('p_brand.code IN (:...p_brandCode)', { p_brandCode: query['brandCode'] });
-          // }
+    if ('groupCode' in query) {
+      queryRequest
+        .innerJoin('catalog.group', 'p_group', 'p_group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
+    }
 
-          queryRequest
-            .addOrderBy('attributes.name', 'ASC');
+    if ('categoryCode' in query) {
+      queryRequest
+        .innerJoin('catalog.category', 'p_category', 'p_category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] })
+    }
+
+    if ('brandCode' in query) {
+      queryRequest
+        .innerJoin('catalog.products', 'products')
+        .innerJoin('products.product', 'product')
+        .innerJoin('product.brand', 'brand', 'brand.code IN (:...brandCode)', { brandCode: query['brandCode'] })
+    }
+
+    queryRequest
+      .addOrderBy('attributes.name', 'ASC');
 
     const result = await queryRequest.getMany();
 
