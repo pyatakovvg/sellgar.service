@@ -2,7 +2,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, JoinTable, OneToMany } from '@plugin/type-orm';
 
 import Unit from './Unit';
-import Category from './Category';
 import AttributeValue from './AttributeValue';
 
 
@@ -27,13 +26,6 @@ class Attribute {
   @ManyToOne(() => Unit, (unit) => unit['uuid'])
   @JoinColumn()
   unit: Unit;
-
-  @ManyToOne(() => Category, (category) => category['code'], {
-    onDelete: 'CASCADE',
-    orphanedRowAction: 'delete',
-  })
-  @JoinColumn()
-  category: Category;
 
   @OneToMany(() => AttributeValue, (value) => value['attribute'])
   @JoinTable()

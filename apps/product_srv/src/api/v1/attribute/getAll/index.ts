@@ -20,25 +20,6 @@ class GetAttributesController extends Controller {
         .andWhere('attribute.uuid IN (:...uuid)', { uuid: query['uuid'] });
     }
 
-    if ('include' in query) {
-      if ( !!~ query['include'].indexOf('category')) {
-        queryBuilder
-          .leftJoin('attribute.category', 'category')
-          .addSelect(['category.uuid', 'category.code', 'category.name', 'category.description']);
-
-        if ('categoryCode' in query) {
-          queryBuilder
-            .andWhere('category.code IN (:...categoryCode)', { categoryCode: query['categoryCode'] });
-        }
-        else if ('categoryUuid' in query) {
-          queryBuilder
-            .andWhere('category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] });
-        }
-
-        queryBuilder.addOrderBy('category.order', 'ASC');
-      }
-    }
-
     if ('unitUuid' in query) {
       queryBuilder
         .andWhere('unit.uuid IN (:...unitUuid)', { unitUuid: query['unitUuid'] });

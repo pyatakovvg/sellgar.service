@@ -22,9 +22,6 @@ class CreateBrandController extends Controller {
       if (body['uuid']) {
         attrModel['uuid'] = body['uuid'];
       }
-      if (body['category']) {
-        attrModel['category'] = { uuid: body['category']['uuid'] };
-      }
       if (body['unit']) {
         attrModel['unit'] = { uuid: body['unit']['uuid'] };
       }
