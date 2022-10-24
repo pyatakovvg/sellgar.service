@@ -92,6 +92,16 @@ class GetProductsController extends Controller {
           .innerJoin('b_product.brand', 'brand', 'brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] })
       }
 
+      if ( !! Object.keys(attrQuery).length) {
+        const a_codes = Object.keys(attrQuery);
+        const values = Object.keys(attrQuery).reduce((accum, item) => [...accum, ...(attrQuery[item])], []);
+
+        queryBuilder
+          .innerJoin('catalog.attributes', 'attribute')
+          .innerJoin('attribute.values', 'value', 'value.value IN (:...values)', { values })
+          .innerJoin('value.attribute', 'value_attribute', 'value_attribute.code IN (:...a_codes)', { a_codes });
+      }
+
       if (('skip' in query) && ('take' in query)) {
         queryBuilder
           .limit(Number(query['take'][0]))
@@ -131,7 +141,7 @@ class GetProductsController extends Controller {
 
         queryBuilder
           .leftJoin('value.attribute', 'value_attribute')
-          .addSelect(['value_attribute.uuid', 'value_attribute.code', 'value_attribute.name', 'value_attribute.description'])
+          .addSelect(['value_attribute.uuid', 'value_attribute.code', 'value_attribute.name', 'value_attribute.description']);
 
         if ( !! Object.keys(attrQuery).length) {
           const a_codes = Object.keys(attrQuery);
@@ -149,13 +159,13 @@ class GetProductsController extends Controller {
           .leftJoinAndSelect('product.brand', 'brand')
           .leftJoinAndSelect('brand.images', 'b_image')
           .leftJoinAndSelect('product.currency', 'currency')
-          .addOrderBy('products.order', 'ASC')
+          .addOrderBy('products.order', 'ASC');
 
         const resultProduct = await queryBuilder.getOne();
 
-        product['images'] = resultProduct['images'];
-        product['products'] = resultProduct['products'];
-        product['attributes'] = resultProduct['attributes'];
+        product['images'] = resultProduct?.['images'] ?? [];
+        product['products'] = resultProduct?.['products'] ?? [];
+        product['attributes'] = resultProduct?.['attributes'] ?? [];
       }
 
       return products;
