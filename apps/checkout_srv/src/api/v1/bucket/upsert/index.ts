@@ -13,85 +13,83 @@ class UpdateBucketController extends Controller {
     const db = super.plugin.get('db');
     const Bucket = db.model['Bucket'];
 
+    const model = new BucketModel(db);
+    const repository = db.manager.getRepository(Bucket);
 
-    const result = await db.manager.transaction(async (entityManager) => {
-      const model = new BucketModel(db, entityManager);
-      const repository = entityManager.getRepository(Bucket);
+    const bucket = await repository.createQueryBuilder('bucket')
+      .where('bucket.uuid = :bucketUuid', {
+        bucketUuid: body['bucketUuid'],
+      })
+      .innerJoin('bucket.customer', 'customer', 'customer.uuid = :customerUuid', {
+        customerUuid: body['customerUuid'],
+      })
+      .leftJoinAndSelect('bucket.products', 'products')
+      .leftJoinAndSelect('products.product', 'product')
+      .getOne();
 
-      const bucket = await repository.createQueryBuilder('bucket')
-        .where('bucket.uuid = :bucketUuid', {
-          bucketUuid: body['bucketUuid'],
-        })
-        .innerJoin('bucket.customer', 'customer', 'customer.uuid = :customerUuid', {
-          customerUuid: body['customerUuid'],
-        })
-        .leftJoinAndSelect('bucket.products', 'products')
-        .leftJoinAndSelect('products.product', 'product')
-        .getOne();
+    const product = await repository.createQueryBuilder('bucket')
+      .where('bucket.uuid = :bucketUuid', {
+        bucketUuid: body['bucketUuid'],
+      })
+      .innerJoin('bucket.customer', 'customer', 'customer.uuid = :customerUuid', {
+        customerUuid: body['customerUuid'],
+      })
+      .innerJoin('bucket.products', 'products')
+      .innerJoin('products.product', 'product', 'product.uuid = :productUuid', {
+        productUuid: body['productUuid'],
+      })
+      .getOne();
 
-      const product = await repository.createQueryBuilder('bucket')
-        .where('bucket.uuid = :bucketUuid', {
-          bucketUuid: body['bucketUuid'],
-        })
-        .innerJoin('bucket.customer', 'customer', 'customer.uuid = :customerUuid', {
-          customerUuid: body['customerUuid'],
-        })
-        .innerJoin('bucket.products', 'products')
-        .innerJoin('products.product', 'product', 'product.uuid = :productUuid', {
-          productUuid: body['productUuid'],
-        })
-        .getOne();
+    const bucketData = {
+      uuid: bucket?.['uuid'],
+      customer: {
+        uuid: body['customerUuid'],
+      },
+      currency: {
+        code: 'RUB',
+      }
+    };
 
-      const bucketData = {
-        uuid: bucket?.['uuid'],
-        customer: {
-          uuid: body['customerUuid'],
-        },
-        currency: {
-          code: 'RUB',
+    if ( ! product) {
+      bucketData['products'] = [
+        ...(bucket?.['products'] ?? []).map((item: any) => ({
+          count: item['count'],
+          product: {
+            uuid: item['product']['uuid'],
+          },
+        })),
+        {
+          count: body['count'],
+          product: {
+            uuid: body['productUuid'],
+          }
         }
-      };
-
-      if ( ! product) {
-        bucketData['products'] = [
-          ...(bucket?.['products'] ?? []).map((item: any) => ({
-            count: item['count'],
-            product: {
-              uuid: item['product']['uuid'],
-            },
-          })),
-          {
+      ];
+    }
+    else {
+      bucketData['products'] = (bucket?.['products'] ?? []).map((item: any) => {
+        if (item['product']['uuid'] === body['productUuid']) {
+          return {
             count: body['count'],
             product: {
-              uuid: body['productUuid'],
-            }
-          }
-        ];
-      }
-      else {
-        bucketData['products'] = (bucket?.['products'] ?? []).map((item: any) => {
-          if (item['product']['uuid'] === body['productUuid']) {
-            return {
-              count: body['count'],
-              product: {
-                uuid: item['product']['uuid'],
-              },
-            }
-          }
-          return {
-            count: item['count'],
-            product: {
               uuid: item['product']['uuid'],
             },
           }
-        });
-      }
-
-      await repository.save(bucketData);
-      return await model.getOne({
-        bucketUuid: body['bucketUuid'],
-        customerUuid: body['customerUuid'],
+        }
+        return {
+          count: item['count'],
+          product: {
+            uuid: item['product']['uuid'],
+          },
+        }
       });
+    }
+
+    await repository.save(bucketData);
+
+    const result = await model.getOne({
+      bucketUuid: body['bucketUuid'],
+      customerUuid: body['customerUuid'],
     });
 
     return new Result()

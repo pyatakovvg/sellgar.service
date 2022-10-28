@@ -14,40 +14,37 @@ class DeleteOrderController extends Controller {
     const Bucket = db.model['Bucket'];
     const BucketProduct = db.model['BucketProduct'];
 
+     const model = new BucketModel(db);
 
-    const result = await db.manager.transaction(async (entityManager) => {
-      const model = new BucketModel(db, entityManager);
+    if (query['productUuid']) {
+      const repository = db.manager.getRepository(BucketProduct);
 
-      if (query['productUuid']) {
-        const repository = entityManager.getRepository(BucketProduct);
-
-        await repository.delete({
-          bucket: {
-            uuid: query['bucketUuid'],
-            customer: {
-              uuid: query['customerUuid'],
-            }
-          },
-          product: {
-            uuid: query['productUuid'],
-          },
-        });
-      }
-      else {
-        const repository = entityManager.getRepository(Bucket);
-
-        await repository.delete({
+      await repository.delete({
+        bucket: {
           uuid: query['bucketUuid'],
           customer: {
             uuid: query['customerUuid'],
-          },
-        });
-      }
-
-      return await model.getOne({
-        bucketUuid: query['bucketUuid'],
-        customerUuid: query['customerUuid'],
+          }
+        },
+        product: {
+          uuid: query['productUuid'],
+        },
       });
+    }
+    else {
+      const repository = db.manager.getRepository(Bucket);
+
+      await repository.delete({
+        uuid: query['bucketUuid'],
+        customer: {
+          uuid: query['customerUuid'],
+        },
+      });
+    }
+
+    const result = await model.getOne({
+      bucketUuid: query['bucketUuid'],
+      customerUuid: query['customerUuid'],
     });
 
     return new Result()

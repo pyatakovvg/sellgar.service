@@ -3,14 +3,13 @@ class StoreModel {
   private db: any = null;
   private manager: any = null;
 
-  constructor(db: any, manager: any) {
+  constructor(db: any) {
     this.db = db;
-    this.manager = manager;
   }
 
   async getOne(params: any) {
     const Bucket = this.db.model['Bucket'];
-    const queryBuilder = this.manager.createQueryBuilder(Bucket, 'bucket');
+    const queryBuilder = this.db.manager.createQueryBuilder(Bucket, 'bucket');
 
     return await queryBuilder
       .andWhere('bucket.uuid = :bucketUuid', {
