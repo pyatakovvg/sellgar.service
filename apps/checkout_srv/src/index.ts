@@ -10,7 +10,6 @@ import { Config, Application, Router } from '@library/app';
     port: Number(process.env['PORT']),
   }));
 
-
   app.addRouter(new Router([
     import('./api/v1/delivery/getAll'),
 

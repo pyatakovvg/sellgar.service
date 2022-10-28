@@ -11,11 +11,10 @@ export default async function init(rabbit, app: Application) {
 
     const repository = db.manager.getRepository(Image);
 
-    await repository.upsert({
-      uuid: data['uuid'],
-      externalId: data['externalId'],
-      name: data['name'],
-    }, ['uuid']);
+    await repository.save(data.map((item: any) => ({
+      uuid: item['uuid'],
+      name: item['name'],
+    })));
 
     cb(true);
   });
