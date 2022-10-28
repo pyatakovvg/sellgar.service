@@ -85,11 +85,11 @@ class UpdateBucketController extends Controller {
       });
     }
 
-    await repository.save(bucketData);
+    const bucketUpdate = await repository.save(bucketData, { reload: true });
 
     const result = await model.getOne({
-      bucketUuid: body['bucketUuid'],
-      customerUuid: body['customerUuid'],
+      bucketUuid: bucketUpdate['uuid'],
+      customerUuid: bucketUpdate['customer']['uuid'],
     });
 
     return new Result()
