@@ -9,14 +9,12 @@ export default async function init(rabbit, app: Application) {
     const db = app.plugins['db'];
     const Image = db.model['Image'];
 
-    const repository = db.repository(Image);
-    const queryBuilder = repository.createQueryBuilder();
+    const repository = db.manager.getRepository(Image);
 
-    await queryBuilder
-      .insert()
-      .into(Image)
-      .values(data.map((i: any) => ({ uuid: i['uuid'], name: i['name'] })))
-      .execute();
+    await repository.save(data.map((item: any) => ({
+      uuid: item['uuid'],
+      name: item['name'],
+    })));
 
     cb(true);
   });
