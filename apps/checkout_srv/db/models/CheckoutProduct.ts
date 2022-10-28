@@ -4,10 +4,12 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
-import Product from "./Product";
+import Product from "./Store";
 import Checkout from "./Checkout";
 import Currency from "./Currency";
 

@@ -21,8 +21,7 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/checkout/create'),
 
     import('./api/v1/bucket/getAll'),
-    import('./api/v1/bucket/update'),
-    import('./api/v1/bucket/create'),
+    import('./api/v1/bucket/upsert'),
     import('./api/v1/bucket/delete'),
   ]));
 

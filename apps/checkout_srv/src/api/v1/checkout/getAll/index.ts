@@ -52,7 +52,9 @@ class GetCheckoutController extends Controller {
       .leftJoinAndSelect('checkout.products', 'products')
       .leftJoinAndSelect('products.currency', 'p_currency')
       .leftJoinAndSelect('products.product', 'product')
-        .leftJoinAndSelect('product.image', 'image')
+        .leftJoinAndSelect('product.product', 'catalog_product')
+          .leftJoinAndSelect('catalog_product.catalog', 'catalog')
+            .leftJoinAndSelect('catalog.image', 'image')
 
       .addOrderBy('checkout.createdAt', 'DESC');
 

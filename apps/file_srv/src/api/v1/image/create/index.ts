@@ -74,7 +74,7 @@ class ImageController extends Controller {
       .orderBy('image.createdAt', 'DESC')
       .getMany();
 
-    await rabbit.sendEvent(process.env['FILE_SRV_IMAGE_CREATE_EXCHANGE'], result);
+    await rabbit.sendEvent(process.env['FILE_SRV_IMAGE_UPSERT_EXCHANGE'], result);
 
     return new Result()
       .data(result)

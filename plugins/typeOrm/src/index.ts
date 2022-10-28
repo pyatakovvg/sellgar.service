@@ -21,6 +21,8 @@ interface IConfig {
 
 export interface IDbPlugin {
   config: IConfig;
+  model: IModel;
+  manager: EntityManager;
   init(app: Application): void;
 }
 
@@ -87,7 +89,7 @@ class DbPlugin extends Plugin implements IDbPlugin {
     return this.instance.getRepository<T>(target);
   }
 
-  get model() {
+  get model(): IModel {
     return this.models;
   }
 

@@ -14,19 +14,26 @@ class CheckController extends Controller {
 
 
     const result = await db.manager.transaction(async (entityManager) => {
-      const productRepository = entityManager.getTreeRepository(Product);
       const commentRepository = entityManager.getTreeRepository(Comment);
 
-      const queryBuilder = productRepository
-        .createQueryBuilder('product');
+      const queryBuilder = entityManager.createQueryBuilder(Product, 'product');
 
       if ('uuid' in query) {
         queryBuilder.andWhere('product.uuid IN (:...productUuid)', { productUuid: query['uuid'] });
       }
 
       queryBuilder
-        .addOrderBy('product.uuid', 'ASC')
         .leftJoinAndSelect('product.comments', 'comment', 'comment.parentUuid IS NULL')
+        .loadRelationCountAndMap('product.allCommentCount', 'product.comments', 'allComments', (qb) => {
+          return qb.where('allComments.parentUuid IS NULL');
+        })
+        .loadRelationCountAndMap('product.newCommentCount', 'product.comments', 'newComments', (qb) => {
+          return qb
+            .where('newComments.parentUuid IS NULL')
+            .innerJoin('newComments.status', 'status', 'status.code = :code', {
+            code: 'new'
+          });
+        })
         .addOrderBy('comment.createdAt', 'ASC');
 
       if (('take' in query) && ('skip' in query)) {
@@ -36,7 +43,6 @@ class CheckController extends Controller {
       }
 
       const products = await queryBuilder.getManyAndCount();
-
 
       const resultProducts = [];
 

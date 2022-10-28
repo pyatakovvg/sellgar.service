@@ -2,6 +2,8 @@
 import { queryNormalize } from '@helper/utils';
 import { Route, Result, Controller } from '@library/app';
 
+import bucketBuilder from '../_builder/bucket';
+
 
 @Route('get', '/api/v1/buckets')
 class GetBucketController extends Controller {
@@ -10,33 +12,38 @@ class GetBucketController extends Controller {
     const db = super.plugin.get('db');
 
     const Bucket = db.model['Bucket'];
-    const repositoryBucket = db.repository(Bucket);
+    const repository = db.repository(Bucket);
 
-    const queryBuilder = repositoryBucket
-      .createQueryBuilder('bucket')
-      .select(['bucket.uuid', 'bucket.createdAt', 'bucket.updatedAt']);
+    const queryBuilder = repository.createQueryBuilder('bucket')
 
     if ('uuid' in query) {
-      queryBuilder.andWhere('bucket.uuid IN (:...bucketUuid)', { bucketUuid: query['uuid'] })
+      queryBuilder.andWhere('bucket.uuid IN (:...bucketUuid)', {
+        bucketUuid: query['uuid'],
+      });
+    }
+
+    if ('customerUuid' in query) {
+      queryBuilder.innerJoin('bucket.customer', 'customer', 'customer.uuid IN (:...customerUuid)', {
+        customerUuid: query['customerUuid'],
+      });
     }
 
     queryBuilder
-      .leftJoin('bucket.products', 'products')
-      .addSelect(['products.uuid', 'products.count'])
+      .leftJoinAndSelect('bucket.currency', 'b_currency')
+      .leftJoinAndSelect('bucket.products', 'products')
+        .leftJoinAndSelect('products.product', 'product')
+          .leftJoinAndSelect('product.currency', 'p_currency')
+          .leftJoinAndSelect('product.product', 'catalog_product')
+            .leftJoinAndSelect('catalog_product.catalog', 'catalog')
+             .leftJoinAndSelect('catalog.image', 'image');
 
-      .leftJoin('products.product', 'product')
-      .addSelect(['product.uuid', 'product.externalId', 'product.title', 'product.price',
-        'product.groupCode', 'product.categoryCode'])
-
-      .leftJoinAndSelect('product.image', 'image')
-      .leftJoinAndSelect('product.currency', 'currency')
-
+    queryBuilder
       .addOrderBy('products.createdAt', 'ASC');
 
     const result = await queryBuilder.getManyAndCount();
 
     return new Result()
-      .data(result[0])
+      .data(result[0].map(bucketBuilder))
       .meta({
         totalRows: result[1],
       })

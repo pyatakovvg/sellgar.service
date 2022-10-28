@@ -52,7 +52,7 @@ class CreateProductTemplateController extends Controller {
       }));
     }
 
-    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], result);
+    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPSERT_EXCHANGE'], result);
 
     return new Result()
       .data({

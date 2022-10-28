@@ -1,15 +1,15 @@
 
 import {
   Tree,
-  TreeParent,
-  TreeChildren,
   Entity,
   Column,
   ManyToOne,
   JoinColumn,
-  PrimaryGeneratedColumn,
+  TreeParent,
+  TreeChildren,
   CreateDateColumn,
   UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
 import Status from "./Status";
@@ -42,7 +42,10 @@ class Comment {
   @JoinColumn()
   status: Status;
 
-  @ManyToOne(() => Product, (product) => product['comments'], {})
+  @ManyToOne(() => Product, (product) => product['comments'], {
+    onDelete: "CASCADE",
+    orphanedRowAction: "delete",
+  })
   product: Product;
 }
 

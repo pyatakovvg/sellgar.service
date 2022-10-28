@@ -10,8 +10,9 @@ class UpdateProductTemplateController extends Controller {
   async send(): Promise<any> {
     const body = super.body;
 
-    // const rabbit = super.plugin.get('rabbit');
     const db = super.plugin.get('db');
+    const rabbit = super.plugin.get('rabbit');
+
     const catalog = new CatalogModel(db);
 
     const catalogUpdated = await catalog.save({
@@ -19,14 +20,11 @@ class UpdateProductTemplateController extends Controller {
     });
     const result = await catalog.getOne(catalogUpdated['uuid']);
 
+    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPSERT_EXCHANGE'], result);
+
     return new Result()
       .data(catalogBuilder(result))
       .build();
-
-
-    // await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPDATE_EXCHANGE'], updatedProduct);
-
-
   }
 }
 

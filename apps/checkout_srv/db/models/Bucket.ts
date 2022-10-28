@@ -3,12 +3,16 @@ import {
   Entity,
   JoinTable,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
+import Customer from './Customer';
 import BucketProduct from './BucketProduct';
+import Currency from "./Currency";
 
 
 @Entity('Bucket')
@@ -29,6 +33,17 @@ class Bucket {
   })
   @JoinTable()
   products: BucketProduct[];
+
+  @ManyToOne(() => Customer, (customer) => customer['uuid'], {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
+  @JoinTable()
+  customer: Customer;
+
+  @ManyToOne(() => Currency, (currency) => currency['code'])
+  @JoinColumn()
+  currency: Currency;
 }
 
 export default Bucket;

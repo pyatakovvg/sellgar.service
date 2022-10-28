@@ -13,10 +13,11 @@ class Product {
   externalId: string;
 
   @Column('varchar', { nullable: true })
-  title: string;
+  name: string;
 
   @OneToMany(() => Comment, (comment) => comment['product'], {
-
+    eager: true,
+    cascade: true,
   })
   @JoinTable()
   comments: Comment[];
