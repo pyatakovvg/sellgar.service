@@ -82,7 +82,7 @@ class RabbitPlugin extends Plugin implements IRabbitPlugin {
       return Promise.resolve();
     }
     catch(error) {
-      logger.error('RabbitPlugin: ' + error?.['data']?.['message'] || error?.['message'] || 'undefined');
+      logger.error('RabbitPlugin: ' + error?.['data']?.['message'] || error?.['message'] || error || 'неизвестная ошибка');
       return Promise.reject();
     }
   }
