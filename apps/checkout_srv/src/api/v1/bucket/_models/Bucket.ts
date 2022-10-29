@@ -25,6 +25,9 @@ class StoreModel {
       .leftJoinAndSelect('product.product', 'catalog_product')
       .leftJoinAndSelect('catalog_product.catalog', 'catalog')
       .leftJoinAndSelect('catalog.image', 'image')
+
+      .addOrderBy('products.order', 'ASC')
+
       .getOne();
   }
 }

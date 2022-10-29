@@ -52,13 +52,15 @@ class UpdateBucketController extends Controller {
 
     if ( ! product) {
       bucketData['products'] = [
-        ...(bucket?.['products'] ?? []).map((item: any) => ({
+        ...(bucket?.['products'] ?? []).map((item: any, index: number) => ({
+          order: index,
           count: item['count'],
           product: {
             uuid: item['product']['uuid'],
           },
         })),
         {
+          order: (bucket?.['products'] ?? []).length,
           count: body['count'],
           product: {
             uuid: body['productUuid'],
@@ -67,9 +69,10 @@ class UpdateBucketController extends Controller {
       ];
     }
     else {
-      bucketData['products'] = (bucket?.['products'] ?? []).map((item: any) => {
+      bucketData['products'] = (bucket?.['products'] ?? []).map((item: any, index: number) => {
         if (item['product']['uuid'] === body['productUuid']) {
           return {
+            order: index,
             count: body['count'],
             product: {
               uuid: item['product']['uuid'],
@@ -77,6 +80,7 @@ class UpdateBucketController extends Controller {
           }
         }
         return {
+          order: index,
           count: item['count'],
           product: {
             uuid: item['product']['uuid'],

@@ -38,7 +38,7 @@ class GetBucketController extends Controller {
              .leftJoinAndSelect('catalog.image', 'image');
 
     queryBuilder
-      .addOrderBy('products.createdAt', 'ASC');
+      .addOrderBy('products.order', 'ASC');
 
     const result = await queryBuilder.getManyAndCount();
 

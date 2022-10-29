@@ -4,8 +4,6 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
@@ -21,11 +19,8 @@ class BucketProduct {
   @Column('integer', { nullable: false, default: 0 })
   count: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column('integer', { default: 999999 })
+  order: string;
 
 
   @ManyToOne(() => Bucket, (bucket) => bucket['uuid'], {
