@@ -5,28 +5,20 @@ import brandBuilder from './brand';
 export default function(data: any) {
   return {
     uuid: data['uuid'],
-    label: data['label'],
-    isTarget: data['isTarget'],
-    product : {
-      uuid: data['product']['uuid'],
 
-      name: data['product']['name'],
-      description: data['product']['description'],
+    name: data['name'],
+    description: data['description'],
 
-      brand: data['product']['brand'] ? brandBuilder(data['product']['brand']) : null,
+    brand: data['brand'] ? brandBuilder(data['brand']) : null,
 
-      barcode: data['product']['barcode'],
-      vendor: data['product']['vendor'],
+    barcode: data['barcode'],
+    vendor: data['vendor'],
 
-      count: Number(data['product']['count']),
-      reserve: Number(data['product']['reserve']),
+    count: Number(data['count']),
+    reserve: Number(data['reserve']),
 
-      price: Number(data['product']['price']),
-      purchasePrice: Number(data['product']['purchasePrice']),
-      currency: data['product']['currency'],
-
-      createdAt: data['createdAt'],
-      updatedAt: data['updatedAt'],
-    },
+    price: Number(data['price']),
+    purchasePrice: Number(data['purchasePrice']),
+    currency: data['currency'],
   };
 }

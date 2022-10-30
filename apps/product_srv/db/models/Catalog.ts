@@ -1,10 +1,22 @@
 
-import { Index, Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinTable, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from '@plugin/type-orm';
+import {
+  Index,
+  Entity,
+  Column,
+  OneToOne,
+  ManyToOne,
+  JoinTable,
+  JoinColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
+} from '@plugin/type-orm';
 
 import Group from './Group';
+import Store from './Store';
 import Category from './Category';
 import CatalogImage from './CatalogImage';
-import CatalogProduct from './CatalogProduct';
 import AttributeGroup from './AttributeGroup';
 
 
@@ -55,19 +67,19 @@ class Catalog {
   @JoinTable()
   attributes: AttributeGroup[];
 
-  @OneToMany(() => CatalogImage, (image) => image['product'], {
+  @OneToMany(() => CatalogImage, (image) => image['catalog'], {
     eager: true,
     cascade: true,
   })
   @JoinTable()
   images: CatalogImage[];
 
-  @OneToMany(() => CatalogProduct, (product) => product['catalog'], {
+  @OneToOne(() => Store, (product) => product['uuid'], {
     eager: true,
     cascade: true,
   })
-  @JoinTable()
-  products: CatalogProduct[];
+  @JoinColumn()
+  product: Store;
 }
 
 export default Catalog;

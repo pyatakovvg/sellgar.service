@@ -38,8 +38,7 @@ class GetProductsController extends Controller {
           return qb
             .select('price')
             .from(Store, 'store')
-            .innerJoin('store.product', 'product', 'product.isTarget is true')
-            .innerJoin('product.catalog', 'cc', 'cc.uuid = "catalog"."uuid"');
+            .innerJoin('store.catalog', 's_catalog', 's_catalog.uuid = "catalog"."uuid"');
         }, 'price')
         .addOrderBy('price', 'ASC')
 
@@ -80,15 +79,13 @@ class GetProductsController extends Controller {
 
       if ('brandCode' in query) {
         queryBuilder
-          .innerJoin('catalog.products', 'b_products')
-          .innerJoin('b_products.product', 'b_product')
+          .innerJoin('catalog.product', 'b_product')
           .innerJoin('b_product.brand', 'brand', 'brand.code IN (:...brandCode)', { brandCode: query['brandCode'] })
       }
 
       if ('brandUuid' in query) {
         queryBuilder
-          .innerJoin('catalog.products', 'b_products')
-          .innerJoin('b_products.product', 'b_product')
+          .innerJoin('catalog.product', 'b_product')
           .innerJoin('b_product.brand', 'brand', 'brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] })
       }
 
@@ -118,11 +115,11 @@ class GetProductsController extends Controller {
           .select(['catalog.uuid'])
           .where('catalog.uuid = :productUuid', { productUuid: product['uuid'] })
 
-          .leftJoin('catalog.images', 'product_image')
-          .addSelect(['product_image.uuid'])
+          .leftJoin('catalog.images', 'catalog_image')
+          .addSelect(['catalog_image.uuid'])
+          .addOrderBy('catalog_image.order', 'ASC')
 
-          .addOrderBy('product_image.order', 'ASC')
-          .leftJoin('product_image.image', 'image')
+          .leftJoin('catalog_image.image', 'image')
           .addSelect(['image.uuid', 'image.name'])
 
           .leftJoin('catalog.attributes', 'attribute')
@@ -154,17 +151,15 @@ class GetProductsController extends Controller {
           .addSelect(['unit.uuid', 'unit.name', 'unit.description'])
 
         queryBuilder
-          .leftJoinAndSelect('catalog.products', 'products')
-          .leftJoinAndSelect('products.product', 'product')
-          .leftJoinAndSelect('product.brand', 'brand')
-          .leftJoinAndSelect('brand.images', 'b_image')
-          .leftJoinAndSelect('product.currency', 'currency')
-          .addOrderBy('products.order', 'ASC');
+          .leftJoinAndSelect('catalog.product', 'product')
+            .leftJoinAndSelect('product.brand', 'brand')
+              .leftJoinAndSelect('brand.images', 'b_image')
+            .leftJoinAndSelect('product.currency', 'currency')
 
         const resultProduct = await queryBuilder.getOne();
 
         product['images'] = resultProduct?.['images'] ?? [];
-        product['products'] = resultProduct?.['products'] ?? [];
+        product['product'] = resultProduct?.['product'] ?? null;
         product['attributes'] = resultProduct?.['attributes'] ?? [];
       }
 

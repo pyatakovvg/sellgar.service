@@ -33,8 +33,7 @@ class GetBucketController extends Controller {
       .leftJoinAndSelect('bucket.products', 'products')
         .leftJoinAndSelect('products.product', 'product')
           .leftJoinAndSelect('product.currency', 'p_currency')
-          .leftJoinAndSelect('product.product', 'catalog_product')
-            .leftJoinAndSelect('catalog_product.catalog', 'catalog')
+          .leftJoinAndSelect('product.catalog', 'catalog')
              .leftJoinAndSelect('catalog.image', 'image');
 
     queryBuilder

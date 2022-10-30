@@ -47,8 +47,7 @@ class GetProductCategoryController extends Controller {
 
     queryBuilder
       .innerJoin('category.catalogs', 'catalog', 'catalog.isUse is true')
-      .innerJoin('catalog.products', 'products')
-      .innerJoin('products.product', 'product', 'product.count > 0 AND product.reserve < product.count');
+      .innerJoin('catalog.product', 'product', 'product.count > 0 AND product.reserve < product.count');
 
     if ('groupCode' in query) {
       queryBuilder

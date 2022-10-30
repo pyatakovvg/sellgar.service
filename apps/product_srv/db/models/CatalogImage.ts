@@ -35,7 +35,7 @@ class CatalogImage {
     orphanedRowAction: 'delete',
   })
   @JoinColumn()
-  product: Catalog;
+  catalog: Catalog;
 }
 
 export default CatalogImage;

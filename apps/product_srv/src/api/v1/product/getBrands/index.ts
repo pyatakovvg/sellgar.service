@@ -28,8 +28,7 @@ class GetProductBrandController extends Controller {
 
     queryBuilder
       .innerJoin('brand.products', 'products', 'products.count > 0 and products.count > products.reserve')
-      .innerJoin('products.product', 'product')
-      .innerJoin('product.catalog', 'catalog', 'catalog.isUse is true');
+      .innerJoin('products.catalog', 'catalog', 'catalog.isUse is true');
 
     if ('groupCode' in query) {
       queryBuilder

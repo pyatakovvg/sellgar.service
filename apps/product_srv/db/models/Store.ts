@@ -1,19 +1,19 @@
 
 import {
+  Index,
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  OneToOne,
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
-  Index,
+  PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
 import Brand from './Brand';
+import Catalog from "./Catalog";
 import Currency from "./Currency";
-import CatalogProduct from "./CatalogProduct";
 
 
 @Entity('Store')
@@ -64,11 +64,11 @@ class Store {
   @JoinColumn()
   brand: Brand;
 
-  @OneToMany(() => CatalogProduct, (product) => product['product'], {
+  @OneToOne(() => Catalog, (product) => product['product'], {
     onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
   })
-  product: CatalogProduct[];
+  catalog: Catalog;
 }
 
 export default Store;

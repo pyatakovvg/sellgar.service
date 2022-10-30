@@ -2,15 +2,15 @@
 export default function(data: any) {
   return {
     uuid: data['uuid'],
-    externalId: data['product'][0]['catalog']['externalId'],
+    externalId: data['catalog']['externalId'],
 
-    name: data['product'][0]['catalog']['name'],
-    label: data['product'][0]['label'],
+    name: data['catalog']['name'],
+    vendor: data['vendor'],
 
-    image: data['product'][0]['catalog']['image'],
+    image: data['catalog']['image'],
 
-    groupCode: data['product'][0]['catalog']['groupCode'],
-    categoryCode: data['product'][0]['catalog']['categoryCode'],
+    groupCode: data['catalog']['groupCode'],
+    categoryCode: data['catalog']['categoryCode'],
 
     price: Number(data['price']),
     currency: data['currency'],

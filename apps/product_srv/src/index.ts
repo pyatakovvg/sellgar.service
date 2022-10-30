@@ -19,6 +19,7 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/product/getCategories'),
     import('./api/v1/product/getAttributes'),
 
+    import('./api/v1/product/copy'),
     import('./api/v1/product/getAll'),
     import('./api/v1/product/upsert'),
 

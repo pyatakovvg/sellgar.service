@@ -8,11 +8,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  Index, JoinTable,
+  Index, JoinTable, OneToOne,
 } from '@plugin/type-orm';
 
+import Catalog from "./Catalog";
 import Currency from "./Currency";
-import CatalogProduct from "./CatalogProduct";
 
 
 @Entity('Store')
@@ -47,12 +47,12 @@ class Store {
   @JoinColumn()
   currency: Currency;
 
-  @OneToMany(() => CatalogProduct, (product) => product['product'], {
+  @OneToOne(() => Catalog, (product) => product['product'], {
     onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
   })
   @JoinTable()
-  product: CatalogProduct[];
+  catalog: Catalog;
 }
 
 export default Store;

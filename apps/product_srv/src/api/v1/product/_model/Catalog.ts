@@ -28,12 +28,10 @@ class CatalogModel {
       .leftJoinAndSelect('catalog.group', 'group')
       .leftJoinAndSelect('catalog.category', 'category')
 
-      .leftJoinAndSelect('catalog.products', 'products')
-      .leftJoinAndSelect('products.product', 'product')
+      .leftJoinAndSelect('catalog.product', 'product')
       .leftJoinAndSelect('product.brand', 'brand')
       .leftJoinAndSelect('brand.images', 'b_image')
       .leftJoinAndSelect('product.currency', 'currency')
-      .addOrderBy('products.order', 'ASC')
 
       .leftJoin('catalog.attributes', 'attribute')
       .addSelect(['attribute.uuid', 'attribute.name'])
@@ -82,19 +80,13 @@ class CatalogModel {
       preloadData['category'] = { uuid: data['categoryUuid'] };
     }
 
+    if ('productUuid' in data) {
+      preloadData['product'] = { uuid: data['productUuid'] };
+    }
+
     if ('images' in data) {
       preloadData['images'] = data['images'].map((image: any, index: number) => ({
         image: { uuid: image['uuid'] },
-        order: index,
-      }));
-    }
-
-    if ('products' in data) {
-      preloadData['products'] = data['products'].map((product: any, index: number) => ({
-        uuid: product['uuid'] || undefined,
-        label: product['label'],
-        isTarget: product['isTarget'],
-        product: { uuid: product['productUuid'] },
         order: index,
       }));
     }
@@ -112,7 +104,7 @@ class CatalogModel {
         order: index,
       }));
     }
-
+console.log(preloadData)
     if ('uuid' in preloadData) {
       const product = await repProduct.preload(preloadData);
       return await repProduct.save(product, { reload: true });

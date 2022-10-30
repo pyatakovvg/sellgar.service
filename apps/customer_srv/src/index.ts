@@ -28,7 +28,6 @@ import { Config, Application, Router } from '@library/app';
 
   app.addPlugin('rabbit', new RabbitPlugin({
     host: process.env['RABBIT_CONNECTION_HOST'],
-    // actionsPath: 'rabbit',
   }));
 
   await app.start();

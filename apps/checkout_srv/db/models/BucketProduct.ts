@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
+import Store from "./Store";
 import Bucket from "./Bucket";
-import Product from "./Store";
 
 
 @Entity('BucketProduct')
@@ -30,9 +30,9 @@ class BucketProduct {
   @JoinColumn()
   bucket: Bucket;
 
-  @ManyToOne(() => Product, (product) => product['uuid'])
+  @ManyToOne(() => Store, (product) => product['uuid'])
   @JoinColumn()
-  product: Product;
+  product: Store;
 }
 
 export default BucketProduct;

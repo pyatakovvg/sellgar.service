@@ -38,8 +38,7 @@ class GetAttributesController extends Controller {
 
     if ('brandCode' in query) {
       queryRequest
-        .innerJoin('catalog.products', 'products')
-        .innerJoin('products.product', 'product')
+        .innerJoin('catalog.product', 'product')
         .innerJoin('product.brand', 'brand', 'brand.code IN (:...brandCode)', { brandCode: query['brandCode'] })
     }
 

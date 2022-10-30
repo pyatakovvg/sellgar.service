@@ -20,10 +20,9 @@ export default async function init(rabbit, app: Application) {
       groupCode: data['group']?.['code'] ?? null,
       categoryCode: data['category']?.['code'] ?? null,
       image: data['images']?.[0]?.['image'] ?? null,
-      products: data['products'].map((product) => ({
-        label: product['label'],
-        product: { uuid:  product['product']['uuid'] },
-      })),
+      product: {
+        uuid:  data?.['product']?.['uuid'] ?? null,
+      },
     });
 
     cb(true);

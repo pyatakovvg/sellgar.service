@@ -18,7 +18,7 @@ export default function(data: any) {
       name: image?.['image']?.['name'],
     })),
 
-    products: data['products'].map(productBuilder),
+    product: data['product'] ? productBuilder(data['product']) : null,
     attributes: data['attributes'].map(attributeGroupBuilder),
 
     isUse: data['isUse'],
