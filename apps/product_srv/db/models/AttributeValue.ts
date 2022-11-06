@@ -1,5 +1,5 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from '@plugin/type-orm';
+import { Index, Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from '@plugin/type-orm';
 
 import Attribute from './Attribute';
 import AttributeGroup from './AttributeGroup';
@@ -10,6 +10,7 @@ class AttributeValue {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
+  @Index({ fulltext: true })
   @Column('varchar')
   value: string;
 

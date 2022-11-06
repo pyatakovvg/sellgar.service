@@ -3,10 +3,10 @@ import {
   Index,
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   OneToMany,
   JoinTable,
-  ManyToMany
+  ManyToMany,
+  PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
 import Image from './Image';
@@ -24,6 +24,7 @@ class Group {
   @Column('varchar', { unique: true })
   code: string;
 
+  @Index({ fulltext: true })
   @Column('varchar', { unique: true })
   name: string;
 

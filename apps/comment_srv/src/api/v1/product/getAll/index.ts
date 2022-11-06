@@ -19,7 +19,9 @@ class CheckController extends Controller {
       const queryBuilder = entityManager.createQueryBuilder(Product, 'product');
 
       if ('uuid' in query) {
-        queryBuilder.andWhere('product.uuid IN (:...productUuid)', { productUuid: query['uuid'] });
+        queryBuilder.andWhere('product.uuid IN (:...productUuid)', {
+          productUuid: query['uuid'],
+        });
       }
 
       queryBuilder
@@ -31,8 +33,8 @@ class CheckController extends Controller {
           return qb
             .where('newComments.parentUuid IS NULL')
             .innerJoin('newComments.status', 'status', 'status.code = :code', {
-            code: 'new'
-          });
+              code: 'new'
+            });
         })
         .addOrderBy('comment.createdAt', 'ASC');
 

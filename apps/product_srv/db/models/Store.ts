@@ -28,12 +28,14 @@ class Store {
   @Column('varchar', { nullable: true, unique: true })
   barcode: string;
 
+  @Index({ fulltext: true })
   @Column('varchar', { nullable: true, unique: true })
   vendor: string;
 
   @Column('varchar', { nullable: true })
   description: string;
 
+  @Index({ fulltext: true })
   @Column('numeric', { precision: 10, scale: 2, default: 0 })
   price: number;
 

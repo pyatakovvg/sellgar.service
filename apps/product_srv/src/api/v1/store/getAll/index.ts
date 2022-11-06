@@ -41,22 +41,20 @@ class GetStoreController extends Controller {
 
     if ('groupUuid' in query) {
       queryBuilder
-        .innerJoin('store.product', 'g_product')
-        .innerJoin('g_product.catalog', 'g_catalog')
+        .innerJoin('store.catalog', 'g_catalog')
         .innerJoin('g_catalog.group', 'group', 'group.uuid IN (:...groupUuid)', { groupUuid: query['groupUuid'] })
     }
 
     if ('categoryUuid' in query) {
       queryBuilder
-        .innerJoin('store.product', 'c_product')
-        .innerJoin('c_product.catalog', 'c_catalog')
+        .innerJoin('store.catalog', 'c_catalog')
         .innerJoin('c_catalog.category', 'category', 'category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] })
     }
 
     if ('hasParent' in query) {
       if (query['hasParent'][0] === 'true') {
         queryBuilder
-          .innerJoin('store.product', 'product', 'product.uuid is null');
+          .innerJoin('store.catalog', 'catalog', 'catalog.uuid is null');
       }
       else if (query['hasParent'][0] === 'false') {
         queryBuilder
@@ -65,7 +63,7 @@ class GetStoreController extends Controller {
               .subQuery()
               .select('st.uuid', 'uuid')
               .from(Store, 'st')
-              .innerJoin('st.product', 'product')
+              .innerJoin('st.catalog', 'catalog')
               .getQuery()
           }`);
 

@@ -15,6 +15,7 @@ import {
 
 import Group from './Group';
 import Store from './Store';
+import Comment from './Comment';
 import Category from './Category';
 import CatalogImage from './CatalogImage';
 import AttributeGroup from './AttributeGroup';
@@ -30,9 +31,11 @@ class Catalog {
   @Column('varchar', { nullable: true, unique: true })
   externalId: string;
 
+  @Index({ fulltext: true })
   @Column('varchar', { nullable: false, default: '' })
   name: string;
 
+  @Index({ fulltext: true })
   @Column('varchar', { nullable: true })
   description: string;
 
@@ -80,6 +83,13 @@ class Catalog {
   })
   @JoinColumn()
   product: Store;
+
+  @OneToMany(() => Comment, (comment) => comment['catalog'], {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  comments: Comment[];
 }
 
 export default Catalog;

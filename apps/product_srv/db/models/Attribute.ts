@@ -1,5 +1,5 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, JoinTable, OneToMany } from '@plugin/type-orm';
+import { Index, Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, JoinTable, OneToMany } from '@plugin/type-orm';
 
 import Unit from './Unit';
 import AttributeValue from './AttributeValue';
@@ -13,6 +13,7 @@ class Attribute {
   @Column('varchar')
   code: string;
 
+  @Index({ fulltext: true })
   @Column('varchar')
   name: string;
 

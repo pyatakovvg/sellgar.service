@@ -22,7 +22,7 @@ class GetProductsController extends Controller {
   async send(): Promise<any> {
     const query = queryNormalize(super.query);
     const attrQuery = getAttrsFilter(query);
-
+console.log(111, query)
     const db = super.plugin.get('db');
 
     const Store = db.model['Store'];
@@ -31,6 +31,9 @@ class GetProductsController extends Controller {
 
     const result = await db.manager.transaction(async (entityManager) => {
       const queryBuilder = entityManager.createQueryBuilder(Catalog, 'catalog');
+
+      queryBuilder
+        .loadRelationCountAndMap('catalog.allCommentCount', 'catalog.comments', 'comments');
 
       queryBuilder
         .select('catalog')
@@ -50,13 +53,8 @@ class GetProductsController extends Controller {
         queryBuilder.andWhere('catalog.externalId IN (:...externalId)', { externalId: query['externalId'] });
       }
 
-      if ('isUse' in query) {
-        queryBuilder.andWhere('catalog.isUse IN (:...isUse)', { isUse: query['isUse'] });
-      }
-
       queryBuilder
         .leftJoinAndSelect('catalog.group', 'group')
-
 
       if ('groupCode' in query) {
         queryBuilder.andWhere('group.code IN (:...groupCode)', { groupCode: query['groupCode'] });
@@ -77,16 +75,16 @@ class GetProductsController extends Controller {
         queryBuilder.andWhere('category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] });
       }
 
+      queryBuilder
+        .innerJoin('catalog.product', 'b_product')
+        .innerJoin('b_product.brand', 'brand')
+
       if ('brandCode' in query) {
-        queryBuilder
-          .innerJoin('catalog.product', 'b_product')
-          .innerJoin('b_product.brand', 'brand', 'brand.code IN (:...brandCode)', { brandCode: query['brandCode'] })
+        queryBuilder.andWhere('brand.code IN (:...brandCode)', { brandCode: query['brandCode'] });
       }
 
       if ('brandUuid' in query) {
-        queryBuilder
-          .innerJoin('catalog.product', 'b_product')
-          .innerJoin('b_product.brand', 'brand', 'brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] })
+        queryBuilder.andWhere('brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] });
       }
 
       if ( !! Object.keys(attrQuery).length) {
@@ -97,6 +95,26 @@ class GetProductsController extends Controller {
           .innerJoin('catalog.attributes', 'attribute')
           .innerJoin('attribute.values', 'value', 'value.value IN (:...values)', { values })
           .innerJoin('value.attribute', 'value_attribute', 'value_attribute.code IN (:...a_codes)', { a_codes });
+      }
+
+      if ('search' in query) {
+        const term = query['search'][0].replace(/\s+/gi, '|') + ':*';
+
+        queryBuilder
+          .andWhere("(to_tsvector(catalog.name) @@ to_tsquery(:term) OR" +
+            " to_tsvector(group.name) @@ to_tsquery(:term) OR" +
+            " to_tsvector(category.name) @@ to_tsquery(:term) OR" +
+            " to_tsvector(brand.name) @@ to_tsquery(:term))")
+          .setParameters({ term });
+      }
+
+      if ('isUse' in query) {
+        queryBuilder.andWhere('catalog.isUse IN (:...isUse)', { isUse: query['isUse'] });
+      }
+
+      if ('limit' in query) {
+        queryBuilder
+          .limit(Number(query['limit'][0]));
       }
 
       if (('skip' in query) && ('take' in query)) {

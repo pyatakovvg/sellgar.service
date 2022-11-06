@@ -15,6 +15,7 @@ class Brand {
   @Column('varchar')
   code: string;
 
+  @Index({ fulltext: true })
   @Column('varchar', { unique: true })
   name: string;
 

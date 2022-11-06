@@ -21,6 +21,8 @@ export default function(data: any) {
     product: data['product'] ? productBuilder(data['product']) : null,
     attributes: data['attributes'].map(attributeGroupBuilder),
 
+    allCommentCount: data['allCommentCount'],
+
     isUse: data['isUse'],
 
     createdAt: data['createdAt'],
