@@ -22,7 +22,7 @@ class Catalog {
   uuid: string;
 
   @Index()
-  @Column('varchar', { nullable: true, unique: true })
+  @Column('varchar', { nullable: true, unique: true, default: null })
   externalId: string;
 
   @Column('varchar', { nullable: true, default: null })
@@ -33,9 +33,6 @@ class Catalog {
 
   @Column('varchar', { nullable: false, default: '' })
   name: string;
-
-  @Column('varchar', { nullable: true })
-  description: string;
 
   @Column('boolean', { default: false })
   isUse: boolean;
@@ -48,15 +45,15 @@ class Catalog {
 
 
   @ManyToOne(() => Image, (image) => image['uuid'], {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
   })
   @JoinColumn()
   image: Image;
 
   @OneToOne(() => Store, (product) => product['uuid'], {
-    eager: true,
-    cascade: true,
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
   })
   @JoinColumn()
   product: Store;

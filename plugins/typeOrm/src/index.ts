@@ -6,7 +6,6 @@ import path from 'path';
 import { DataSource, EntityManager, Repository, ObjectLiteral, EntitySchema } from 'typeorm';
 
 import 'reflect-metadata';
-import * as console from "console";
 
 
 interface IConfig {
@@ -119,7 +118,6 @@ class DbPlugin extends Plugin implements IDbPlugin {
       return Promise.resolve();
     }
     catch(error) {
-      console.log(error)
       logger.error('DbTypeORMPlugin: ' + error['message']);
       return Promise.reject();
     }

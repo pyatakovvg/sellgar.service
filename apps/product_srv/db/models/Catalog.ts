@@ -28,7 +28,7 @@ class Catalog {
   uuid: string;
 
   @Index()
-  @Column('varchar', { nullable: true, unique: true })
+  @Column('varchar', { nullable: true, unique: true, default: null })
   externalId: string;
 
   @Index({ fulltext: true })
@@ -78,8 +78,8 @@ class Catalog {
   images: CatalogImage[];
 
   @OneToOne(() => Store, (product) => product['uuid'], {
-    eager: true,
-    cascade: true,
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
   })
   @JoinColumn()
   product: Store;

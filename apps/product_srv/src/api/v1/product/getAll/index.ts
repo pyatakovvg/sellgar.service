@@ -22,7 +22,7 @@ class GetProductsController extends Controller {
   async send(): Promise<any> {
     const query = queryNormalize(super.query);
     const attrQuery = getAttrsFilter(query);
-console.log(111, query)
+
     const db = super.plugin.get('db');
 
     const Store = db.model['Store'];
@@ -76,8 +76,8 @@ console.log(111, query)
       }
 
       queryBuilder
-        .innerJoin('catalog.product', 'b_product')
-        .innerJoin('b_product.brand', 'brand')
+        .leftJoin('catalog.product', 'b_product')
+        .leftJoin('b_product.brand', 'brand')
 
       if ('brandCode' in query) {
         queryBuilder.andWhere('brand.code IN (:...brandCode)', { brandCode: query['brandCode'] });

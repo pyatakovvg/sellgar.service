@@ -35,7 +35,6 @@ class ImageController extends Controller {
 
     return new Result()
       .data(result['rows'].map((item) => {
-        console.log(item.toJSON())
         return item.toJSON()
       }))
       .meta({

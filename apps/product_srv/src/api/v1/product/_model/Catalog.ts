@@ -104,7 +104,7 @@ class CatalogModel {
         order: index,
       }));
     }
-console.log(preloadData)
+
     if ('uuid' in preloadData) {
       const product = await repProduct.preload(preloadData);
       return await repProduct.save(product, { reload: true });

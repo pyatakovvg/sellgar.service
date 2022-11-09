@@ -20,7 +20,7 @@ class UpdateProductTemplateController extends Controller {
     });
     const result = await catalog.getOne(catalogUpdated['uuid']);
 
-    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPSERT_EXCHANGE'], result);
+    await rabbit.sendEvent(process.env['PRODUCT_SRV_CATALOG_UPSERT_EXCHANGE'], result);
 
     return new Result()
       .data(catalogBuilder(result))

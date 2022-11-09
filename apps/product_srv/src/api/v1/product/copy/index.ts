@@ -16,41 +16,32 @@ class CopyProductTemplateController extends Controller {
     const catalog = new CatalogModel(db);
 
     const product = await catalog.getOne(params['uuid']);
-    console.log(product)
-    const catalogUpdated = await catalog.save({
-      externalId: Date.now().toString(32),
+
+    const data = {
       name: product['name'],
       description: product['description'],
       isUse: false,
-      // images: product['images'].map((item: any) => {
-      //   console.log(item)
-      //   return {
-      //     image: item['image'],
-      //   };
-      // }),
       groupUuid: product?.['group']?.['uuid'] ?? null,
       categoryUuid: product?.['category']?.['uuid'] ?? null,
-      products: [],
-      // attributes: product['attributes'].map((item: any, index: number) => {
-      //   return {
-      //     order: index,
-      //     name: item['name'],
-      //     values: item['values'].map((item: any, index: number) => ({
-      //       order: index,
-      //       value: item['value'],
-      //       attribute: { uuid: item['attribute']['uuid'] },
-      //     })),
-      //   }
-      // }),
-    });
+      images: product['images'].map((image) => ({
+        uuid: image['image']['uuid'],
+      })),
+      attributes: product['attributes'].map((group) => ({
+        name: group['name'],
+        values: group['values'].map((attr) => ({
+          value: attr['value'],
+          attributeUuid: attr['attribute']['uuid'],
+        })),
+      })),
+    };
 
+    const catalogUpdated = await catalog.save(data);
     const result = await catalog.getOne(catalogUpdated['uuid']);
 
-    await rabbit.sendEvent(process.env['PRODUCT_SRV_PRODUCT_UPSERT_EXCHANGE'], result);
+    await rabbit.sendEvent(process.env['PRODUCT_SRV_CATALOG_UPSERT_EXCHANGE'], result);
 
     return new Result()
-      .data(null)
-      // .data(catalogBuilder(result))
+      .data(catalogBuilder(result))
       .build();
   }
 }
