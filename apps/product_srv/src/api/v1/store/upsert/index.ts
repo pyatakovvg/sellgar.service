@@ -14,7 +14,23 @@ class UpdateProductTemplateController extends Controller {
     const db = super.plugin.get('db');
     const store = new Store(db);
 
-    const item = await store.save(body);
+    const item = await store.save({
+      uuid: body?.['uuid'],
+      name: body['name'],
+      brand: {
+        uuid: body?.['brand']?.['uuid'] ?? null,
+      },
+      description: body['description'],
+      vendor: body['vendor'],
+      barcode: body['barcode'],
+      count: body['count'],
+      reserve: body['reserve'],
+      price: Number(body['price']),
+      purchasePrice: Number(body['purchasePrice']),
+      currency: {
+        code: body?.['currency']?.['code'] ?? null,
+      }
+    });
     const result = await store.getOne(item['uuid']);
 
     await rabbit.sendEvent(process.env['PRODUCT_SRV_STORE_PRODUCT_UPSERT_EXCHANGE'], result);

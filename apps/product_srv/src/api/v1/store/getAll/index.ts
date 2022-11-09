@@ -30,13 +30,11 @@ class GetStoreController extends Controller {
       .addOrderBy('store.createdAt', 'ASC');
 
     if ('uuid' in query) {
-      queryBuilder
-        .andWhere('store.uuid IN (:...uuid)', { uuid: query['uuid'] });
+      queryBuilder.andWhere('store.uuid IN (:...uuid)', { uuid: query['uuid'] });
     }
 
     if ('brandUuid' in query) {
-      queryBuilder
-        .andWhere('brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] })
+      queryBuilder.andWhere('brand.uuid IN (:...brandUuid)', { brandUuid: query['brandUuid'] })
     }
 
     if ('groupUuid' in query) {
@@ -51,10 +49,17 @@ class GetStoreController extends Controller {
         .innerJoin('c_catalog.category', 'category', 'category.uuid IN (:...categoryUuid)', { categoryUuid: query['categoryUuid'] })
     }
 
+    if ('vendor' in query) {
+      queryBuilder.andWhere('store.vendor IN (:...vendor)', { vendor: query['vendor'] });
+    }
+
+    if ('barcode' in query) {
+      queryBuilder.andWhere('store.barcode IN (:...barcode)', { barcode: query['barcode'] });
+    }
+
     if ('hasParent' in query) {
       if (query['hasParent'][0] === 'true') {
-        queryBuilder
-          .innerJoin('store.catalog', 'catalog', 'catalog.uuid is null');
+        queryBuilder.innerJoin('store.catalog', 'catalog', 'catalog.uuid is null');
       }
       else if (query['hasParent'][0] === 'false') {
         queryBuilder
@@ -68,8 +73,7 @@ class GetStoreController extends Controller {
           }`);
 
         if (query['products']) {
-          queryBuilder
-            .orWhere('store.uuid IN (:...products)', { products: query?.['products'] ?? [] });
+          queryBuilder.orWhere('store.uuid IN (:...products)', { products: query?.['products'] ?? [] });
         }
       }
     }

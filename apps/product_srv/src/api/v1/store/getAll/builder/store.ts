@@ -3,6 +3,7 @@ export default function(data: any) {
   return {
     uuid: data['uuid'],
     name: data['name'],
+    brand: data['brand'],
     description: data['description'],
 
     vendor: data['vendor'],
