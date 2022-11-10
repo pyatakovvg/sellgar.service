@@ -10,7 +10,7 @@ cd ./helpers || return
 echo '------------------------------------'
 echo 'Пакет "Utils"'
 echo '------------------------------------'
-cd ./utils && npx yarn build
+cd ./utils && npm run build
 
 
 echo '------------------------------------'
@@ -22,32 +22,32 @@ cd ../../packages || return 0
 echo '------------------------------------'
 echo 'Пакет "Errors"'
 echo '------------------------------------'
-cd ./errors && npx yarn build || return 0
+cd ./errors && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "Logger"'
 echo '------------------------------------'
-cd ../logger && npx yarn build || return 0
+cd ../logger && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "Numeral"'
 echo '------------------------------------'
-cd ../numeral && npx yarn build || return 0
+cd ../numeral && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "Moment"'
 echo '------------------------------------'
-cd ../moment && npx yarn build || return 0
+cd ../moment && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "Request"'
 echo '------------------------------------'
-cd ../request && npx yarn build || return 0
+cd ../request && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "Sharp"'
 echo '------------------------------------'
-cd ../sharp && npx yarn build || return 0
+cd ../sharp && npm run build || return 0
 
 
 echo '------------------------------------'
@@ -59,7 +59,7 @@ cd ../../libraries || return 0
 echo '------------------------------------'
 echo 'Пакет "app"'
 echo '------------------------------------'
-cd ./app && npx yarn build || return 0
+cd ./app && npm run build || return 0
 
 
 echo '------------------------------------'
@@ -71,19 +71,19 @@ cd ../../plugins || return 0
 echo '------------------------------------'
 echo 'Пакет "db"'
 echo '------------------------------------'
-cd ./db && npx yarn build || return 0
+cd ./db && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "db2"'
 echo '------------------------------------'
-cd ../typeOrm && npx yarn build || return 0
+cd ../typeOrm && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "rabbit"'
 echo '------------------------------------'
-cd ../rabbit && npx yarn build || return 0
+cd ../rabbit && npm run build || return 0
 
 echo '------------------------------------'
 echo 'Пакет "rabbit"'
 echo '------------------------------------'
-cd ../rabbit && npx yarn build || return 0
+cd ../rabbit && npm run build || return 0
