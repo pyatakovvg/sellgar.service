@@ -44,6 +44,7 @@ class GetProductsController extends Controller {
             .innerJoin('store.catalog', 's_catalog', 's_catalog.uuid = "catalog"."uuid"');
         }, 'price')
         .addOrderBy('price', 'ASC')
+        .leftJoin('catalog.product', 'product')
 
       if ('uuid' in query) {
         queryBuilder.andWhere('catalog.uuid IN (:...catalogUuid)', { catalogUuid: query['uuid'] });
@@ -76,8 +77,7 @@ class GetProductsController extends Controller {
       }
 
       queryBuilder
-        .leftJoin('catalog.product', 'b_product')
-        .leftJoin('b_product.brand', 'brand')
+        .leftJoin('product.brand', 'brand')
 
       if ('brandCode' in query) {
         queryBuilder.andWhere('brand.code IN (:...brandCode)', { brandCode: query['brandCode'] });
@@ -101,10 +101,14 @@ class GetProductsController extends Controller {
         const term = query['search'][0].replace(/\s+/gi, '|') + ':*';
 
         queryBuilder
-          .andWhere("(to_tsvector(catalog.name) @@ to_tsquery(:term) OR" +
+          .andWhere("(" +
+            " to_tsvector(catalog.name) @@ to_tsquery(:term) OR" +
             " to_tsvector(group.name) @@ to_tsquery(:term) OR" +
             " to_tsvector(category.name) @@ to_tsquery(:term) OR" +
-            " to_tsvector(brand.name) @@ to_tsquery(:term))")
+            " to_tsvector(brand.name) @@ to_tsquery(:term) OR" +
+            " to_tsvector(product.vendor) @@ to_tsquery(:term) OR" +
+            " to_tsvector(product.barcode) @@ to_tsquery(:term)" +
+            ")")
           .setParameters({ term });
       }
 

@@ -22,11 +22,7 @@ class ImageController extends Controller {
     const db = super.plugin.get('db2');
     const Image = db.model['Image'];
 
-    let files = super.ctx.request.files['files[]'];
-
-    if ( ! (files instanceof Array)) {
-      files = new Array(files);
-    }
+    let files = super.ctx.request.files;
 
     const bulkImages = [];
     for (let index in files) {
