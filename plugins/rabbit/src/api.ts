@@ -62,20 +62,22 @@ export async function createChanel(connection) {
 export async function createQueue(channel, queue, message, options) {
   const defaultOptions = {
     reply: false,
+    autoDelete: false,
     ...options,
   };
 
   return new Promise(function(resolve, reject) {
-    channel.assertQueue(queue, { durable: true, autoDelete: true }, function(error) {
+    channel.assertQueue(queue, { durable: true, autoDelete: defaultOptions['autoDelete'] }, function(error) {
       if (error) {
         return reject(new InternalServerError({ code: '10.2.0', message: error['message'] }));
       }
+
       logger.info(`RabbitMQ: Очередь "${queue}" успешно создана или существует`);
 
-      const correlationId = UUID();
-      const replyQueue = queue + '_reply';
-
       if (defaultOptions['reply']) {
+        const correlationId = UUID();
+        const replyQueue = queue + '_reply';
+
         channel.assertQueue(replyQueue, { durable: true, autoDelete: true }, function(error) {
           if (error) {
             return reject(new InternalServerError({ code: '100.2.1', message: error['message'] }));
@@ -113,6 +115,7 @@ export async function createQueue(channel, queue, message, options) {
 export async function createConsumer(channel, queue, options, callback?) {
   let defaultOptions = {
     reply: false,
+    autoDelete: false,
   };
 
   if (options instanceof Function) {
@@ -126,7 +129,7 @@ export async function createConsumer(channel, queue, options, callback?) {
   }
 
   return new Promise(function(resolve, reject) {
-    channel.assertQueue(queue, { durable: true, autoDelete: true }, function(error) {
+    channel.assertQueue(queue, { durable: true, autoDelete: defaultOptions['autoDelete'] }, function(error) {
       if (error) {
         return reject(new InternalServerError({ code: '10.3.0', message: error['message'] }));
       }
