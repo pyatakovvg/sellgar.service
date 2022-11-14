@@ -1,12 +1,10 @@
 
-import DbPlugin from "@plugin/db";
 import RabbitPlugin from "@plugin/rabbit";
 import DbTypeORMPlugin from "@plugin/type-orm";
 import { Config, Application, Router } from '@library/app';
 
 
 (async function() {
-
   const app = new Application(new Config({
     port: Number(process.env['PORT']),
   }));
@@ -18,20 +16,17 @@ import { Config, Application, Router } from '@library/app';
     import('./api/v1/image/getAll'),
 
     import('./api/v1/folder/getAll'),
+    import('./api/v1/folder/create'),
+    import('./api/v1/folder/delete'),
   ]));
 
-  app.addPlugin('db2', new DbTypeORMPlugin({
+  app.addPlugin('db', new DbTypeORMPlugin({
     logging: true,
     host: process.env['DATABASE_HOST'],
     port: Number(process.env['DATABASE_PORT']),
     username: process.env['DATABASE_USERNAME'],
     password: process.env['DATABASE_PASSWORD'],
     database: process.env['DATABASE_DATABASE'],
-    modelsPath: 'db2/models',
-  }));
-
-  app.addPlugin('db', new DbPlugin({
-    host: process.env['DB_CONNECTION_HOST'],
     modelsPath: 'db/models',
   }));
 

@@ -1,7 +1,6 @@
 
 import { Context } from 'koa';
 
-import Plugin from './Plugin';
 import Application from './Application';
 
 
@@ -30,7 +29,7 @@ class Controller {
   get plugin() {
     const app = this.app;
     return {
-      get(name: string): Plugin {
+      get(name: string) {
         return app.plugins[name];
       }
     };

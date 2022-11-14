@@ -1,41 +1,49 @@
 
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+} from '@plugin/type-orm';
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Image extends Model {}
+import Folder from "./Folder";
 
-  Image.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    large: {
-      type: DataTypes.BLOB,
-    },
-    order: {
-      type: DataTypes.INTEGER,
-    }
-  }, {
-    sequelize,
-    timestamps: true,
-  });
 
-  Image.associate = ({ Folder }) => {
+@Entity('Image')
+class Image {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-    Image.belongsToMany(Folder, {
-      through: 'FolderImage',
-      foreignKey: 'imageUuid',
-      as: 'folders',
-      onDelete: 'cascade',
-    });
-  };
+  @Column('varchar', { nullable: true })
+  name: string;
 
-  return Image;
+  @Column('integer', { nullable: false, default: 0 })
+  size: number;
+
+  @Column('varchar', { nullable: true })
+  mime: string;
+
+  @Column('integer', { default: 0 })
+  width: number;
+
+  @Column('integer', { default: 0 })
+  height: number;
+
+  @Column('bytea', { nullable: true })
+  buffer: Buffer;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ManyToOne(() => Folder, (folder) => folder['uuid'], {
+    nullable: true,
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
+  @JoinColumn()
+  folder: Folder;
 }
 
-export default init;
+export default Image;

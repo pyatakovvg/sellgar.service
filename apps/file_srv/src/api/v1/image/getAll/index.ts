@@ -8,7 +8,7 @@ class ImageController extends Controller {
   async send(): Promise<any> {
     const query = queryNormalize(super.query);
 
-    const db = super.plugin.get('db2');
+    const db = super.plugin.get('db');
     const Image = db.model['Image'];
 
     const repository = db.repository(Image);
@@ -16,6 +16,15 @@ class ImageController extends Controller {
       .createQueryBuilder('image')
       .select(['image.uuid', 'image.name', 'image.size', 'image.mime', 'image.width', 'image.height'])
       .orderBy('image.createdAt', 'DESC');
+
+    if (query?.['all']?.[0] !== 'true') {
+      if ('folderUuid' in query) {
+        queryBuilder.andWhere('image.folderUuid IN (:...uuid)', { uuid: query['folderUuid'] });
+      }
+      else {
+        queryBuilder.andWhere('image.folderUuid IS NULL');
+      }
+    }
 
     if ('skip' in query) {
       queryBuilder.offset(Number(query['skip'][0]));

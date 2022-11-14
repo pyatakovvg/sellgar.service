@@ -1,44 +1,27 @@
 
+import { Tree, Entity, Column, TreeParent, TreeChildren, PrimaryGeneratedColumn, CreateDateColumn } from '@plugin/type-orm';
 
-function init({ sequelize, DataTypes, Model }): any {
-  class Folder extends Model {}
+@Entity('Folder')
+@Tree('closure-table')
+class Folder {
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-  Folder.init({
-    uuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    parentUuid: {
-      type: DataTypes.UUID,
-      allowNull: true,
-    }
-  }, {
-    sequelize,
-    timestamps: true,
-  });
+  @Column('varchar', { nullable: true })
+  name: string;
 
-  Folder.associate = ({ Image }) => {
+  @TreeChildren({
+    cascade: true,
+  })
+  children: Folder[]
 
-    Folder.hasMany(Folder, {
-      foreignKey: 'parentUuid',
-      as: 'folders',
-    });
+  @TreeParent({
+    onDelete: 'CASCADE',
+  })
+  parent: Folder
 
-    Folder.belongsToMany(Image, {
-      through: 'FolderImage',
-      foreignKey: 'folderUuid',
-      as: 'images',
-      onDelete: 'cascade',
-    });
-  };
-
-  return Folder;
+  @CreateDateColumn()
+  createdAt: Date;
 }
 
-export default init;
+export default Folder;

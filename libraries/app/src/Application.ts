@@ -3,6 +3,7 @@ import { Events } from '@helper/utils';
 
 import Config from './Config';
 import Router from './Router';
+import Plugin from './Plugin';
 import HttpServer from './HttpServer';
 
 import logger from './koa/logger';
@@ -13,7 +14,9 @@ class Application {
   readonly server: HttpServer;
   readonly events: Events;
   readonly routers: Array<Router> = [];
-  readonly plugins: object = {};
+  readonly plugins: {
+    [key: string]: Plugin;
+  } = {};
 
   constructor(config: Config) {
     this.config = config;
@@ -30,7 +33,7 @@ class Application {
     this.routers.push(router);
   }
 
-  addPlugin(name, plugin) {
+  addPlugin<T extends Plugin>(name: string, plugin: T) {
     this.plugins[name] = plugin;
   }
 
@@ -45,7 +48,6 @@ class Application {
     await new Promise((resolve) => {
       this.server.start(() => {
         logger.info('Server has been started on port: ' + this.config['port']);
-        this.events.emit('start', this);
         resolve(null);
       });
     });
@@ -54,6 +56,8 @@ class Application {
       const plugin = this.plugins[index];
       await plugin.init(this);
     }
+
+    this.events.emit('start', this);
   }
 }
 

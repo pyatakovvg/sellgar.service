@@ -8,7 +8,7 @@ class ImageController extends Controller {
     const params = super.params;
     const rabbit = super.plugin.get('rabbit');
 
-    const db = super.plugin.get('db2');
+    const db = super.plugin.get('db');
     const Image = db.model['Image'];
 
     const repository = db.repository(Image);

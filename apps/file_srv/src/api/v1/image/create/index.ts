@@ -17,9 +17,10 @@ function getSize(innerWidth: number, innerHeight: number, square: number) {
 @Route('post', '/api/v1/images')
 class ImageController extends Controller {
   async send(): Promise<any> {
+    const query = super.query;
     const rabbit = super.plugin.get('rabbit');
 
-    const db = super.plugin.get('db2');
+    const db = super.plugin.get('db');
     const Image = db.model['Image'];
 
     let files = super.ctx.request.files;
@@ -48,6 +49,7 @@ class ImageController extends Controller {
           width: outputMeta['width'],
           height: outputMeta['height'],
           buffer,
+          folder: { uuid: query?.['folderUuid'] || null },
         });
       }
     }
@@ -61,6 +63,7 @@ class ImageController extends Controller {
       .values(bulkImages)
       .execute();
 
+    console.log(111, query)
     const result = await repository
       .createQueryBuilder('image')
       .select(['image.uuid', 'image.name', 'image.size', 'image.mime', 'image.width', 'image.height'])

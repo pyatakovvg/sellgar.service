@@ -26,7 +26,7 @@ class ImageController extends Controller {
       throw new BadRequestError({ code: '100.0.2', message: 'Неверное значение размера' });
     }
 
-    const db = super.plugin.get('db2');
+    const db = super.plugin.get('db');
     const Image = db.model['Image'];
 
     const repository = db.repository(Image);

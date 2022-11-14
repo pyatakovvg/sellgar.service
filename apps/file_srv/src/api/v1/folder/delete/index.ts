@@ -2,23 +2,26 @@
 import { Route, Result, Controller } from '@library/app';
 
 
-@Route('delete', '/api/v1/images/:uuid')
-class ImageController extends Controller {
+@Route('delete', '/api/v1/folders/:uuid')
+class DeleteFolderController extends Controller {
   async send(): Promise<any> {
     const params = super.params;
-
+console.log(params)
     const db = super.plugin.get('db');
-    const rabbit = super.plugin.get('rabbit');
+    // const rabbit = super.plugin.get('rabbit');
 
-    const Image = db.models['Image'];
+    const Folder = db.model['Folder'];
 
-    await Image.destroy({
-      where: {
-        uuid: params['uuid']
-      },
-    });
+    const repository = db.repository(Folder);
+    const queryBuilder = repository.createQueryBuilder();
 
-    await rabbit.sendEvent(process.env['FILE_SRV_IMAGE_DELETE_EXCHANGE'], params['uuid']);
+    await queryBuilder
+      .delete()
+      .from(Folder)
+      .where('uuid = :uuid', { uuid: params['uuid'] })
+      .execute();
+
+    // await rabbit.sendEvent(process.env['FILE_SRV_IMAGE_DELETE_EXCHANGE'], params['uuid']);
 
     return new Result()
       .data(params)
@@ -26,4 +29,4 @@ class ImageController extends Controller {
   }
 }
 
-export default ImageController;
+export default DeleteFolderController;
