@@ -11,7 +11,7 @@ class GetStatusController extends Controller {
     const repository = db.manager.getRepository(Status);
     const queryBuilder = repository.createQueryBuilder('status')
       .select(['status.code', 'status.displayName', 'status.description'])
-      .addOrderBy('status.displayName', 'ASC');
+      .addOrderBy('status.order', 'ASC');
 
     const result = await queryBuilder.getMany();
 

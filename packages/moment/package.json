@@ -14,11 +14,10 @@
   },
   "dependencies": {
     "moment": "2.29.4",
-    "moment-timezone": "0.5.37"
+    "moment-timezone": "0.5.40"
   },
   "devDependencies": {
     "@types/moment": "2.13.0",
-    "@types/moment-timezone": "0.5.30",
-    "@types/node": "16.11.49"
+    "@types/moment-timezone": "0.5.30"
   }
 }

@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from '@plugin/type-orm';
 
-import Product from "./Store";
+import Store from "./Store";
 import Checkout from "./Checkout";
 import Currency from "./Currency";
 
@@ -43,9 +43,9 @@ class CheckoutProduct {
   @JoinColumn()
   checkout: Checkout;
 
-  @ManyToOne(() => Product, (product) => product['uuid'])
+  @ManyToOne(() => Store, (store) => store['uuid'])
   @JoinColumn()
-  product: Product;
+  store: Store;
 }
 
 export default CheckoutProduct;

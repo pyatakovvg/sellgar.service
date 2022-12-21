@@ -8,7 +8,7 @@ import categoryBuilder from './builders/category';
 @Route('get', '/api/v1/categories')
 class GetCategoriesController extends Controller {
   async send(): Promise<any> {
-    const query = queryNormalize(super.query);
+    const query = queryNormalize(super.query) as any;
 
     const db = super.plugin.get('db');
     const Category = db.model['Category'];

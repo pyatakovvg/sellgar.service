@@ -1,6 +1,7 @@
 
 import Application from '@library/app';
 
+
 export default async function init(rabbit, app: Application) {
   await rabbit.bindToExchange(
     process.env['PRODUCT_SRV_IMAGE_UPSERT_QUEUE'],

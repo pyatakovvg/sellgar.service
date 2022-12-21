@@ -12,6 +12,9 @@ class CheckoutStatus {
 
   @Column('varchar', { nullable: true })
   description: string;
+
+  @Column('integer', { nullable: false, default: 0 })
+  order: number;
 }
 
 export default CheckoutStatus;

@@ -1,13 +1,13 @@
 
-interface IError {
-  name: string;
-  status: number;
-  data: any;
-}
-
 interface IData {
   code: string;
   message: string;
+}
+
+interface IError extends Error {
+  name: string;
+  status: number;
+  data: IData;
 }
 
 

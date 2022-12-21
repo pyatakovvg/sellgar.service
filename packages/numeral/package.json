@@ -16,7 +16,6 @@
     "numeral": "2.0.6"
   },
   "devDependencies": {
-    "@types/node": "16.11.49",
     "@types/numeral": "2.0.2"
   }
 }

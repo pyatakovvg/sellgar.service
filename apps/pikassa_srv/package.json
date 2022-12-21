@@ -8,13 +8,13 @@
   },
   "dependencies": {
     "@library/app": "0.0.1",
+    "@package/request": "0.0.1",
     "@plugin/db": "0.0.1",
     "@plugin/rabbit": "0.0.1",
-    "@package/request": "0.0.1",
-    "ajv": "8.11.0",
+    "ajv": "8.11.2",
     "busboy": "1.6.0",
     "node-sagas": "0.0.6",
-    "sharp": "0.31.0"
+    "sharp": "0.31.2"
   },
   "devDependencies": {},
   "peerDependencies": {}

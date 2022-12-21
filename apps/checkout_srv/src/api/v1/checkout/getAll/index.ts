@@ -51,11 +51,11 @@ class GetCheckoutController extends Controller {
     queryBuilder
       .leftJoinAndSelect('checkout.products', 'products')
       .leftJoinAndSelect('products.currency', 'p_currency')
-      .leftJoinAndSelect('products.product', 'product')
-        .leftJoinAndSelect('product.product', 'catalog_product')
-          .leftJoinAndSelect('catalog_product.catalog', 'catalog')
-            .leftJoinAndSelect('catalog.image', 'image')
+      .leftJoinAndSelect('products.store', 'store')
+        .leftJoinAndSelect('store.catalog', 'catalog')
+          .leftJoinAndSelect('catalog.image', 'image') ;
 
+    queryBuilder
       .addOrderBy('checkout.createdAt', 'DESC');
 
     const result = await queryBuilder.getManyAndCount();

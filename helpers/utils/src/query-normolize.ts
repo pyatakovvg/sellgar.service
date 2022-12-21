@@ -1,5 +1,10 @@
 
-export default function(query) {
+interface IResult {
+  [key: string]: Array<any>;
+}
+
+
+export default function(query): IResult {
   const result = {};
   const keys = Object.keys(query);
 
@@ -14,4 +19,4 @@ export default function(query) {
   }
 
   return result;
-}
+};

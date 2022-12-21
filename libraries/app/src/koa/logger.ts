@@ -66,15 +66,20 @@ export function middleware() {
     const request = ctx['request'];
     const url = request['url'];
     const method = request['method'];
+    let body;
 
-    let requestData = { ...request['body'] };
-
-    if (requestData && (requestData.constructor === Array) && (requestData.length > 10)) {
-      requestData = requestData.slice(0, 10);
-      requestData.push('...');
+    if (request['body'] instanceof Array) {
+      body = [...request.body] as Array<any>;
+      if (body.length > 10) {
+        body = body.slice(0, 10);
+        body.push('...');
+      }
+    }
+    else if (request['body'] instanceof Object) {
+      body = { ...request.body } as object;
     }
 
-    logger.info({ message: `REQUEST [${realIP}][xff: ${xff}] ---> [${method}] "${url}" (${requestData ? JSON.stringify(requestData) : 'null'})`, correlationId });
+    logger.info({ message: `REQUEST [${realIP}][xff: ${xff}] ---> [${method}] "${url}" (${body ? JSON.stringify(body) : 'null'})`, correlationId });
 
     await next();
 
@@ -94,6 +99,7 @@ export function middleware() {
     switch(status) {
       case 200:
       case 201:
+      case 204:
         logger.info({ message: `RESPONSE <--- [${method}] "${url}" ${status} (${responseData ? JSON.stringify(responseData) : 'null'})`, correlationId });
         break;
       default:
