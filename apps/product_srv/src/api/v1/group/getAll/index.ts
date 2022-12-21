@@ -6,9 +6,9 @@ import groupBuilder from './builders/group';
 
 
 interface IQuery {
-  uuid: Array<string>;
-  code: Array<string>;
-  include: Array<string>;
+  uuid?: Array<string>;
+  code?: Array<string>;
+  include?: Array<string>;
 }
 
 
