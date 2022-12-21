@@ -32,7 +32,6 @@
     "libraries/app",
     "plugins/db",
     "plugins/typeOrm",
-    "plugins/rabbit",
-    "apps/*"
+    "plugins/rabbit"
   ]
 }
