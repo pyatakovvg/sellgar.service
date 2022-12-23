@@ -1,4 +1,5 @@
 
+import { type EntityManager } from '@plugin/type-orm';
 import { Route, Result, Controller } from '@library/app';
 
 import bucketBuilder from './builders/bucket';
@@ -20,7 +21,7 @@ class CreateCheckoutController extends Controller {
     // const CheckoutDetail = db.model['CheckoutDetail'];
     // const CheckoutProduct = db.model['CheckoutProduct'];
 
-    const result = await db.manager.transaction(async (entityManager) => {
+    const result = await db.manager.transaction(async (entityManager: EntityManager) => {
       const bucketRepository = entityManager.getRepository(Bucket);
       const checkoutRepository = entityManager.getRepository(Checkout);
       // const paymentDetailRepository = entityManager.getRepository(PaymentDetail);
@@ -50,7 +51,7 @@ class CreateCheckoutController extends Controller {
           count: product['count'],
           price: product['product']['price'],
           currency: product['product']['currency'],
-          store: product['product']['uuid'],
+          store: product['product'],
         })),
       };
 

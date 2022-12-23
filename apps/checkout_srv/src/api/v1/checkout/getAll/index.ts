@@ -13,7 +13,7 @@ class GetCheckoutController extends Controller {
     const repository = db.repository(Checkout);
     const queryBuilder = repository
       .createQueryBuilder('checkout')
-      .select(['checkout.uuid', 'checkout.externalId', 'checkout.price', 'checkout.createdAt', 'checkout.updatedAt']);
+      .select(['checkout.uuid', 'checkout.externalId', 'checkout.price', 'checkout.payed', 'checkout.createdAt', 'checkout.updatedAt']);
 
     if ('uuid' in query) {
       queryBuilder.andWhere('checkout.uuid IN (:...checkoutUuid)', { checkoutUuid: query['uuid'] })
@@ -54,6 +54,9 @@ class GetCheckoutController extends Controller {
       .leftJoinAndSelect('products.store', 'store')
         .leftJoinAndSelect('store.catalog', 'catalog')
           .leftJoinAndSelect('catalog.image', 'image') ;
+
+    queryBuilder
+      .leftJoinAndSelect('checkout.customer', 'customer')
 
     queryBuilder
       .addOrderBy('checkout.createdAt', 'DESC');

@@ -15,6 +15,7 @@ import {
 import Payment from "./Payment";
 import Currency from "./Currency";
 import Delivery from "./Delivery";
+import Customer from "./Customer";
 import CheckoutDetail from "./CheckoutDetail";
 import CheckoutStatus from "./CheckoutStatus";
 import DeliveryDetail from "./DeliveryDetail";
@@ -32,6 +33,9 @@ class Checkout {
 
   @Column('numeric', { precision: 10, scale: 2, default: 0 })
   price: number;
+
+  @Column('boolean', { default: false })
+  payed: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -62,6 +66,10 @@ class Checkout {
   @ManyToOne(() => Payment, (payment) => payment['code'])
   @JoinColumn()
   payment: Payment;
+
+  @ManyToOne(() => Customer, (customer) => customer['uuid'])
+  @JoinColumn()
+  customer: Customer;
 
   @OneToMany(() => CheckoutDetail, (details) => details['checkout'], {
     eager: true,

@@ -1,6 +1,7 @@
 
 import { queryNormalize } from '@helper/utils';
 import { Controller, Result, Route } from '@library/app';
+import { EntityManager } from '@plugin/type-orm';
 
 import catalogBuilder from '../_builder/catalog';
 
@@ -29,7 +30,7 @@ class GetProductsController extends Controller {
     const Catalog = db.model['Catalog'];
 
 
-    const result = await db.manager.transaction(async (entityManager) => {
+    const result = await db.manager.transaction(async (entityManager: EntityManager) => {
       const queryBuilder = entityManager.createQueryBuilder(Catalog, 'catalog');
 
       queryBuilder
