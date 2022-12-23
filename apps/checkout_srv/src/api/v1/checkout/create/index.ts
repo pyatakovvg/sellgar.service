@@ -50,8 +50,10 @@ class CreateCheckoutController extends Controller {
         })),
       };
 
-      const checkout = await checkoutRepository.save(checkoutData, { reload: true });
+      console.log(checkoutData)
 
+      const checkout = await checkoutRepository.save(checkoutData, { reload: true });
+console.log(checkout)
       // if (body['paymentCode'] === 'online') {
       //   const result = await rabbit.sendCommand(process.env['PIKASSA_SRV_PAYMENT_CREATE_QUEUE'], '', { reply: true })
 
@@ -68,7 +70,7 @@ class CreateCheckoutController extends Controller {
       // }
 
       await bucketRepository.delete({ uuid: bucket['uuid'] });
-
+console.log(123)
       return {
         uuid: checkout['uuid'],
       }
