@@ -7,10 +7,8 @@ import bucketBuilder from './builders/bucket';
 
 @Route('post', '/api/v1/checkouts')
 class CreateCheckoutController extends Controller {
-  async send(): Promise<any> {
+  async send() {
     const body = super.body;
-
-    // console.log(body);
 
     const db = super.plugin.get('db');
     // const rabbit = super.plugin.get('rabbit');
@@ -38,20 +36,17 @@ class CreateCheckoutController extends Controller {
 
       const checkoutData = {
         status: { code: 'new' },
-        payment: {
-          code: body['paymentCode'],
-        },
-        delivery: {
-          code: body['deliveryCode'],
-        },
-        price: bucket['price'],
-        currency: bucket['currency'],
-        details: body['details'],
+        payment: { code: body.paymentCode },
+        delivery: { code: body.deliveryCode },
+        customer: { uuid: body.customerUuid },
+        details: body.details,
+        price: bucket.price,
+        currency: { code: bucket.currency.code },
         products: bucket.products.map((product) => ({
           count: product['count'],
           price: product['product']['price'],
-          currency: product['product']['currency'],
-          store: product['product'],
+          currency: { code: product.product.currency.code },
+          store: { uuid: product.product.uuid },
         })),
       };
 
