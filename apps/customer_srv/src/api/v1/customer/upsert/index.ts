@@ -19,8 +19,10 @@ class UpdateCustomerController extends Controller {
     const repository = db.manager.getRepository(Customer);
 
     const customerUpdate = await repository.save({
-      uuid: body['uuid'] || undefined,
-      name: body['name'] || 'Неизвестен',
+      uuid: body['uuid'],
+      name: body['name'],
+      phone: body['phone'],
+      email: body['email'],
     }, { reload: true });
 
     const result = await model.getOne({

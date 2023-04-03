@@ -4,8 +4,15 @@ import DbTypeORMPlugin from "@plugin/type-orm";
 import { Config, Application, Router } from '@library/app';
 
 
-(async function() {
+process.on('unhandledRejection', (error: Error) => {
+  console.error(JSON.stringify({
+    date: new Date(),
+    message: error.message || error
+  }));
+});
 
+(async function() {
+console.log(process.env)
   const app = new Application(new Config({
     port: Number(process.env['PORT']),
   }));

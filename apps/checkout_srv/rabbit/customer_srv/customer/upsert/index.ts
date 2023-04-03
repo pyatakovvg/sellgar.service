@@ -14,6 +14,8 @@ export default async function init(rabbit, app: Application) {
     await repository.save({
       uuid: data['uuid'],
       name: data['name'],
+      phone: data['phone'],
+      email: data['email'],
     });
 
     cb(true);

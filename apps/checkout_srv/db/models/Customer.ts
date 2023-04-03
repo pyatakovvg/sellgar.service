@@ -13,8 +13,14 @@ class Customer {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column('varchar', { nullable: false })
+  @Column('varchar', { nullable: false, default: '' })
   name: string;
+
+  @Column('varchar', { nullable: false, default: '' })
+  email: string;
+
+  @Column('varchar', { nullable: false, default: '' })
+  phone: string;
 
   @CreateDateColumn()
   createdAt: Date;
